@@ -7,14 +7,6 @@
         mc:Ignorable="d"
         Title="Playing Audio in WPF" WindowStartupLocation="CenterScreen" Height="600" Width="800">
     
-    <Window.Resources>
-        <DataTemplate x:Key="SingleLineView">
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Text="{Binding MediaName}"/>                
-            </StackPanel>
-        </DataTemplate>
-    </Window.Resources>    
-    
     <Grid>                
         <StackPanel Margin="24">            
             <ContentControl Content="{Binding Player.MPlayer}" Height="350"/>

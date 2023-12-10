@@ -12,7 +12,7 @@ namespace MediaPlayerDemo.ViewModels;
 
 public class MainViewModel : INotifyPropertyChanged
 {
-    private MainPlayer _player = new();
+    private MainPlayer _player;
 
 public MainPlayer Player
         {
@@ -23,6 +23,11 @@ public MainPlayer Player
             OnPropertyChanged();
             }
         }
+
+    public MainViewModel()
+    {
+        _player = new(new MediaElement(), new PlaybackList());       
+    }
 
     public event PropertyChangedEventHandler? PropertyChanged;
 

@@ -12,32 +12,30 @@ namespace MediaPlayerDemo.ViewModels;
 
 public class MainPlayer : INotifyPropertyChanged
 {
+    private MediaElement _mPlayer;
+    private PlaybackList _currentMediaList;
     private string _displayStatus = string.Empty;
     private string _totalDuration = "00:00";
     private string _elapsedTime = "00:00";
-    private DispatcherTimer _timer = new();
-    private MediaElement _mPlayer = new();    
-    private PlaybackList _mediaList = new();
+    private DispatcherTimer _timer = new();            
 
-    public MediaElement MPlayer
+public MediaElement MPlayer
     {
         get => _mPlayer;
         set
         {
-            _mPlayer = value;
-            OnPropertyChanged();
+            if (_mPlayer != value)
+            {
+                _mPlayer = value;
+                OnPropertyChanged();
+            }
         }
     }
-
-    public PlaybackList MediaList
+    
+    public PlaybackList CurrentMediaList
     {
-        get => _mediaList;
-        set
-        {
-            _mediaList = value;
-            OnPropertyChanged();
-        }
-    }
+        get => _currentMediaList;
+    }        
 
     public string ElapsedTime
     {
@@ -74,7 +72,14 @@ public class MainPlayer : INotifyPropertyChanged
 
     public bool CanRepeat { get; set; }
 
-    public MainPlayer()
+    public MainPlayer(MediaElement mediaElement, PlaybackList playbackList)
+    {
+        _mPlayer = mediaElement;
+        _currentMediaList = playbackList;
+        InitializePlayer();
+    }
+    
+    private void InitializePlayer()
     {
         MPlayer.Volume = 0.5;
         MPlayer.Balance = 0;
@@ -110,8 +115,8 @@ public class MainPlayer : INotifyPropertyChanged
 
         if (pickedFiles.Count != 0)
         {
-            MediaList.AddFilesToList(pickedFiles);
-            PlayItem(MediaList.CurrentItem);
+            CurrentMediaList.AddFilesToList(pickedFiles);
+            PlayItem(CurrentMediaList.CurrentItem);
         }
     }
 
@@ -129,24 +134,19 @@ public class MainPlayer : INotifyPropertyChanged
 
     public void Play()
     {
-        if (MPlayer.Source is not null)
-        {
-            if (_timer.IsEnabled == false)
-            {
-                _timer.Start();
-            }
+        if (MPlayer.Source is null) return;
+        
+            if (_timer.IsEnabled == false) _timer.Start();            
 
-            MPlayer.Play();
-        }
+            MPlayer.Play();        
     }
 
     public void Pause()
     {
-        if (MPlayer.Source is not null)
-        {
+        if (MPlayer.Source is null) return;
+        
             _timer.Stop();
-            MPlayer.Pause();        
-    }
+            MPlayer.Pause();            
     }
 
     public void Rewind()
@@ -163,7 +163,7 @@ public class MainPlayer : INotifyPropertyChanged
     {
         if (MPlayer.Source is not null)
         {            
-            PlayItem(MediaList.GetNextItem());
+            PlayItem(CurrentMediaList.GetNextItem());
         }
     }
 
@@ -171,7 +171,7 @@ public class MainPlayer : INotifyPropertyChanged
     {
         if (MPlayer.Source is not null)
         {            
-            PlayItem(MediaList.GetPreviousItem());
+            PlayItem(CurrentMediaList.GetPreviousItem());
         }
     }
 

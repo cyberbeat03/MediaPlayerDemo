@@ -3,20 +3,9 @@ using System.IO;
 
 namespace MediaPlayerDemo.Models;
 
-public class MediaItem
+public class MediaItem(string fullPath)
 {
-    public MediaItem(string fullPath)
-    {
-        MediaName = Path.GetFileName(fullPath);
-        MediaPath = fullPath;
-    }
-
-    public string MediaName { get; set; }
-    public string MediaPath { get; set; }
-
-    public Uri MediaUri
-    {
-        get => new Uri(MediaPath);
-    }
-
+    public string MediaName { get; } = Path.GetFileName(fullPath);
+    public string MediaPath { get; } = fullPath;
+    public Uri MediaUri => new Uri(MediaPath);
 }
