@@ -1,25 +1,15 @@
-﻿using MediaPlayerDemo.Models;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Threading;
-
-namespace MediaPlayerDemo.ViewModels;
+﻿namespace MediaPlayerDemo.Models;
 
 public class MainPlayer : INotifyPropertyChanged
 {
-    private MediaElement _mPlayer;
+    private MediaElement _mPlayer = new();
     private PlaybackList _currentMediaList;
     private string _displayStatus = string.Empty;
     private string _totalDuration = "00:00";
     private string _elapsedTime = "00:00";
-    private DispatcherTimer _timer = new();            
+    private DispatcherTimer _timer = new();
 
-public MediaElement MPlayer
+    public MediaElement MPlayer
     {
         get => _mPlayer;
         set
@@ -31,11 +21,11 @@ public MediaElement MPlayer
             }
         }
     }
-    
+
     public PlaybackList CurrentMediaList
     {
         get => _currentMediaList;
-    }        
+    }
 
     public string ElapsedTime
     {
@@ -72,13 +62,12 @@ public MediaElement MPlayer
 
     public bool CanRepeat { get; set; }
 
-    public MainPlayer(MediaElement mediaElement, PlaybackList playbackList)
+    public MainPlayer(PlaybackList playbackList)
     {
-        _mPlayer = mediaElement;
         _currentMediaList = playbackList;
         InitializePlayer();
     }
-    
+
     private void InitializePlayer()
     {
         MPlayer.Volume = 0.5;
@@ -106,8 +95,8 @@ public MediaElement MPlayer
     {
         MPlayer.SpeedRatio = newValue;
     }
-    
-        public void AddMediaFiles()
+
+    public void AddMediaFiles()
     {
         FileOperations fileOperations = new();
 
@@ -135,18 +124,18 @@ public MediaElement MPlayer
     public void Play()
     {
         if (MPlayer.Source is null) return;
-        
-            if (_timer.IsEnabled == false) _timer.Start();            
 
-            MPlayer.Play();        
+        if (_timer.IsEnabled == false) _timer.Start();
+
+        MPlayer.Play();
     }
 
     public void Pause()
     {
         if (MPlayer.Source is null) return;
-        
-            _timer.Stop();
-            MPlayer.Pause();            
+
+        _timer.Stop();
+        MPlayer.Pause();
     }
 
     public void Rewind()
@@ -162,7 +151,7 @@ public MediaElement MPlayer
     public void PlayNext()
     {
         if (MPlayer.Source is not null)
-        {            
+        {
             PlayItem(CurrentMediaList.GetNextItem());
         }
     }
@@ -170,7 +159,7 @@ public MediaElement MPlayer
     public void PlayPrevious()
     {
         if (MPlayer.Source is not null)
-        {            
+        {
             PlayItem(CurrentMediaList.GetPreviousItem());
         }
     }
@@ -180,26 +169,26 @@ public MediaElement MPlayer
         if (currentItem != null && MPlayer.Source != currentItem.MediaUri)
         {
             MPlayer.Source = currentItem.MediaUri;
-                Play();
-            }
-GetMediaDetails();
+            Play();
+        }
+        GetMediaDetails();
     }
 
     private void Media_Opened(object sender, RoutedEventArgs e)
     {
         TotalDuration = MPlayer.NaturalDuration.TimeSpan.ToString(@"mm\:ss");
-        _timer.Start();        
+        _timer.Start();
     }
 
     private void Media_Ended(object sender, RoutedEventArgs e)
     {
-        MPlayer.Stop();
         _timer.Stop();
+        MPlayer.Position = TimeSpan.Zero;
         ElapsedTime = "00:00";
 
         if (CanRepeat)
         {
-                Play();            
+            Play();
         }
         else
         {

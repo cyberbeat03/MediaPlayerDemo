@@ -1,9 +1,6 @@
 ﻿using MediaPlayerDemo.ViewModels;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
 
-namespace MediaElementTrial;
+namespace MediaPlayerDemo;
 
 public partial class MainWindow : Window
 {

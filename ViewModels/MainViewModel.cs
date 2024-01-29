@@ -1,12 +1,4 @@
 ﻿using MediaPlayerDemo.Models;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Threading;
 
 namespace MediaPlayerDemo.ViewModels;
 
@@ -26,7 +18,7 @@ public MainPlayer Player
 
     public MainViewModel()
     {
-        _player = new(new MediaElement(), new PlaybackList());       
+       _player = new(new PlaybackList());       
     }
 
     public event PropertyChangedEventHandler? PropertyChanged;

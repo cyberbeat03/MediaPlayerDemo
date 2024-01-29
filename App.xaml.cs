@@ -1,10 +1,5 @@
-﻿using System.Windows;
+﻿namespace MediaPlayerDemo;
 
-namespace MediaElementTrial;
-
-/// <summary>
-/// Interaction logic for App.xaml
-/// </summary>
 public partial class App : Application
 {
 }
