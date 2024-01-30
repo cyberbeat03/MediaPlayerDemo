@@ -74,7 +74,6 @@ public class MainPlayer : INotifyPropertyChanged
         MPlayer.Balance = 0;
         MPlayer.SpeedRatio = 1;
         MPlayer.LoadedBehavior = MediaState.Manual;
-
         MPlayer.MediaOpened += Media_Opened;
         MPlayer.MediaEnded += Media_Ended;
 
@@ -183,7 +182,7 @@ public class MainPlayer : INotifyPropertyChanged
     private void Media_Ended(object sender, RoutedEventArgs e)
     {
         _timer.Stop();
-        MPlayer.Position = TimeSpan.Zero;
+        MPlayer.Stop();        
         ElapsedTime = "00:00";
 
         if (CanRepeat)

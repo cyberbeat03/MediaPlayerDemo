@@ -1,10 +1,10 @@
 ﻿using MediaPlayerDemo.ViewModels;
 
-namespace MediaPlayerDemo;
+namespace MediaPlayerDemo.Views;
 
 public partial class MainWindow : Window
 {
-    private MainViewModel _mainVM = new();
+    private readonly MainViewModel _mainVM = new();
 
     public MainWindow()
     {        
