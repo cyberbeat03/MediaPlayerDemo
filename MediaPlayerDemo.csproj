@@ -21,6 +21,11 @@
     <None Remove=".gitattributes" />
     <None Remove=".gitignore" />
     <None Remove="LICENSE.txt" />
+    <None Remove="Models\FileOpenService" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="Models\FileOpenService" />
   </ItemGroup>
 
   <ItemGroup>

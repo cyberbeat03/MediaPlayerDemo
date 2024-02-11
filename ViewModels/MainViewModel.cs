@@ -1,6 +1,6 @@
 ﻿namespace MediaPlayerDemo.ViewModels;
 
-public partial class MainViewModel : MainViewModelBase
+public partial class MainViewModel : ViewModelBase
 {
     [ObservableProperty] private MediaElement _mPlayer = new();
     [ObservableProperty] private PlaybackList _currentMediaList = new();
@@ -10,7 +10,6 @@ public partial class MainViewModel : MainViewModelBase
 private DispatcherTimer _timer = new();
 
     public bool CanRepeat { get; set; }
-
 
     public MainViewModel()
     {
@@ -44,20 +43,21 @@ private DispatcherTimer _timer = new();
         MPlayer.SpeedRatio = newValue;
     }
 
-    public void AddMediaFiles()
+[RelayCommand]
+    private void AddMediaFiles()
     {
-        FileOperations fileOperations = new();
+       FileOpenService fileService = new();
 
-        IList<string> pickedFiles = fileOperations.PickMediaFiles();
+        IList<string> pickedFiles = fileService.PickMediaFiles();
 
         if (pickedFiles.Count != 0)
         {
-            CurrentMediaList.AddFilesToList(pickedFiles);
+            CurrentMediaList.AddFiles(pickedFiles);
             PlayItem(CurrentMediaList.CurrentItem);
         }
     }
 
-    public void GetMediaDetails()
+    private void GetMediaDetails()
     {
         if (MPlayer.Source is null)
         {
@@ -69,7 +69,8 @@ private DispatcherTimer _timer = new();
         }
     }
 
-    public void Play()
+[RelayCommand]
+    private void Play()
     {
         if (MPlayer.Source is null) return;
 
@@ -78,7 +79,9 @@ private DispatcherTimer _timer = new();
         MPlayer.Play();
     }
 
-    public void Pause()
+    
+[RelayCommand]
+    private void Pause()
     {
         if (MPlayer.Source is null) return;
 
@@ -86,17 +89,20 @@ private DispatcherTimer _timer = new();
         MPlayer.Pause();
     }
 
-    public void Rewind()
+[RelayCommand]    
+    private void Rewind()
     {
         MPlayer.Position -= TimeSpan.FromSeconds(10);
     }
 
-    public void FastForward()
+[RelayCommand]
+    private void FastForward()
     {
         MPlayer.Position += TimeSpan.FromSeconds(10);
     }
 
-    public void PlayNext()
+[RelayCommand]    
+    private void Next()
     {
         if (MPlayer.Source is not null)
         {
@@ -104,7 +110,8 @@ private DispatcherTimer _timer = new();
         }
     }
 
-    public void PlayPrevious()
+    [RelayCommand]
+    private void Previous()
     {
         if (MPlayer.Source is not null)
         {
@@ -140,7 +147,7 @@ private DispatcherTimer _timer = new();
         }
         else
         {
-            PlayNext();
+            Next();
         }
     }
 }

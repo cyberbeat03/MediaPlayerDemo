@@ -2,7 +2,7 @@
 
 namespace MediaPlayerDemo.Models;
 
-public class FileOperations
+public class FileOpenService
 {
     private readonly string _musicFolder = Environment.GetFolderPath(Environment.SpecialFolder.MyMusic);
     private readonly string title = "Select media files to add to playlist";

@@ -18,13 +18,13 @@
                         <Slider x:Name="speedSlider" Minimum="0.5" Maximum="1.5" Value="1" ValueChanged="SpeedSlider_ValueChanged" Width="70"/>            
             
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="64">                
-                <Button Content="_Open..." Width="100" Click="AddMedia_Click"/>
-                <Button Content="Pre_vious" Width="100" Click="PreviousButton_Click"/>
-                <Button Content="_Rewind" Click="RewindButton_Click"/>
-                <Button Content="_Play" Width="100" Click="PlayMedia_Click"/>
-                <Button Content="Pa_use" Width="100" Click="Pause_Click"/>                
-                <Button Content="_Fast Forward" Click="ForwardButton_Click"/>
-                <Button Content="_Next" Width="100" Click="NextButton_Click"/>
+                <Button Content="_Open..." Width="100" Command="{Binding AddMediaFilesCommand}"/>
+                <Button Content="Pre_vious" Width="100" Command="{Binding PreviousCommand}" />
+                <Button Content="_Rewind" Command="{Binding RewindCommand}" />
+                <Button Content="_Play" Width="100" Command="{Binding PlayCommand}" />
+                <Button Content="Pa_use" Width="100" Command="{Binding PauseCommand}" />                
+                <Button Content="_Fast Forward" Command="{Binding FastForwardCommand}" />
+                <Button Content="_Next" Width="100" Command="{Binding NextCommand}"/>
             </StackPanel>                         
         </StackPanel>
     </Grid>

@@ -40,7 +40,7 @@ public class PlaybackList
         _currentIndex = 0;
     }
 
-    public void AddFilesToList(IList<string> mediaFiles)
+    public void AddFiles(IList<string> mediaFiles)
     {
         if (mediaFiles.Count > 0)
         {
