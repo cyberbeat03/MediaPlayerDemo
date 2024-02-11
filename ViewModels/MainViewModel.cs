@@ -2,14 +2,14 @@
 
 public partial class MainViewModel : ViewModelBase
 {
-    [ObservableProperty] private MediaElement _mPlayer = new();
-    [ObservableProperty] private PlaybackList _currentMediaList = new();
-    [ObservableProperty] private string _displayStatus = string.Empty;
-[ObservableProperty] private string _totalDuration = "00:00";
-[ObservableProperty] private string _elapsedTime = "00:00";
-private DispatcherTimer _timer = new();
+    [ObservableProperty] MediaElement _mPlayer = new();
+    [ObservableProperty] PlaybackList _currentMediaList = new();
+    [ObservableProperty] string _displayStatus = string.Empty;
+[ObservableProperty] string _totalDuration = "00:00";
+[ObservableProperty] string _elapsedTime = "00:00";
+    [ObservableProperty] bool _canRepeat;
+    private DispatcherTimer _timer = new();
 
-    public bool CanRepeat { get; set; }
 
     public MainViewModel()
     {
@@ -38,10 +38,13 @@ private DispatcherTimer _timer = new();
         }
     }
 
-    public void ChangeSpeed(double newValue)
+    private void GetMediaDetails()
     {
-        MPlayer.SpeedRatio = newValue;
-    }
+        if (MPlayer.Source is null)
+            DisplayStatus = "There is no media loaded";
+        else
+            DisplayStatus = $"{MPlayer.Source}";
+    }    
 
 [RelayCommand]
     private void AddMediaFiles()
@@ -56,19 +59,7 @@ private DispatcherTimer _timer = new();
             PlayItem(CurrentMediaList.CurrentItem);
         }
     }
-
-    private void GetMediaDetails()
-    {
-        if (MPlayer.Source is null)
-        {
-            DisplayStatus = "Nothing to play";
-        }
-        else
-        {
-            DisplayStatus = $"{MPlayer.Source}";
-        }
-    }
-
+    
 [RelayCommand]
     private void Play()
     {
