@@ -15,7 +15,7 @@
             <TextBlock Text="{Binding ElapsedTime}" Focusable="True" Width="50" Height="25"/>
             <TextBlock Text="{Binding TotalDuration}" Focusable="True" Width="50" Height="25"/>
             <Label Content="Adjust playback speed"/>
-                        <Slider x:Name="speedSlider" Minimum="0.5" Maximum="1.5" Value="{Binding MPlayer.SpeedRatio, Mode=TwoWay}" Width="70"/>            
+                        <Slider Minimum="0.5" Maximum="1.5" Value="{Binding MPlayer.SpeedRatio, Mode=TwoWay}" Width="70"/>            
             
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="64">                
                 <Button Content="_Open..." Width="100" Command="{Binding AddMediaFilesCommand}"/>

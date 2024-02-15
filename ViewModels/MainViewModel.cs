@@ -1,6 +1,6 @@
 ﻿namespace MediaPlayerDemo.ViewModels;
 
-public partial class MainViewModel : ViewModelBase
+public partial class MainViewModel : ObservableObject
 {
     [ObservableProperty] MediaElement _mPlayer = new();
     [ObservableProperty] PlaybackList _currentMediaList = new();
