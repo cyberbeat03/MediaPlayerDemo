@@ -7,13 +7,35 @@
         Title="Playing Audio in WPF" WindowStartupLocation="CenterScreen" Height="600" Width="800">
 
     <Grid>
-        <StackPanel Margin="24">
-            <ContentControl Content="{Binding MPlayer}" Height="350"/>
-            <CheckBox Content="Repeat Mode" IsChecked="{Binding CanRepeat}" Margin="24"/>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <StackPanel Grid.Column="0" HorizontalAlignment="Center" Margin="24">
+            <Label Content="Media Items"/>
+            <ListView ItemsSource="{Binding CurrentMediaList.Items}" Height="400" Width="300" SelectionMode="Single">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding MediaName}"/>
+                    </DataTemplate>                                        
+                </ListView.ItemTemplate>
+
+                <ListView.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Play Item"/>                        
+                                                <MenuItem Header="Remove"/>
+                    </ContextMenu>
+                </ListView.ContextMenu>                
+            </ListView>                                    
+        </StackPanel>
+
+        <StackPanel Grid.Column="1" Margin="24">
+            <ContentControl Content="{Binding MPlayer}" Height="350"/>            
             <Label Content="Media Player Status"/>
             <TextBlock Text="{Binding DisplayStatus}" Focusable="True" Height="25" Width="100"/>
             <TextBlock Text="{Binding ElapsedTime}" Focusable="True" Width="50" Height="25"/>
             <TextBlock Text="{Binding TotalDuration}" Focusable="True" Width="50" Height="25"/>
+            <CheckBox Content="Repeat Mode" IsChecked="{Binding CanRepeat}" Margin="24"/>
             <Label Content="Adjust playback speed"/>
             <Slider Minimum="0.5" Maximum="1.5" Value="{Binding MPlayer.SpeedRatio, Mode=TwoWay}" Width="70"/>
 
