@@ -5,27 +5,27 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
         Title="Playing Audio in WPF" WindowStartupLocation="CenterScreen" Height="600" Width="800">
-    
-    <Grid>                
-        <StackPanel Margin="24">            
+
+    <Grid>
+        <StackPanel Margin="24">
             <ContentControl Content="{Binding MPlayer}" Height="350"/>
-            <CheckBox Content="Repeat Mode" IsChecked="{Binding CanRepeat}" Margin="24"/>                        
+            <CheckBox Content="Repeat Mode" IsChecked="{Binding CanRepeat}" Margin="24"/>
             <Label Content="Media Player Status"/>
             <TextBlock Text="{Binding DisplayStatus}" Focusable="True" Height="25" Width="100"/>
             <TextBlock Text="{Binding ElapsedTime}" Focusable="True" Width="50" Height="25"/>
             <TextBlock Text="{Binding TotalDuration}" Focusable="True" Width="50" Height="25"/>
             <Label Content="Adjust playback speed"/>
-                        <Slider Minimum="0.5" Maximum="1.5" Value="{Binding MPlayer.SpeedRatio, Mode=TwoWay}" Width="70"/>            
-            
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="64">                
-                <Button Content="_Open..." Width="100" Command="{Binding AddMediaFilesCommand}"/>
+            <Slider Minimum="0.5" Maximum="1.5" Value="{Binding MPlayer.SpeedRatio, Mode=TwoWay}" Width="70"/>
+
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="64">
+                <Button Content="_Open Files..." Width="100" Command="{Binding AddMediaFilesCommand}"/>
                 <Button Content="Pre_vious" Width="100" Command="{Binding PreviousCommand}" />
                 <Button Content="_Rewind" Command="{Binding RewindCommand}" />
                 <Button Content="_Play" Width="100" Command="{Binding PlayCommand}" />
-                <Button Content="Pa_use" Width="100" Command="{Binding PauseCommand}" />                
+                <Button Content="Pa_use" Width="100" Command="{Binding PauseCommand}" />
                 <Button Content="_Fast Forward" Command="{Binding FastForwardCommand}" />
                 <Button Content="_Next" Width="100" Command="{Binding NextCommand}"/>
-            </StackPanel>                         
+            </StackPanel>
         </StackPanel>
     </Grid>
 </Window>

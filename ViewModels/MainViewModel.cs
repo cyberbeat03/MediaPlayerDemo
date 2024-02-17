@@ -1,15 +1,8 @@
 ﻿namespace MediaPlayerDemo.ViewModels;
 
-public partial class MainViewModel : ObservableObject
-{
-    [ObservableProperty] MediaElement _mPlayer = new();
-    [ObservableProperty] PlaybackList _currentMediaList = new();
-    [ObservableProperty] string _displayStatus = string.Empty;
-[ObservableProperty] string _totalDuration = "00:00";
-[ObservableProperty] string _elapsedTime = "00:00";
-    [ObservableProperty] bool _canRepeat;
+public partial class MainViewModel : MainViewModelBase
+{    
     private DispatcherTimer _timer = new();
-
 
     public MainViewModel()
     {
@@ -32,18 +25,16 @@ public partial class MainViewModel : ObservableObject
 
     private void Timer_Tick(object? sender, EventArgs e)
     {
-        if (MPlayer.NaturalDuration.HasTimeSpan)
-        {
-            ElapsedTime = MPlayer.Position.ToString(@"mm\:ss");
-        }
+        if (MPlayer.NaturalDuration.HasTimeSpan)        
+            ElapsedTime = MPlayer.Position.ToString(@"mm\:ss");        
     }
 
     private void GetMediaDetails()
     {
         if (MPlayer.Source is null)
-            DisplayStatus = "There is no media loaded";
+            DisplayStatus = "There is currently no media loaded";
         else
-            DisplayStatus = $"{MPlayer.Source}";
+            DisplayStatus = MPlayer.Source.OriginalString;
     }    
 
 [RelayCommand]
@@ -65,18 +56,16 @@ public partial class MainViewModel : ObservableObject
     {
         if (MPlayer.Source is null) return;
 
-        if (_timer.IsEnabled == false) _timer.Start();
-
+        _timer.IsEnabled = true;
         MPlayer.Play();
     }
-
     
 [RelayCommand]
     private void Pause()
     {
         if (MPlayer.Source is null) return;
 
-        _timer.Stop();
+        _timer.IsEnabled = false;
         MPlayer.Pause();
     }
 
@@ -95,24 +84,20 @@ public partial class MainViewModel : ObservableObject
 [RelayCommand]    
     private void Next()
     {
-        if (MPlayer.Source is not null)
-        {
-            PlayItem(CurrentMediaList.GetNextItem());
-        }
+        if (MPlayer.Source is not null)        
+            PlayItem(CurrentMediaList.GetNextItem());        
     }
 
     [RelayCommand]
     private void Previous()
     {
-        if (MPlayer.Source is not null)
-        {
-            PlayItem(CurrentMediaList.GetPreviousItem());
-        }
+        if (MPlayer.Source is not null)        
+            PlayItem(CurrentMediaList.GetPreviousItem());        
     }
 
     private void PlayItem(MediaItem? currentItem)
     {
-        if (currentItem != null && MPlayer.Source != currentItem.MediaUri)
+        if (currentItem is not null && MPlayer.Source != currentItem.MediaUri)
         {
             MPlayer.Source = currentItem.MediaUri;
             Play();
@@ -132,13 +117,10 @@ public partial class MainViewModel : ObservableObject
         MPlayer.Stop();
         ElapsedTime = "00:00";
 
-        if (CanRepeat)
-        {
-            Play();
-        }
-        else
-        {
-            Next();
-        }
+        if (CanRepeat)        
+            Play();        
+        else        
+            Next();        
     }
+
 }
