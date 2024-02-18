@@ -20,12 +20,12 @@ public partial class MainViewModel : MainViewModelBase
 
     private void PlayItem(MediaItem? currentItem)
     {
-        if (currentItem is not null && MPlayer.Source != currentItem.MediaUri)
+        if ((currentItem is not null) && (MPlayer.Source != currentItem.MediaUri))
         {
             MPlayer.Source = currentItem.MediaUri;
-            Play();
+Play();
+            GetMediaDetails();
         }
-        GetMediaDetails();
     }    
 
     private void Media_Opened(object sender, RoutedEventArgs e)
