@@ -1,10 +1,9 @@
-﻿using System.IO;
+﻿namespace MediaPlayerDemo.Models;
 
-namespace MediaPlayerDemo.Models;
-
-public class MediaItem(string fullPath)
+public class MediaItem(FileInfo mediaFileInfo)
 {
-    public string MediaName { get; } = Path.GetFileName(fullPath);
-    public string MediaPath { get; } = fullPath;
-    public Uri MediaUri => new Uri(MediaPath);
+    public string MediaName { get; } = mediaFileInfo.Name;
+    public string MediaPath { get; } = mediaFileInfo.FullName;
+    public Uri MediaUri => new Uri(mediaFileInfo.FullName);
+    public string MediaCreationDate { get; } = mediaFileInfo.CreationTime.ToLongDateString();
 }

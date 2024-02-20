@@ -1,21 +1,10 @@
 ﻿namespace MediaPlayerDemo.Models;
 
 public class PlaybackList
-{
-    private ObservableCollection<MediaItem> _items;
+{    
     private int _currentIndex;
 
-    public ObservableCollection<MediaItem> Items
-    {
-        get => _items;
-        set
-        {
-            if (_items != value)
-            {
-                _items = value;
-            }
-        }
-    }
+    public ObservableCollection<MediaItem> Items { get; } = new();
 
     public int CurrentIndex
     {
@@ -36,8 +25,8 @@ public class PlaybackList
 
     public PlaybackList()
     {
-        _items = new();
-        _currentIndex = 0;
+        Items = new();
+        CurrentIndex = 0;
     }
 
     public void AddFiles(IList<string> mediaFiles)
@@ -47,7 +36,9 @@ public class PlaybackList
             int totalCount = Items.Count;
             foreach (string mediaFile in mediaFiles)
             {
-                Items.Add(new MediaItem(mediaFile));
+                MediaItem item = new(new FileInfo(mediaFile));
+                
+                                Items.Add(item);
             }
             CurrentIndex = totalCount;            
         }
