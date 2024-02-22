@@ -1,4 +1,4 @@
-﻿namespace MediaPlayerDemo.ViewModels;
+﻿namespace WinMix.ViewModels;
 
 public partial class MainViewModelBase : ObservableObject
 {
@@ -7,7 +7,7 @@ public partial class MainViewModelBase : ObservableObject
     [ObservableProperty] string _displayStatus = string.Empty;
     [ObservableProperty] string _totalDuration = "00:00";
     [ObservableProperty] string _elapsedTime = "00:00";
-    [ObservableProperty] bool _canRepeat;
+    [ObservableProperty] int _selectedIndex;
 
     public MainViewModelBase()
     {
@@ -20,13 +20,13 @@ private     void InitializePlayer()
         MPlayer.Balance = 0;
         MPlayer.SpeedRatio = 1;
         MPlayer.LoadedBehavior = MediaState.Manual;
-        GetMediaDetails();
+        GetMediaStatus();
     }
     
-  public void GetMediaDetails()
+  public void GetMediaStatus()
     {
         if (MPlayer.Source is null)
-            DisplayStatus = "There is currently no media loaded";
+            DisplayStatus = "No media is currently loaded";
         else
             DisplayStatus = MPlayer.Source.OriginalString;
     }    

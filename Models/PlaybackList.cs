@@ -1,4 +1,4 @@
-﻿namespace MediaPlayerDemo.Models;
+﻿namespace WinMix.Models;
 
 public class PlaybackList
 {    
@@ -32,15 +32,13 @@ public class PlaybackList
     public void AddFiles(IList<string> mediaFiles)
     {
         if (mediaFiles.Count > 0)
-        {
-            int totalCount = Items.Count;
+        {            
             foreach (string mediaFile in mediaFiles)
             {
                 MediaItem item = new(new FileInfo(mediaFile));
                 
                                 Items.Add(item);
-            }
-            CurrentIndex = totalCount;            
+            }            
         }
     }
 

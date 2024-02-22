@@ -6,7 +6,7 @@
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>    
     <ImplicitUsings>enable</ImplicitUsings>
-    <RootNamespace>MediaPlayerDemo</RootNamespace>
+    <RootNamespace>WinMix</RootNamespace>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -25,7 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="Models\FileOpenService" />
+    <Compile Include="Services\FileOpenService" />
   </ItemGroup>
 
   <ItemGroup>

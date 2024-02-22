@@ -1,4 +1,4 @@
-﻿namespace MediaPlayerDemo;
+﻿namespace WinMix;
 
 public partial class MainWindow : Window
 {    

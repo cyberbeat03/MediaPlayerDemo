@@ -1,15 +1,17 @@
-﻿namespace MediaPlayerDemo.ViewModels;
+﻿using WinMix.Services;
+
+namespace WinMix.ViewModels;
 
 public partial class MainViewModel : MainViewModelBase
-{
+{    
     private DispatcherTimer _timer = new();
 
     public MainViewModel()
-    {        
+    {
         _timer.Interval = TimeSpan.FromSeconds(1);
         _timer.Tick += Timer_Tick;
         MPlayer.MediaOpened += Media_Opened;
-        MPlayer.MediaEnded += Media_Ended;                
+        MPlayer.MediaEnded += Media_Ended;
     }
 
     private void Timer_Tick(object? sender, EventArgs e)
@@ -23,10 +25,10 @@ public partial class MainViewModel : MainViewModelBase
         if ((currentItem is not null) && (MPlayer.Source != currentItem.MediaUri))
         {
             MPlayer.Source = currentItem.MediaUri;
-Play();
-            GetMediaDetails();
+            Play();
+            GetMediaStatus();
         }
-    }    
+    }
 
     private void Media_Opened(object sender, RoutedEventArgs e)
     {
@@ -38,12 +40,7 @@ Play();
     {
         _timer.Stop();
         MPlayer.Stop();
-        ElapsedTime = "00:00";
-
-        if (CanRepeat)
-            Play();
-        else
-            Next();
+        ElapsedTime = "00:00";        
     }
 
     [RelayCommand]
@@ -55,8 +52,8 @@ Play();
             MPlayer.Play();
         }
     }
-    
-[RelayCommand]
+
+    [RelayCommand]
     private void Pause()
     {
         if (MPlayer.Source is not null)
@@ -66,43 +63,65 @@ Play();
         }
     }
 
-[RelayCommand]    
+    [RelayCommand]
     private void Rewind()
     {
         MPlayer.Position -= TimeSpan.FromSeconds(10);
     }
 
-[RelayCommand]
+    [RelayCommand]
     private void FastForward()
     {
         MPlayer.Position += TimeSpan.FromSeconds(10);
     }
 
-[RelayCommand]    
+    [RelayCommand]
     private void Next()
     {
-        if (MPlayer.Source is not null)        
-            PlayItem(CurrentMediaList.GetNextItem());        
+        if (MPlayer.Source is not null)
+            PlayItem(CurrentMediaList.GetNextItem());
     }
 
     [RelayCommand]
     private void Previous()
     {
-        if (MPlayer.Source is not null)        
-            PlayItem(CurrentMediaList.GetPreviousItem());        
+        if (MPlayer.Source is not null)
+            PlayItem(CurrentMediaList.GetPreviousItem());
     }
 
     [RelayCommand]
-    private void AddMediaFiles()
+    void AddMediaFiles()
     {
         FileOpenService fileService = new();
 
         IList<string> pickedFiles = fileService.PickMediaFiles();
 
         if (pickedFiles.Count != 0)
+            CurrentMediaList.AddFiles(pickedFiles);        
+    }
+
+    [RelayCommand]
+    void PlaySelectedItem()
+    {
+        CurrentMediaList.SetCurrentIndex(SelectedIndex);
+        PlayItem(CurrentMediaList.CurrentItem);
+    }
+
+    [RelayCommand]
+    void RemoveItem()
+    {
+        MediaItem? itemToRemove = CurrentMediaList.Items[SelectedIndex];
+
+        if (itemToRemove is not null)
         {
-            CurrentMediaList.AddFiles(pickedFiles);
-            PlayItem(CurrentMediaList.CurrentItem);
+            CurrentMediaList.Items.Remove(itemToRemove);
+
+            if (MPlayer.Source == itemToRemove.MediaUri)
+            {
+                MPlayer.Stop();
+                MPlayer.Source = null;
+                GetMediaStatus();
+            }
         }
     }
 

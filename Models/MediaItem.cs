@@ -1,4 +1,4 @@
-﻿namespace MediaPlayerDemo.Models;
+﻿namespace WinMix.Models;
 
 public class MediaItem(FileInfo mediaFileInfo)
 {
