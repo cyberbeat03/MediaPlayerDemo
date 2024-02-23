@@ -25,8 +25,10 @@ private     void InitializePlayer()
     
   public void GetMediaStatus()
     {
+        const string noMediaMessage = "There is currently no media loaded.";        
+
         if (MPlayer.Source is null)
-            DisplayStatus = "No media is currently loaded";
+            DisplayStatus = noMediaMessage;
         else
             DisplayStatus = MPlayer.Source.OriginalString;
     }    
