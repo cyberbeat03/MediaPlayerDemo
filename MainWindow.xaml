@@ -13,10 +13,13 @@
         </Grid.ColumnDefinitions>
         <StackPanel Grid.Column="0" HorizontalAlignment="Center" Margin="24">
             <Label Content="Media Items"/>
-            <ListView ItemsSource="{Binding CurrentMediaList.Items}" SelectedIndex="{Binding SelectedIndex}" Height="400" Width="300" SelectionMode="Single">
+            <ListView ItemsSource="{Binding CurrentMediaList.Items}" SelectedItem="{Binding SelectedItem}" Height="400" Width="300" SelectionMode="Single">
                 <ListView.ItemTemplate>
                     <DataTemplate>
-                        <TextBlock Text="{Binding MediaName}"/>
+                        <StackPanel>
+                            <TextBlock Text="{Binding MediaName}"/>
+                            <TextBlock Text="{Binding CreationDate}"/>
+                        </StackPanel>
                     </DataTemplate>                                        
                 </ListView.ItemTemplate>
 

@@ -88,15 +88,14 @@ public partial class MainViewModel : MainViewModelBase
 
     [RelayCommand]
     void PlaySelectedItem()
-    {
-        CurrentMediaList.SetCurrentIndex(SelectedIndex);
-        PlayItem(CurrentMediaList.CurrentItem);
+    {        
+        PlayItem(SelectedItem);
     }
 
     [RelayCommand]
     void RemoveItem()
     {
-        MediaItem? itemToRemove = CurrentMediaList.Items[SelectedIndex];
+        MediaItem? itemToRemove = SelectedItem;
 
         if (itemToRemove is not null)
         {

@@ -7,7 +7,7 @@ public partial class MainViewModelBase : ObservableObject
     [ObservableProperty] string _displayStatus = string.Empty;
     [ObservableProperty] string _totalDuration = "00:00";
     [ObservableProperty] string _elapsedTime = "00:00";
-    [ObservableProperty] int _selectedIndex;
+    [ObservableProperty] MediaItem? _selectedItem;
 
     public MainViewModelBase()
     {
