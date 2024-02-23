@@ -44,7 +44,7 @@ public partial class MainViewModel : MainViewModelBase
     }
 
     [RelayCommand]
-    private void Play()
+    void Play()
     {
         if (MPlayer.Source is not null)
         {
@@ -54,7 +54,7 @@ public partial class MainViewModel : MainViewModelBase
     }
 
     [RelayCommand]
-    private void Pause()
+  void Pause()
     {
         if (MPlayer.Source is not null)
         {
@@ -64,29 +64,15 @@ public partial class MainViewModel : MainViewModelBase
     }
 
     [RelayCommand]
-    private void Rewind()
+    void Rewind()
     {
         MPlayer.Position -= TimeSpan.FromSeconds(10);
     }
 
     [RelayCommand]
-    private void FastForward()
+    void FastForward()
     {
         MPlayer.Position += TimeSpan.FromSeconds(10);
-    }
-
-    [RelayCommand]
-    private void Next()
-    {
-        if (MPlayer.Source is not null)
-            PlayItem(CurrentMediaList.GetNextItem());
-    }
-
-    [RelayCommand]
-    private void Previous()
-    {
-        if (MPlayer.Source is not null)
-            PlayItem(CurrentMediaList.GetPreviousItem());
     }
 
     [RelayCommand]
@@ -123,6 +109,7 @@ public partial class MainViewModel : MainViewModelBase
                 GetMediaStatus();
             }
         }
+
     }
 
 }

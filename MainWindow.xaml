@@ -39,13 +39,11 @@
             <Slider Minimum="0.5" Maximum="1.5" Value="{Binding MPlayer.SpeedRatio, Mode=TwoWay}" Width="70"/>
 
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="64">
-                <Button Content="_Open Files..." Width="100" Command="{Binding AddMediaFilesCommand}"/>
-                <Button Content="Pre_vious" Width="100" Command="{Binding PreviousCommand}" />
+                <Button Content="_Open Files..." Width="100" Command="{Binding AddMediaFilesCommand}"/>                
                 <Button Content="_Rewind" Command="{Binding RewindCommand}" />
                 <Button Content="_Play" Width="100" Command="{Binding PlayCommand}" />
                 <Button Content="Pa_use" Width="100" Command="{Binding PauseCommand}" />
-                <Button Content="_Fast Forward" Command="{Binding FastForwardCommand}" />
-                <Button Content="_Next" Width="100" Command="{Binding NextCommand}"/>
+                <Button Content="_Fast Forward" Command="{Binding FastForwardCommand}" />                
             </StackPanel>
         </StackPanel>
     </Grid>
