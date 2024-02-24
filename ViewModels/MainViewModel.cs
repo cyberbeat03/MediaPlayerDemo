@@ -111,4 +111,26 @@ public partial class MainViewModel : MainViewModelBase
 
     }
 
+    [RelayCommand]
+    void MoveItemUp()
+    {
+        if (SelectedItem is not null)
+        {
+            int currentPosition = CurrentMediaList.Items.IndexOf(SelectedItem);
+            if (currentPosition > 0)
+            CurrentMediaList.Items.Move(currentPosition,     currentPosition - 1);
+        }
+    }
+
+    [RelayCommand]
+    void MoveItemDown()
+    {
+        if (SelectedItem is not null)
+        {
+            int currentPosition = CurrentMediaList.Items.IndexOf(SelectedItem);
+            if (currentPosition < CurrentMediaList.Items.Count - 1)
+            CurrentMediaList.Items.Move(currentPosition, currentPosition + 1);
+        }
+    }
+
 }

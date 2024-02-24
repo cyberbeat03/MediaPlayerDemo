@@ -27,6 +27,8 @@
                     <ContextMenu>
                         <MenuItem Header="Play Item" Command="{Binding PlaySelectedItemCommand}"/>
                         <MenuItem Header="Remove" Command="{Binding RemoveItemCommand}"/>
+                        <MenuItem Header="Move Up" Command="{Binding MoveItemUpCommand}"/>
+                        <MenuItem Header="Move Down" Command="{Binding MoveItemDownCommand}"/>
                     </ContextMenu>
                 </ListView.ContextMenu>                
             </ListView>                                    
