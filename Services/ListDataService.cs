@@ -2,22 +2,21 @@
 
 public class ListDataService
 {    
-    readonly string _storagePath;
+    readonly string _playlistPath;
 
     public ListDataService()
     {
                  string _musicPath = Environment.GetFolderPath(Environment.SpecialFolder.MyMusic);
-        _storagePath = Path.Combine(_musicPath, "playlists");
+        _playlistPath = Path.Combine(_musicPath, "playlists");
     }
 
     public async Task<IList<string>> LoadDataAsync(string fileToLoad)
     {
-        List<string> outputList = new();
-        string playlistPath = Path.Combine(_storagePath, fileToLoad);
+        List<string> outputList = new();        
 
-        if (File.Exists(playlistPath))
+        if (File.Exists(Path.Combine(_playlistPath, fileToLoad)))
         {
-            using FileStream FS = File.OpenRead(fileToLoad);
+            using FileStream FS = File.OpenRead(Path.Combine(_playlistPath, fileToLoad));
             var jsonData = await JsonSerializer.DeserializeAsync<List<string>>(FS);
             if (jsonData is not null)
                 outputList = jsonData;
@@ -27,10 +26,9 @@ public class ListDataService
         }
 
     public async Task SaveDataAsync(string fileToSave, IList<string> fileList)
-    {
-        string playlistPath = Path.Combine(_storagePath, fileToSave);
-        
-            using FileStream FS = File.Create(playlistPath);
+    {        
+            using FileStream FS = File.Create(Path.Combine(_playlistPath, fileToSave));
             await JsonSerializer.SerializeAsync(FS, fileList);
         }    
+
 }

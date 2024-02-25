@@ -133,4 +133,40 @@ public partial class MainViewModel : MainViewModelBase
         }
     }
 
+    [RelayCommand]
+    void CopyItem()
+    {
+if (SelectedItem is not null)
+            {
+                ClipBoardService clipboard = new();
+                clipboard.Copy(SelectedItem.MediaPath);
+            }
+            }
+
+[RelayCommand]
+void CopyAllItems()
+        {
+            if (CurrentMediaList.Items.Count > 0)
+            {
+                List<string> filePaths = new();
+
+                foreach (var item in CurrentMediaList.Items)
+                {
+                    filePaths.Add(item.MediaPath);
+                }
+
+ClipBoardService clipboard = new();
+                                clipboard.CopyAll(filePaths);
+            }       
+        }
+
+        [RelayCommand]
+        void PasteItems()
+        {
+            ClipBoardService clipBoard = new();
+            IList<string>? returnedFiles = clipBoard.Paste();
+            if (returnedFiles is not null)
+                CurrentMediaList.AddFiles(returnedFiles);
+                }
+
 }

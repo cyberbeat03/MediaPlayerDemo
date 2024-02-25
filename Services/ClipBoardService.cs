@@ -20,12 +20,12 @@ public class ClipBoardService
         }
     }
 
-    public void Copy(string mediaURL)
+    public void Copy(string mediaPath)
     {
         try
         {
             StringCollection dropFiles = new();
-            dropFiles.Add(mediaURL);
+            dropFiles.Add(mediaPath);
 
             Clipboard.SetFileDropList(dropFiles);
         }
@@ -35,7 +35,7 @@ public class ClipBoardService
         }
     }
 
-    public void CopyAll(List<string> allFiles)
+    public void CopyAll(IList<string> allFiles)
     {
         try
         {
