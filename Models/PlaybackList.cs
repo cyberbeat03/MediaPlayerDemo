@@ -1,46 +1,79 @@
-﻿using WinMix.Services;
-
-namespace WinMix.Models;
+﻿namespace WinMix.Models;
 
 public class PlaybackList
-{        
-    public ObservableCollection<MediaItem> Items { get; } = new();
-    
-    public PlaybackList()
-    {        
-    }
+{
+    private ObservableCollection<MediaItem> _items;
+    private int _currentIndex;
 
-    public async Task LoadAsync(string fileName)
+    public ObservableCollection<MediaItem> Items
     {
-ListDataService listService = new();
-IList<string> files = await listService.LoadDataAsync(fileName);
-        AddFiles(files);
-    }
-
-    public async Task SaveAsync(string fileName)
-    {                        
-        List<string> filePaths = new();
-        
-        if (Items.Count > 0)
+        get => _items;
+        set
         {
-            ListDataService listService = new();
-            foreach (var item in Items)
-                filePaths.Add(item.MediaName);
-            await listService.SaveDataAsync(fileName, filePaths);
+            if (_items != value)
+            {
+                _items = value;
+            }
         }
     }
 
-    public void AddFiles(IList<string> mediaFiles)
+    public int CurrentIndex
     {
-        if (mediaFiles.Count > 0)
-        {            
-            foreach (string mediaFile in mediaFiles)
+        get => _currentIndex;
+        private set
+        {
+            if (_currentIndex != value)
             {
-                MediaItem item = new(new FileInfo(mediaFile));
-                
-                                Items.Add(item);
-            }            
+                _currentIndex = value;
+            }
         }
-    }        
+    }
+
+    public MediaItem? CurrentItem
+    {
+        get => (Items.Count > 0) ? Items[_currentIndex] : null;
+    }
+
+    public PlaybackList()
+    {
+        _items = new();
+        _currentIndex = 0;
+    }
     
+    public void SetCurrentIndex(int index)
+    {
+        int maxValue = Items.Count;
+
+        if (index < 0)
+        {
+            CurrentIndex = 0;
+    }
+        else if (index > maxValue)
+        {
+            CurrentIndex = maxValue - 1;
+        }
+        else
+        {
+CurrentIndex= index;
+        }
+    }
+
+    public MediaItem? GetPreviousItem()
+    {
+        if (CurrentIndex > 0)
+        {
+            CurrentIndex--;
+        }        
+        return CurrentItem;
+    }            
+
+    public MediaItem? GetNextItem()
+    {
+        if (CurrentIndex < Items.Count - 1)
+        {
+            CurrentIndex++;
+        }        
+        return CurrentItem;
+    }
+
 }            

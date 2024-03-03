@@ -3,7 +3,7 @@
 namespace WinMix.ViewModels;
 
 public partial class MainViewModel : MainViewModelBase
-{    
+{
     private DispatcherTimer _timer = new();
 
     public MainViewModel()
@@ -40,7 +40,11 @@ public partial class MainViewModel : MainViewModelBase
     {
         _timer.Stop();
         MPlayer.Stop();
-        ElapsedTime = "00:00";        
+        ElapsedTime = "00:00";
+        if (CanRepeat)
+            Play();
+        else
+            Next();
     }
 
     [RelayCommand]
@@ -54,7 +58,7 @@ public partial class MainViewModel : MainViewModelBase
     }
 
     [RelayCommand]
-  void Pause()
+    void Pause()
     {
         if (MPlayer.Source is not null)
         {
@@ -75,98 +79,29 @@ public partial class MainViewModel : MainViewModelBase
         MPlayer.Position += TimeSpan.FromSeconds(10);
     }
 
+[RelayCommand]
+    void Next()
+    {
+        if (MPlayer.Source is not null)
+        {
+            PlayItem(CurrentMediaList.GetNextItem());
+        }
+    }
+
+[RelayCommand]
+    void Previous()
+    {
+        if (MPlayer.Source is not null)
+        {
+            PlayItem(CurrentMediaList.GetPreviousItem());
+        }
+    }
+
     [RelayCommand]
     void AddMediaFiles()
     {
-        FileOpenService fileService = new();
-
-        IList<string> pickedFiles = fileService.PickMediaFiles();
-
-        if (pickedFiles.Count != 0)
-            CurrentMediaList.AddFiles(pickedFiles);        
+PlaylistManager listManager = new();
+        listManager.Show();
     }
-
-    [RelayCommand]
-    void PlaySelectedItem()
-    {        
-        PlayItem(SelectedItem);
-    }
-
-    [RelayCommand]
-    void RemoveItem()
-    {
-        MediaItem? itemToRemove = SelectedItem;
-
-        if (itemToRemove is not null)
-        {
-            CurrentMediaList.Items.Remove(itemToRemove);
-
-            if (MPlayer.Source == itemToRemove.MediaUri)
-            {
-                MPlayer.Stop();
-                MPlayer.Source = null;
-                GetMediaStatus();
-            }
-        }
-
-    }
-
-    [RelayCommand]
-    void MoveItemUp()
-    {
-        if (SelectedItem is not null)
-        {
-            int currentPosition = CurrentMediaList.Items.IndexOf(SelectedItem);
-            if (currentPosition > 0)
-            CurrentMediaList.Items.Move(currentPosition,     currentPosition - 1);
-        }
-    }
-
-    [RelayCommand]
-    void MoveItemDown()
-    {
-        if (SelectedItem is not null)
-        {
-            int currentPosition = CurrentMediaList.Items.IndexOf(SelectedItem);
-            if (currentPosition < CurrentMediaList.Items.Count - 1)
-            CurrentMediaList.Items.Move(currentPosition, currentPosition + 1);
-        }
-    }
-
-    [RelayCommand]
-    void CopyItem()
-    {
-if (SelectedItem is not null)
-            {
-                ClipBoardService clipboard = new();
-                clipboard.Copy(SelectedItem.MediaPath);
-            }
-            }
-
-[RelayCommand]
-void CopyAllItems()
-        {
-            if (CurrentMediaList.Items.Count > 0)
-            {
-                List<string> filePaths = new();
-
-                foreach (var item in CurrentMediaList.Items)
-                {
-                    filePaths.Add(item.MediaPath);
-                }
-
-ClipBoardService clipboard = new();
-                                clipboard.CopyAll(filePaths);
-            }       
-        }
-
-        [RelayCommand]
-        void PasteItems()
-        {
-            ClipBoardService clipBoard = new();
-            IList<string>? returnedFiles = clipBoard.Paste();
-            if (returnedFiles is not null)
-                CurrentMediaList.AddFiles(returnedFiles);
-                }
 
 }
