@@ -20,7 +20,7 @@ public class PlaybackList
     public int CurrentIndex
     {
         get => _currentIndex;
-        private set
+        set
         {
             if (_currentIndex != value)
             {
@@ -38,26 +38,8 @@ public class PlaybackList
     {
         _items = new();
         _currentIndex = 0;
-    }
+    }    
     
-    public void SetCurrentIndex(int index)
-    {
-        int maxValue = Items.Count;
-
-        if (index < 0)
-        {
-            CurrentIndex = 0;
-    }
-        else if (index > maxValue)
-        {
-            CurrentIndex = maxValue - 1;
-        }
-        else
-        {
-CurrentIndex= index;
-        }
-    }
-
     public MediaItem? GetPreviousItem()
     {
         if (CurrentIndex > 0)

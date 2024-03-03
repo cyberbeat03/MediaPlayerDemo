@@ -5,11 +5,11 @@ namespace WinMix.ViewModels;
 public partial class PlaylistViewModel : MainViewModelBase
 {
     [ObservableProperty] MediaItem? _selectedItem;
-    [ObservableProperty] ObservableCollection<MediaItem> _items;
+    [ObservableProperty] ObservableCollection<MediaItem> _mediaItems;
     
-    public PlaylistViewModel()
+    public PlaylistViewModel(ObservableCollection<MediaItem> mediaItems)
     {
-        Items = new();
+        MediaItems = mediaItems;
     }    
 
     async Task LoadAsync(string fileName)
@@ -23,10 +23,10 @@ public partial class PlaylistViewModel : MainViewModelBase
     {
         List<string> filePaths = new();
 
-        if (Items.Count > 0)
+        if (MediaItems.Count > 0)
         {
             ListDataService listService = new();
-            foreach (var item in Items)
+            foreach (var item in MediaItems)
                 filePaths.Add(item.MediaName);
             await listService.SaveDataAsync(fileName, filePaths);
         }
@@ -40,11 +40,25 @@ public partial class PlaylistViewModel : MainViewModelBase
             {
                 MediaItem item = new(new FileInfo(mediaFile));
 
-                Items.Add(item);
+                MediaItems.Add(item);
             }
         }
     }
 
+    public PlaybackList GetPlaybackList()
+    {
+        PlaybackList list = new();
+
+
+        list.Items = MediaItems;
+        if (SelectedItem is not null)
+            list.CurrentIndex = MediaItems.IndexOf(SelectedItem);
+        else
+            list.CurrentIndex = 0;
+
+return list;
+    }
+    
     [RelayCommand]
     void AddMediaFiles()
     {
@@ -62,7 +76,7 @@ public partial class PlaylistViewModel : MainViewModelBase
         MediaItem? itemToRemove = SelectedItem;
 
         if (itemToRemove is not null)        
-          Items.Remove(itemToRemove);            
+          MediaItems.Remove(itemToRemove);            
         }    
 
     [RelayCommand]
@@ -70,9 +84,9 @@ public partial class PlaylistViewModel : MainViewModelBase
     {
         if (SelectedItem is not null)
         {
-            int currentPosition = CurrentMediaList.Items.IndexOf(SelectedItem);
+            int currentPosition = MediaItems.IndexOf(SelectedItem);
             if (currentPosition > 0)
-                CurrentMediaList.Items.Move(currentPosition, currentPosition - 1);
+                MediaItems.Move(currentPosition, currentPosition - 1);
         }
     }
 
@@ -81,8 +95,8 @@ public partial class PlaylistViewModel : MainViewModelBase
     {
         if (SelectedItem is not null)
         {
-            int currentPosition = CurrentMediaList.Items.IndexOf(SelectedItem);
-            if (currentPosition < CurrentMediaList.Items.Count - 1)
+            int currentPosition = MediaItems.IndexOf(SelectedItem);
+            if (currentPosition < MediaItems.Count - 1)
                 CurrentMediaList.Items.Move(currentPosition, currentPosition + 1);
         }
     }
@@ -104,7 +118,7 @@ public partial class PlaylistViewModel : MainViewModelBase
         {
             List<string> filePaths = new();
 
-            foreach (var item in CurrentMediaList.Items)
+            foreach (var item in MediaItems)
             {
                 filePaths.Add(item.MediaPath);
             }

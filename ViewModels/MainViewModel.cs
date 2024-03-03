@@ -7,7 +7,7 @@ public partial class MainViewModel : MainViewModelBase
     private DispatcherTimer _timer = new();
 
     public MainViewModel()
-    {
+    {        
         _timer.Interval = TimeSpan.FromSeconds(1);
         _timer.Tick += Timer_Tick;
         MPlayer.MediaOpened += Media_Opened;
@@ -98,10 +98,15 @@ public partial class MainViewModel : MainViewModelBase
     }
 
     [RelayCommand]
-    void AddMediaFiles()
+    void LoadMedia()
     {
-PlaylistManager listManager = new();
-        listManager.Show();
+PlaylistManager listManager = new(CurrentMediaList);                
+        if (listManager.ShowDialog() == true)
+        {
+            CurrentMediaList.Items = listManager.Playlist.Items;
+            CurrentMediaList.CurrentIndex = listManager.Playlist.CurrentIndex;            
+            PlayItem(CurrentMediaList.CurrentItem);        
+        }
     }
 
 }

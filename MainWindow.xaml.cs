@@ -10,14 +10,14 @@ public partial class MainWindow : Window
         DataContext = _mainVM;
     }
 
-    async void Window_Closing(object sender, CancelEventArgs e)
+    void Window_Closing(object sender, CancelEventArgs e)
     {
-        // await _mainVM.CurrentMediaList.SaveAsync("Last Played.wmx");
+        
     }
 
-async void Window_Loaded(object sender, RoutedEventArgs e)
+ void Window_Loaded(object sender, RoutedEventArgs e)
     {
-        // await _mainVM.CurrentMediaList.LoadAsync("Last Played.wmx");
+
     }
 
 }
