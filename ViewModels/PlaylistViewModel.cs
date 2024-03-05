@@ -95,9 +95,10 @@ return list;
     {
         if (SelectedItem is not null)
         {
-            int currentPosition = MediaItems.IndexOf(SelectedItem);
-            if (currentPosition < MediaItems.Count - 1)
-                CurrentMediaList.Items.Move(currentPosition, currentPosition + 1);
+            int currentPosition = MediaItems.IndexOf(SelectedItem);            
+
+             if (currentPosition < MediaItems.Count - 1)
+MediaItems.Move(currentPosition, currentPosition + 1);
         }
     }
 

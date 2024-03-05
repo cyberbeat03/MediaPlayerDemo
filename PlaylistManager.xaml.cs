@@ -2,16 +2,16 @@
 
 public partial class PlaylistManager : Window
 {
-    PlaylistViewModel _playVM;
+readonly PlaylistViewModel _playVM;
 
-    public PlaybackList Playlist { get; set; }
+    public PlaybackList Playlist { get; private set; }
 
     public PlaylistManager(PlaybackList mediaList)
-    {
+    {                
+        InitializeComponent();
+
         Playlist = mediaList;
         _playVM = new PlaylistViewModel(Playlist.Items);
-        
-        InitializeComponent();
         DataContext = _playVM;
     }
 

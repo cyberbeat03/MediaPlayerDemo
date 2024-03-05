@@ -22,12 +22,12 @@
 
                 <ListView.ContextMenu>
                     <ContextMenu>                        
-                        <MenuItem Header="Remove" Command="{Binding RemoveItemCommand}"/>
-                        <MenuItem Header="Move Up" Command="{Binding MoveItemUpCommand}"/>
-                        <MenuItem Header="Move Down" Command="{Binding MoveItemDownCommand}"/>
-                        <MenuItem Header="Copy" Command="{Binding CopyItemCommand}"/>
-                        <MenuItem Header="Copy All" Command="{Binding CopyAllItemsCommand}"/>
-                        <MenuItem Header="Paste" Command="{Binding PasteItemsCommand}"/>
+                        <MenuItem Header="_Remove" Command="{Binding RemoveItemCommand}"/>
+                        <MenuItem Header="Move _Up" Command="{Binding MoveItemUpCommand}"/>
+                        <MenuItem Header="Move _Down" Command="{Binding MoveItemDownCommand}"/>
+                        <MenuItem Header="_Copy" Command="{Binding CopyItemCommand}"/>
+                        <MenuItem Header="Copy _All" Command="{Binding CopyAllItemsCommand}"/>
+                        <MenuItem Header="_Paste" Command="{Binding PasteItemsCommand}"/>
                     </ContextMenu>
                 </ListView.ContextMenu>
             </ListView>
