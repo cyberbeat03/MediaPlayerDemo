@@ -16,7 +16,7 @@
             <Label Content="Media Player Status"/>
             <StackPanel Orientation="Horizontal">
                 <TextBlock Text="{Binding DisplayStatus}" Focusable="True" Height="25" Width="100"/>
-                <Button Content="L_oad Media..." Width="100" Command="{Binding LoadMediaCommand}"/>                
+                <Button Content="_Load Media..." Width="100" Command="{Binding LoadMediaCommand}"/>                
             </StackPanel>
             <TextBlock Text="{Binding ElapsedTime}" Focusable="True" Width="50" Height="25"/>
             <TextBlock Text="{Binding TotalDuration}" Focusable="True" Width="50" Height="25"/>            

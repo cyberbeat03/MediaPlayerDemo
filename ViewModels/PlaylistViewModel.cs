@@ -49,7 +49,6 @@ public partial class PlaylistViewModel : MainViewModelBase
     {
         PlaybackList list = new();
 
-
         list.Items = MediaItems;
         if (SelectedItem is not null)
             list.CurrentIndex = MediaItems.IndexOf(SelectedItem);
@@ -60,7 +59,7 @@ return list;
     }
     
     [RelayCommand]
-    void AddMediaFiles()
+    void PickMediaFiles()
     {
         FileOpenService fileService = new();
 

@@ -11,7 +11,9 @@
             <KeyBinding Key="U" Modifiers="Control" Command="{Binding MoveItemUpCommand}"/>
         <KeyBinding Key="D" Modifiers="Control" Command="{Binding MoveItemDownCommand}"/>
         <KeyBinding Key="Delete" Command="{Binding RemoveItemCommand}"/>
-        <KeyBinding Key="O" Modifiers="Control" Command="{Binding AddMediaFilesCommand}"/>
+        <KeyBinding Key="O" Modifiers="Control" Command="{Binding PickMediaFilesCommand}"/>
+        <KeyBinding Key="C" Modifiers="Control" Command="{Binding CopyItemCommand}"/>
+        <KeyBinding Key="V" Modifiers="Control" Command="{Binding PasteItemsCommand}"/>
     </Window.InputBindings>        
         
     <Grid>
@@ -41,7 +43,7 @@
         
 
         <StackPanel Orientation="Horizontal" Margin="24">
-            <Button Content="Browse..." Command="{Binding AddMediaFilesCommand}"/>
+            <Button Content="Browse..." Command="{Binding PickMediaFilesCommand}"/>
             <Button Content="OK" IsDefault="True" Click="SaveButton_Click"/>
             <Button Content="Cancel" IsCancel="True" Click="CancelButton_Click"/>        
         </StackPanel>
