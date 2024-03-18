@@ -1,27 +1,39 @@
 ﻿namespace WinMix.Services;
 
 public class ListDataService
-{        
+{
+    private readonly string _musicFolder = Environment.GetFolderPath(Environment.SpecialFolder.MyMusic);
+
     public async Task<IList<string>> LoadDataAsync(string fileToLoad)
     {
-        List<string> outputList = new();        
+        List<string> outputList = new();
 
         if (File.Exists(fileToLoad))
         {
             using FileStream FS = File.OpenRead(fileToLoad);
             var jsonData = await JsonSerializer.DeserializeAsync<List<string>>(FS);
-            
+
             if (jsonData is not null)
                 outputList = jsonData;
-        }        
-
-        return outputList;                    
         }
 
+        return outputList;
+    }
+
     public async Task SaveDataAsync(string fileToSave, IList<string> fileList)
-    {        
-            using FileStream FS = File.Create(fileToSave);
-            await JsonSerializer.SerializeAsync(FS, fileList);
-        }    
+    {
+        using FileStream FS = File.Create(fileToSave);
+        await JsonSerializer.SerializeAsync(FS, fileList);
+    }
+
+    public IList<FileInfo> SearchForFiles()
+    {
+        List<FileInfo> outputList = new();
+
+        DirectoryInfo music = new (_musicFolder);
+        outputList = music.GetFiles().OrderByDescending(f => f.LastWriteTime).ToList();
+
+        return outputList;
+    }
 
 }

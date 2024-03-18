@@ -32,6 +32,16 @@ public partial class PlaylistViewModel : MainViewModelBase
         }
     }
 
+    [RelayCommand]
+  void SearchForFiles()
+    {
+        ListDataService listService = new();
+        IList<FileInfo> foundFiles = listService.SearchForFiles();
+
+        foreach (FileInfo mediaFile in foundFiles)        
+            MediaItems.Add(new MediaItem(mediaFile));        
+    }
+
     void AddFiles(IList<string> mediaFiles)
     {
         if (mediaFiles.Count > 0)
