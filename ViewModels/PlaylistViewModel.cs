@@ -20,28 +20,18 @@ public partial class PlaylistViewModel : MainViewModelBase
     }
 
   async Task SaveAsync(string fileName)
-    {
-        List<string> filePaths = new();
-
+    {        
         if (MediaItems.Count > 0)
         {
             ListDataService listService = new();
+            List<string> filePaths = new();
+
             foreach (var item in MediaItems)
-                filePaths.Add(item.MediaName);
+                filePaths.Add(item.MediaPath);
             await listService.SaveDataAsync(fileName, filePaths);
         }
     }
-
-    [RelayCommand]
-  void SearchForFiles()
-    {
-        ListDataService listService = new();
-        IList<FileInfo> foundFiles = listService.SearchForFiles();
-
-        foreach (FileInfo mediaFile in foundFiles)        
-            MediaItems.Add(new MediaItem(mediaFile));        
-    }
-
+    
     void AddFiles(IList<string> mediaFiles)
     {
         if (mediaFiles.Count > 0)
@@ -124,14 +114,12 @@ MediaItems.Move(currentPosition, currentPosition + 1);
     [RelayCommand]
     void CopyAllItems()
     {
-        if (CurrentMediaList.Items.Count > 0)
+        if (MediaItems.Count > 0)
         {
             List<string> filePaths = new();
 
-            foreach (var item in MediaItems)
-            {
-                filePaths.Add(item.MediaPath);
-            }
+            foreach (var item in MediaItems)            
+                filePaths.Add(item.MediaPath);            
 
             ClipBoardService clipboard = new();
             clipboard.CopyAll(filePaths);
