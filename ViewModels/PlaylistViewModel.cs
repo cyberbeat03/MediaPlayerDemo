@@ -5,46 +5,50 @@ namespace WinMix.ViewModels;
 public partial class PlaylistViewModel : MainViewModelBase
 {
     [ObservableProperty] MediaItem? _selectedItem;
-    [ObservableProperty] ObservableCollection<MediaItem> _mediaItems;
-    
+    [ObservableProperty] ObservableCollection<MediaItem> _mediaItems = new();
+    ListDataService _listService = new();
+
     public PlaylistViewModel(ObservableCollection<MediaItem> mediaItems)
     {
-        MediaItems = mediaItems;
+        if (mediaItems.Count > 0)
+            MediaItems = mediaItems;
+        else
+            FindMediaFiles();        
     }    
 
     async Task LoadAsync(string fileName)
-    {
-        ListDataService listService = new();
-        IList<string> files = await listService.LoadDataAsync(fileName);
+    {        
+        IList<string> files = await _listService.LoadDataAsync(fileName);
         AddFiles(files);
     }
 
   async Task SaveAsync(string fileName)
     {        
         if (MediaItems.Count > 0)
-        {
-            ListDataService listService = new();
+        {            
             List<string> filePaths = new();
 
             foreach (var item in MediaItems)
                 filePaths.Add(item.MediaPath);
-            await listService.SaveDataAsync(fileName, filePaths);
+
+            await _listService.SaveDataAsync(fileName, filePaths);
         }
     }
     
     void AddFiles(IList<string> mediaFiles)
-    {
-        if (mediaFiles.Count > 0)
-        {
-            foreach (string mediaFile in mediaFiles)
-            {
-                MediaItem item = new(new FileInfo(mediaFile));
-
-                MediaItems.Add(item);
-            }
-        }
+    {        
+            foreach (string mediaFile in mediaFiles)            
+                MediaItems.Add(new MediaItem(new FileInfo(mediaFile)));                    
     }
 
+    void FindMediaFiles()
+    {
+        IList<FileInfo> mediaFiles = _listService.SearchForMedia();
+
+        foreach (FileInfo mediaFile in mediaFiles)
+            MediaItems.Add(new MediaItem(mediaFile));
+    }
+    
     public PlaybackList GetPlaybackList()
     {
         PlaybackList list = new();
@@ -65,7 +69,7 @@ return list;
 
         IList<string> pickedFiles = fileService.PickMediaFiles();
 
-        if (pickedFiles.Count != 0)
+        if (pickedFiles.Count > 0)
             AddFiles(pickedFiles);
     }
     

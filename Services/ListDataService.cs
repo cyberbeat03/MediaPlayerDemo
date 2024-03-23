@@ -26,12 +26,13 @@ public class ListDataService
         await JsonSerializer.SerializeAsync(FS, fileList);
     }
 
-    public IList<FileInfo> SearchForFiles()
+    public IList<FileInfo> SearchForMedia()
     {
         List<FileInfo> outputList = new();
 
         DirectoryInfo music = new (_musicFolder);
-        outputList = music.GetFiles().OrderByDescending(f => f.LastWriteTime).ToList();
+        outputList = music.GetFiles().ToList();
+             outputList.OrderByDescending(file => file.LastWriteTime);
 
         return outputList;
     }
