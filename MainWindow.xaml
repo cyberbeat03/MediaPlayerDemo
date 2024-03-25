@@ -6,10 +6,10 @@
         mc:Ignorable="d"
         Title="WinMix Desktop" WindowStartupLocation="CenterScreen" Height="600" Width="800" Closing="Window_Closing" Loaded="Window_Loaded">
     <Window.InputBindings>
-        <KeyBinding Gesture="Alt+Up" Command="{Binding PreviousCommand}"/>
-        <KeyBinding Gesture="Alt+Down" Command="{Binding NextCommand}"/>
-        <KeyBinding Gesture="Alt+Left" Command="{Binding RewindCommand}"/>
-        <KeyBinding Gesture="Alt+Right" Command="{Binding FastForwardCommand}"/>
+        <KeyBinding Gesture="Alt+Up" Command="{Binding FastForwardCommand}"/>
+        <KeyBinding Gesture="Alt+Down" Command="{Binding RewindCommand}"/>
+        <KeyBinding Gesture="Alt+Left" Command="{Binding PreviousCommand}"/>
+        <KeyBinding Gesture="Alt+Right" Command="{Binding NextCommand}"/>
         <KeyBinding Gesture="Escape" Command="{Binding PauseCommand}"/>
     </Window.InputBindings>
     
