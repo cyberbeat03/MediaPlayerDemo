@@ -8,7 +8,6 @@
         Title="PlaylistManager" Height="610" Width="900" WindowStartupLocation="CenterScreen">
     
         <Window.InputBindings>
-
             <KeyBinding  Gesture="Ctrl+U" Command="{Binding MoveItemUpCommand}"/>
         <KeyBinding Gesture="Ctrl+D" Command="{Binding MoveItemDownCommand}"/>
         <KeyBinding Key="Delete" Command="{Binding RemoveItemCommand}"/>

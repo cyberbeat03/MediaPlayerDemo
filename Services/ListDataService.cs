@@ -24,17 +24,6 @@ public class ListDataService
     {
         using FileStream FS = File.Create(fileToSave);
         await JsonSerializer.SerializeAsync(FS, fileList);
-    }
-
-    public IList<FileInfo> SearchForMedia()
-    {
-        List<FileInfo> outputList = new();
-
-        DirectoryInfo music = new (_musicFolder);
-        outputList = music.GetFiles().ToList();
-             outputList.OrderByDescending(file => file.LastWriteTime);
-
-        return outputList;
-    }
+    }    
 
 }

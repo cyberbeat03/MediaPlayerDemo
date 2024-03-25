@@ -5,7 +5,14 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
         Title="WinMix Desktop" WindowStartupLocation="CenterScreen" Height="600" Width="800" Closing="Window_Closing" Loaded="Window_Loaded">
-
+    <Window.InputBindings>
+        <KeyBinding Gesture="Alt+Up" Command="{Binding PreviousCommand}"/>
+        <KeyBinding Gesture="Alt+Down" Command="{Binding NextCommand}"/>
+        <KeyBinding Gesture="Alt+Left" Command="{Binding RewindCommand}"/>
+        <KeyBinding Gesture="Alt+Right" Command="{Binding FastForwardCommand}"/>
+        <KeyBinding Gesture="Escape" Command="{Binding PauseCommand}"/>
+    </Window.InputBindings>
+    
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>

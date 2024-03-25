@@ -5,20 +5,18 @@ namespace WinMix.ViewModels;
 public partial class PlaylistViewModel : MainViewModelBase
 {
     [ObservableProperty] MediaItem? _selectedItem;
-    [ObservableProperty] ObservableCollection<MediaItem> _mediaItems = new();
-    ListDataService _listService = new();
+    [ObservableProperty] ObservableCollection<MediaItem> _mediaItems = new();    
 
     public PlaylistViewModel(ObservableCollection<MediaItem> mediaItems)
-    {
-        if (mediaItems.Count > 0)
-            MediaItems = mediaItems;
-        else
-            FindMediaFiles();        
+    {        
+            MediaItems = mediaItems;        
     }    
 
     async Task LoadAsync(string fileName)
-    {        
-        IList<string> files = await _listService.LoadDataAsync(fileName);
+    {
+        ListDataService listService = new();
+        
+        IList<string> files = await listService.LoadDataAsync(fileName);
         AddFiles(files);
     }
 
@@ -31,7 +29,8 @@ public partial class PlaylistViewModel : MainViewModelBase
             foreach (var item in MediaItems)
                 filePaths.Add(item.MediaPath);
 
-            await _listService.SaveDataAsync(fileName, filePaths);
+            ListDataService listService = new();
+            await listService.SaveDataAsync(fileName, filePaths);
         }
     }
     
@@ -41,15 +40,7 @@ public partial class PlaylistViewModel : MainViewModelBase
                 MediaItems.Add(new MediaItem(new FileInfo(mediaFile)));                    
     }
 
-    void FindMediaFiles()
-    {
-        IList<FileInfo> mediaFiles = _listService.SearchForMedia();
-
-        foreach (FileInfo mediaFile in mediaFiles)
-            MediaItems.Add(new MediaItem(mediaFile));
-    }
-    
-    public PlaybackList GetPlaybackList()
+public PlaybackList GetPlaybackList()
     {
         PlaybackList list = new();
 
