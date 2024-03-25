@@ -1,61 +1,43 @@
-﻿namespace WinMix.Models;
+﻿using WinMix.Services;
+
+namespace WinMix.Models;
 
 public class PlaybackList
-{
-    private ObservableCollection<MediaItem> _items;
-    private int _currentIndex;
-
-    public ObservableCollection<MediaItem> Items
-    {
-        get => _items;
-        set
-        {
-            if (_items != value)
-            {
-                _items = value;
-            }
-        }
-    }
-
-    public int CurrentIndex
-    {
-        get => _currentIndex;
-        set
-        {
-            if (_currentIndex != value)
-            {
-                _currentIndex = value;
-            }
-        }
-    }
-
-    public MediaItem? CurrentItem
-    {
-        get => (Items.Count > 0) ? Items[_currentIndex] : null;
-    }
-
-    public PlaybackList()
-    {
-        _items = new();
-        _currentIndex = 0;
-    }    
+{        
+    public ObservableCollection<MediaItem> Items { get; } = new();
     
-    public MediaItem? GetPreviousItem()
-    {
-        if (CurrentIndex > 0)
-        {
-            CurrentIndex--;
-        }        
-        return CurrentItem;
-    }            
-
-    public MediaItem? GetNextItem()
-    {
-        if (CurrentIndex < Items.Count - 1)
-        {
-            CurrentIndex++;
-        }        
-        return CurrentItem;
+    public PlaybackList()
+    {        
     }
 
+    public async Task LoadAsync(string fileName)
+    {
+ListDataService listService = new();
+IList<string> files = await listService.LoadDataAsync(fileName);
+        AddItems(files);
+    }
+
+    public async Task SaveAsync(string fileName)
+    {                        
+        List<string> filePaths = new();
+        
+        if (Items.Count > 0)
+        {
+            ListDataService listService = new();
+            foreach (var item in Items)
+                filePaths.Add(item.MediaName);
+            await listService.SaveDataAsync(fileName, filePaths);
+        }
+    }
+
+    public void AddItems(IList<string> mediaFiles)
+    {        
+            foreach (string mediaFile in mediaFiles)
+            {
+                MediaItem item = new(new FileInfo(mediaFile));
+                
+                                Items.Add(item);
+            }                    
+    }        
+    
 }            

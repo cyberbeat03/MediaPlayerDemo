@@ -3,49 +3,21 @@
 namespace WinMix.ViewModels;
 
 public partial class MainViewModel : MainViewModelBase
-{
-    [ObservableProperty] MediaElement _mPlayer = new();
-    [ObservableProperty] PlaybackList _currentMediaList = new();
-    [ObservableProperty] bool _canRepeat = false;
-    [ObservableProperty] string _displayStatus = string.Empty;
-    [ObservableProperty] string _totalDuration = "00:00";
-    [ObservableProperty] string _elapsedTime = "00:00";
-
+{    
     private DispatcherTimer _timer = new();
 
     public MainViewModel()
     {
-        InitializePlayer();
-    }
-
-    private void InitializePlayer()
-    {                
         _timer.Interval = TimeSpan.FromSeconds(1);
         _timer.Tick += Timer_Tick;
-        
-        MPlayer.Volume = 0.5;
-        MPlayer.Balance = 0;
-        MPlayer.SpeedRatio = 1;
-        MPlayer.LoadedBehavior = MediaState.Manual;
         MPlayer.MediaOpened += Media_Opened;
         MPlayer.MediaEnded += Media_Ended;
-        GetMediaStatus();
     }
 
     private void Timer_Tick(object? sender, EventArgs e)
     {
         if (MPlayer.NaturalDuration.HasTimeSpan)
             ElapsedTime = MPlayer.Position.ToString(@"mm\:ss");
-    }
-
-    private void GetMediaStatus()
-    {
-        const string noMediaMessage = "There is currently no media loaded.";
-
-        if (MPlayer.Source is null)
-            DisplayStatus = noMediaMessage;
-        else
-            DisplayStatus = MPlayer.Source.OriginalString;
     }
 
     private void PlayItem(MediaItem? currentItem)
@@ -68,11 +40,7 @@ public partial class MainViewModel : MainViewModelBase
     {
         _timer.Stop();
         MPlayer.Stop();
-        ElapsedTime = "00:00";
-        if (CanRepeat)
-            Play();
-        else
-            Next();
+        ElapsedTime = "00:00";        
     }
 
     [RelayCommand]
@@ -80,17 +48,17 @@ public partial class MainViewModel : MainViewModelBase
     {
         if (MPlayer.Source is not null)
         {
-            _timer.IsEnabled = true;
+            _timer.Start();
             MPlayer.Play();
         }
     }
 
     [RelayCommand]
-    void Pause()
+  void Pause()
     {
         if (MPlayer.Source is not null)
         {
-            _timer.IsEnabled = false;
+            _timer.Stop();            
             MPlayer.Pause();
         }
     }
@@ -107,34 +75,99 @@ public partial class MainViewModel : MainViewModelBase
         MPlayer.Position += TimeSpan.FromSeconds(10);
     }
 
-[RelayCommand]
-    void Next()
+    [RelayCommand]
+    void PickMediaFiles()
     {
-        if (MPlayer.Source is not null)
-        {
-            PlayItem(CurrentMediaList.GetNextItem());
-        }
-    }
+        FileOpenService fileService = new();
 
-[RelayCommand]
-    void Previous()
-    {
-        if (MPlayer.Source is not null)
+        IList<string> pickedFiles = fileService.PickMediaFiles();
+
+        if (pickedFiles.Count != 0)
         {
-            PlayItem(CurrentMediaList.GetPreviousItem());
+            CurrentMediaList.AddItems(pickedFiles);
+            MPlayer.Source = new Uri(pickedFiles[0]);
+            Play();
+            GetMediaStatus();
         }
     }
 
     [RelayCommand]
-    void LoadMedia()
-    {
-PlaylistManager listManager = new(CurrentMediaList);                
-        if (listManager.ShowDialog() == true)
+    void PlaySelectedItem()
+    {        
+        PlayItem(SelectedItem);
+    }
+
+    [RelayCommand]
+    void RemoveItem()
+    {        
+        if (SelectedItem is not null)
         {
-            CurrentMediaList.Items = listManager.Playlist.Items;
-            CurrentMediaList.CurrentIndex = listManager.Playlist.CurrentIndex;            
-            PlayItem(CurrentMediaList.CurrentItem);        
+            if (MPlayer.Source == SelectedItem.MediaUri)
+            {
+                MPlayer.Stop();
+                _timer.Stop();
+                MPlayer.Source = null;
+                GetMediaStatus();
+            }
+            CurrentMediaList.Items.Remove(SelectedItem);
+        }
+
+    }
+
+    [RelayCommand]
+    void MoveItemUp()
+    {
+        if (SelectedItem is not null)
+        {
+            int currentPosition = CurrentMediaList.Items.IndexOf(SelectedItem);
+            if (currentPosition > 0)
+            CurrentMediaList.Items.Move(currentPosition,     currentPosition - 1);
         }
     }
+
+    [RelayCommand]
+    void MoveItemDown()
+    {
+        if (SelectedItem is not null)
+        {
+            int currentPosition = CurrentMediaList.Items.IndexOf(SelectedItem);
+            if (currentPosition < CurrentMediaList.Items.Count - 1)
+            CurrentMediaList.Items.Move(currentPosition, currentPosition + 1);
+        }
+    }
+
+    [RelayCommand]
+    void CopyItem()
+    {
+if (SelectedItem is not null)
+            {
+                ClipBoardService clipboard = new();
+                clipboard.Copy(SelectedItem.MediaPath);
+            }
+            }
+
+[RelayCommand]
+void CopyAllItems()
+        {
+            if (CurrentMediaList.Items.Count > 0)
+            {
+                List<string> filePaths = new();
+
+                foreach (var item in CurrentMediaList.Items)                
+                    filePaths.Add(item.MediaPath);                
+
+ClipBoardService clipboard = new();
+                                clipboard.CopyAll(filePaths);
+            }       
+        }
+
+        [RelayCommand]
+        void PasteItems()
+        {
+            ClipBoardService clipBoard = new();
+            IList<string>? returnedFiles = clipBoard.Paste();
+            if (returnedFiles is not null)
+                CurrentMediaList.AddItems(returnedFiles);
+                }
 
 }

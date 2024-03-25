@@ -4,33 +4,65 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="WinMix Desktop" WindowStartupLocation="CenterScreen" Height="600" Width="800" Closing="Window_Closing" Loaded="Window_Loaded">
+                Title="WPF Media Demo" Height="610" Width="900" WindowStartupLocation="CenterScreen">
+
+    <Window.InputBindings>
+
+        <KeyBinding  Gesture="Ctrl+U" Command="{Binding MoveItemUpCommand}"/>
+        <KeyBinding Gesture="Ctrl+D" Command="{Binding MoveItemDownCommand}"/>
+        <KeyBinding Key="Delete" Command="{Binding RemoveItemCommand}"/>
+        <KeyBinding Gesture="Ctrl+O" Command="{Binding PickMediaFilesCommand}"/>
+        <KeyBinding Gesture="Ctrl+C" Command="{Binding CopyItemCommand}"/>
+        <KeyBinding Gesture="Ctrl+V" Command="{Binding PasteItemsCommand}"/>
+    </Window.InputBindings>
 
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        <StackPanel Grid.Column="1" Margin="24">
-            <ContentControl Content="{Binding MPlayer}" Height="350"/>            
-            <Label Content="Media Player Status"/>
+        <StackPanel Grid.Column="0" HorizontalAlignment="Center" Margin="24">
+            <Label Content="Media Items"/>
+            <ListView ItemsSource="{Binding CurrentMediaList.Items}" SelectedItem="{Binding SelectedItem, Mode=OneWayToSource}" Height="400" Width="300" SelectionMode="Single">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel>
+                            <TextBlock Text="{Binding MediaName}"/>
+                            <TextBlock Text="{Binding CreationDate}"/>
+                        </StackPanel>
+                    </DataTemplate>                                        
+                </ListView.ItemTemplate>
+
+                <ListView.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Play Item" Command="{Binding PlaySelectedItemCommand}"/>
+                        <MenuItem Header="Remove" Command="{Binding RemoveItemCommand}"/>
+                        <MenuItem Header="Move Up" Command="{Binding MoveItemUpCommand}"/>
+                        <MenuItem Header="Move Down" Command="{Binding MoveItemDownCommand}"/>
+                        <MenuItem Header="Copy" Command="{Binding CopyItemCommand}"/>
+                        <MenuItem Header="Copy All" Command="{Binding CopyAllItemsCommand}"/>
+                        <MenuItem Header="Paste" Command="{Binding PasteItemsCommand}"/>
+                    </ContextMenu>
+                </ListView.ContextMenu>                
+            </ListView>                                    
+        </StackPanel>
+
+        <StackPanel Grid.Column="1" Margin="24">                        
             <StackPanel Orientation="Horizontal">
                 <TextBlock Text="{Binding DisplayStatus}" Focusable="True" Height="25" Width="100"/>
-                <Button Content="_Load Media..." Width="100" Command="{Binding LoadMediaCommand}"/>                
+                <Button Content="Add Media..." Width="100" Command="{Binding PickMediaFilesCommand}"/>                
             </StackPanel>
             <TextBlock Text="{Binding ElapsedTime}" Focusable="True" Width="50" Height="25"/>
             <TextBlock Text="{Binding TotalDuration}" Focusable="True" Width="50" Height="25"/>            
             <Label Content="Adjust playback speed"/>
             <Slider Minimum="0.5" Maximum="1.5" Value="{Binding MPlayer.SpeedRatio, Mode=TwoWay}" Width="70"/>
-            <CheckBox Content="Repeat Mode" IsChecked="{Binding CanRepeat}" Margin="24"/>
+            <ContentControl Content="{Binding MPlayer}" Height="350"/>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="64">                
                 <Button Content="_Rewind" Command="{Binding RewindCommand}" />
                 <Button Content="_Play" Width="100" Command="{Binding PlayCommand}" />
                 <Button Content="Pa_use" Width="100" Command="{Binding PauseCommand}" />
-                <Button Content="_Fast Forward" Command="{Binding FastForwardCommand}" />
-                <Button Content="Pre_vious" Width="100" Command="{Binding PreviousCommand}"/>
-                <Button Content="_Next" Width="100" Command="{Binding NextCommand}"/>
-            </StackPanel>        
+                <Button Content="_Fast Forward" Command="{Binding FastForwardCommand}" />                
+            </StackPanel>
         </StackPanel>
     </Grid>
 </Window>
