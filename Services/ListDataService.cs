@@ -2,7 +2,7 @@
 
 public class ListDataService
 {
-    private readonly string _musicFolder = Environment.GetFolderPath(Environment.SpecialFolder.MyMusic);
+    readonly string _musicFolder = Environment.GetFolderPath(Environment.SpecialFolder.MyMusic);
 
     public async Task<IList<string>> LoadDataAsync(string fileToLoad)
     {
