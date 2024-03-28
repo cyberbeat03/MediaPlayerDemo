@@ -2,7 +2,7 @@
 
 namespace WinMix.ViewModels;
 
-public partial class MainViewModel : MainViewModelBase
+public partial class MainViewModel : ViewModelBase
 {
     [ObservableProperty] MediaElement _mPlayer = new();
     [ObservableProperty] PlaybackList _currentMediaList = new();
@@ -128,7 +128,7 @@ public partial class MainViewModel : MainViewModelBase
     [RelayCommand]
     void LoadMedia()
     {
-PlaylistManager listManager = new(CurrentMediaList);                
+ListManagerDialog listManager = new(CurrentMediaList);                
         if (listManager.ShowDialog() == true)
         {
             CurrentMediaList.Items = listManager.Playlist.Items;

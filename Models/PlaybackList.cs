@@ -1,19 +1,17 @@
 ﻿namespace WinMix.Models;
 
 public class PlaybackList
-{
-    private ObservableCollection<MediaItem> _items;
+{    
     private int _currentIndex;
+    private ObservableCollection<MediaItem> _items;
 
     public ObservableCollection<MediaItem> Items
     {
         get => _items;
         set
         {
-            if (_items != value)
-            {
-                _items = value;
-            }
+if (_items != value)
+            _items = value;
         }
     }
 
@@ -22,10 +20,8 @@ public class PlaybackList
         get => _currentIndex;
         set
         {
-            if (_currentIndex != value)
-            {
-                _currentIndex = value;
-            }
+            if (_currentIndex != value)            
+                _currentIndex = value;            
         }
     }
 

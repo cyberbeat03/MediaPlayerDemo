@@ -2,19 +2,19 @@
 
 namespace WinMix.ViewModels;
 
-public partial class PlaylistViewModel : MainViewModelBase
+public partial class ListManagerViewModel : ViewModelBase
 {
     [ObservableProperty] MediaItem? _selectedItem;
     [ObservableProperty] ObservableCollection<MediaItem> _mediaItems = new();    
 
-    public PlaylistViewModel(ObservableCollection<MediaItem> mediaItems)
+    public ListManagerViewModel(ObservableCollection<MediaItem> mediaItems)
     {        
             MediaItems = mediaItems;        
     }    
 
     async Task LoadAsync(string fileName)
     {
-        ListDataService listService = new();
+        PlaylistService listService = new();
         
         IList<string> files = await listService.LoadDataAsync(fileName);
         AddFiles(files);
@@ -29,7 +29,7 @@ public partial class PlaylistViewModel : MainViewModelBase
             foreach (var item in MediaItems)
                 filePaths.Add(item.MediaPath);
 
-            ListDataService listService = new();
+            PlaylistService listService = new();
             await listService.SaveDataAsync(fileName, filePaths);
         }
     }

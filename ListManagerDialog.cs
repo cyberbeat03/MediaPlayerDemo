@@ -1,17 +1,17 @@
 ﻿namespace WinMix;
 
-public partial class PlaylistManager : Window
+public partial class ListManagerDialog : Window
 {
-readonly PlaylistViewModel _playVM;
+readonly ListManagerViewModel _playVM;
 
     public PlaybackList Playlist { get; private set; }
 
-    public PlaylistManager(PlaybackList mediaList)
+    public ListManagerDialog(PlaybackList mediaList)
     {                
         InitializeComponent();
 
         Playlist = mediaList;
-        _playVM = new PlaylistViewModel(Playlist.Items);
+        _playVM = new ListManagerViewModel(Playlist.Items);
         DataContext = _playVM;
     }
 

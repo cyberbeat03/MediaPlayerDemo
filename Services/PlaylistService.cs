@@ -1,8 +1,10 @@
 ﻿namespace WinMix.Services;
 
-public class ListDataService
+public class PlaylistService
 {
-    readonly string _musicFolder = Environment.GetFolderPath(Environment.SpecialFolder.MyMusic);
+    readonly string _playlistFolder = Path.Combine(
+        Environment.GetFolderPath(Environment.SpecialFolder.MyMusic),
+    "playlists");
 
     public async Task<IList<string>> LoadDataAsync(string fileToLoad)
     {
