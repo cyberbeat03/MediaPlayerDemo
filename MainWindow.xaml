@@ -14,12 +14,7 @@
     </Window.InputBindings>
     
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
-        <StackPanel Grid.Column="1" Margin="24">
-            <ContentControl Content="{Binding MPlayer}" Height="350"/>            
+        <StackPanel Margin="24" HorizontalAlignment="Center">            
             <Label Content="Media Player Status"/>
             <StackPanel Orientation="Horizontal">
                 <TextBlock Text="{Binding DisplayStatus}" Focusable="True" Height="25" Width="100"/>
@@ -28,8 +23,9 @@
             <TextBlock Text="{Binding ElapsedTime}" Focusable="True" Width="50" Height="25"/>
             <TextBlock Text="{Binding TotalDuration}" Focusable="True" Width="50" Height="25"/>            
             <Label Content="Adjust playback speed"/>
-            <Slider Minimum="0.5" Maximum="1.5" Value="{Binding MPlayer.SpeedRatio, Mode=TwoWay}" Width="70"/>
+            <Slider Minimum="0.5" Maximum="1.5" Value="{Binding MPlayer.SpeedRatio, Mode=TwoWay}" Width="300"/>
             <CheckBox Content="Repeat Mode" IsChecked="{Binding CanRepeat}" Margin="24"/>
+            <ContentControl Content="{Binding MPlayer}" Height="400"/>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="64">                
                 <Button Content="_Rewind" Command="{Binding RewindCommand}" />
                 <Button Content="_Play" Width="100" Command="{Binding PlayCommand}" />
