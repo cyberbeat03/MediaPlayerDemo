@@ -5,11 +5,12 @@ namespace WinMix.ViewModels;
 public partial class ListManagerViewModel : ViewModelBase
 {
     [ObservableProperty] MediaItem? _selectedItem;
-    [ObservableProperty] ObservableCollection<MediaItem> _mediaItems = new();    
+    [ObservableProperty] ObservableCollection<MediaItem> _mediaItems;    
 
-    public ListManagerViewModel(ObservableCollection<MediaItem> mediaItems)
-    {        
-            MediaItems = mediaItems;        
+    public ListManagerViewModel(PlaybackList playlist)
+    {
+        MediaItems = playlist.Items;
+        SelectedItem = playlist.CurrentItem;
     }    
 
     async Task LoadAsync(string fileName)
@@ -40,19 +41,6 @@ public partial class ListManagerViewModel : ViewModelBase
                 MediaItems.Add(new MediaItem(new FileInfo(mediaFile)));                    
     }
 
-public PlaybackList GetPlaybackList()
-    {
-        PlaybackList list = new();
-
-        list.Items = MediaItems;
-        if (SelectedItem is not null)
-            list.CurrentIndex = MediaItems.IndexOf(SelectedItem);
-        else
-            list.CurrentIndex = 0;
-
-return list;
-    }
-    
     [RelayCommand]
     void PickMediaFiles()
     {
@@ -66,11 +54,9 @@ return list;
     
     [RelayCommand]
     void RemoveItem()
-    {
-        MediaItem? itemToRemove = SelectedItem;
-
-        if (itemToRemove is not null)        
-          MediaItems.Remove(itemToRemove);            
+    {        
+        if (SelectedItem is not null)        
+          MediaItems.Remove(SelectedItem);            
         }    
 
     [RelayCommand]

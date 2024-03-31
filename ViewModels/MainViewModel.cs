@@ -128,11 +128,20 @@ public partial class MainViewModel : ViewModelBase
     [RelayCommand]
     void LoadMedia()
     {
-ListManagerDialog listManager = new(CurrentMediaList);                
+ListManagerDialog listManager = new();
+        ListManagerViewModel listVM = new(CurrentMediaList);
+
+        listManager.DataContext = listVM;
+
         if (listManager.ShowDialog() == true)
         {
-            CurrentMediaList.Items = listManager.Playlist.Items;
-            CurrentMediaList.CurrentIndex = listManager.Playlist.CurrentIndex;            
+            CurrentMediaList.Items = listVM.MediaItems;
+
+            if (listVM.SelectedItem is not null)
+            CurrentMediaList.CurrentIndex = listVM.MediaItems.IndexOf(listVM.SelectedItem);
+else
+                CurrentMediaList.CurrentIndex = 0;
+            
             PlayItem(CurrentMediaList.CurrentItem);        
         }
     }

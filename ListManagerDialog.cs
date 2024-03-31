@@ -1,23 +1,15 @@
 ﻿namespace WinMix;
 
 public partial class ListManagerDialog : Window
-{
-readonly ListManagerViewModel _playVM;
+{    
 
-    public PlaybackList Playlist { get; private set; }
-
-    public ListManagerDialog(PlaybackList mediaList)
+    public ListManagerDialog()
     {                
-        InitializeComponent();
-
-        Playlist = mediaList;
-        _playVM = new ListManagerViewModel(Playlist.Items);
-        DataContext = _playVM;
+        InitializeComponent();        
     }
 
     private void SaveButton_Click(object sender, RoutedEventArgs e)
-    {
-        Playlist = _playVM.GetPlaybackList();
+    {        
 DialogResult     = true;
     }
 
