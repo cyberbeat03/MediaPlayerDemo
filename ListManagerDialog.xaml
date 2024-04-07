@@ -22,9 +22,9 @@
             <ListView ItemsSource="{Binding MediaItems}" SelectedItem="{Binding SelectedItem, Mode=OneWayToSource}" Height="400" SelectionMode="Single">
                 <ListView.ItemTemplate>
                     <DataTemplate>
-                        <StackPanel>
+                        <StackPanel Margin="10">
                             <TextBlock Text="{Binding MediaName}"/>
-                            <TextBlock Text="{Binding CreationDate}"/>
+                            <TextBlock Text="{Binding CreationString}"/>
                         </StackPanel>
                     </DataTemplate>
                 </ListView.ItemTemplate>
