@@ -13,7 +13,7 @@ public partial class ListManagerViewModel : ViewModelBase
         SelectedItem = playlist.CurrentItem;
     }    
 
-    async Task LoadAsync(string fileName)
+    async Task LoadPlaylistAsync(string fileName)
     {
         PlaylistService listService = new();
         
@@ -21,7 +21,7 @@ public partial class ListManagerViewModel : ViewModelBase
         AddFiles(files);
     }
 
-  async Task SaveAsync(string fileName)
+  async Task SavePlaylistAsync(string fileName)
     {        
         if (MediaItems.Count > 0)
         {            
@@ -94,18 +94,18 @@ MediaItems.Move(currentPosition, currentPosition + 1);
 
     [RelayCommand]
     void CopyAllItems()
-    {
-        if (MediaItems.Count > 0)
         {
-            List<string> filePaths = new();
+            if (MediaItems.Count > 0)
+            {
+                List<string> filePaths = new();
 
-            foreach (var item in MediaItems)            
-                filePaths.Add(item.MediaPath);            
+                foreach (var item in MediaItems)
+                    filePaths.Add(item.MediaPath);
 
-            ClipBoardService clipboard = new();
-            clipboard.CopyAll(filePaths);
-        }
-    }
+                ClipBoardService clipboard = new();
+                clipboard.CopyAll(filePaths);
+            }
+        }    
 
     [RelayCommand]
     void PasteItems()

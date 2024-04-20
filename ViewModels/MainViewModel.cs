@@ -5,7 +5,7 @@ namespace WinMix.ViewModels;
 public partial class MainViewModel : ViewModelBase
 {
     [ObservableProperty] MediaElement _mPlayer = new();
-    [ObservableProperty] PlaybackList _currentMediaList = new();
+    [ObservableProperty] PlaybackList _mediaList = new();
     [ObservableProperty] bool _canRepeat = false;
     [ObservableProperty] string _displayStatus = string.Empty;
     [ObservableProperty] string _totalDuration = "00:00";
@@ -112,7 +112,7 @@ public partial class MainViewModel : ViewModelBase
     {
         if (MPlayer.Source is not null)
         {
-            PlayItem(CurrentMediaList.GetNextItem());
+            PlayItem(MediaList.GetNextItem());
         }
     }
 
@@ -121,7 +121,7 @@ public partial class MainViewModel : ViewModelBase
     {
         if (MPlayer.Source is not null)
         {
-            PlayItem(CurrentMediaList.GetPreviousItem());
+            PlayItem(MediaList.GetPreviousItem());
         }
     }
 
@@ -129,20 +129,20 @@ public partial class MainViewModel : ViewModelBase
     void LoadMedia()
     {
 ListManagerDialog listManager = new();
-        ListManagerViewModel listVM = new(CurrentMediaList);
+        ListManagerViewModel listVM = new(MediaList);
 
         listManager.DataContext = listVM;
 
         if (listManager.ShowDialog() == true)
         {
-            CurrentMediaList.Items = listVM.MediaItems;
+MediaList.Items = listVM.MediaItems;            
 
-            if (listVM.SelectedItem is not null)
-            CurrentMediaList.CurrentIndex = listVM.MediaItems.IndexOf(listVM.SelectedItem);
+if (listVM.SelectedItem is not null)
+            MediaList.CurrentIndex = listVM.MediaItems.IndexOf(listVM.SelectedItem);
 else
-                CurrentMediaList.CurrentIndex = 0;
-            
-            PlayItem(CurrentMediaList.CurrentItem);        
+                MediaList.CurrentIndex = 0;
+
+            PlayItem(MediaList.CurrentItem);        
         }
     }
 
