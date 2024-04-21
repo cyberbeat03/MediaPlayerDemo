@@ -4,14 +4,13 @@ namespace WinMix.ViewModels;
 
 public partial class MainViewModel : ViewModelBase
 {
-    [ObservableProperty] MediaElement _mPlayer = new();
-    [ObservableProperty] PlaybackList _mediaList = new();
+    [ObservableProperty] MediaElement _mPlayer = new();    
     [ObservableProperty] bool _canRepeat = false;
     [ObservableProperty] string _displayStatus = string.Empty;
     [ObservableProperty] string _totalDuration = "00:00";
     [ObservableProperty] string _elapsedTime = "00:00";
-
-    private DispatcherTimer _timer = new();
+    PlaybackList _mediaList = new();
+    DispatcherTimer _timer = new();
 
     public MainViewModel()
     {
@@ -112,7 +111,7 @@ public partial class MainViewModel : ViewModelBase
     {
         if (MPlayer.Source is not null)
         {
-            PlayItem(MediaList.GetNextItem());
+            PlayItem(_mediaList.GetNextItem());
         }
     }
 
@@ -121,7 +120,7 @@ public partial class MainViewModel : ViewModelBase
     {
         if (MPlayer.Source is not null)
         {
-            PlayItem(MediaList.GetPreviousItem());
+            PlayItem(_mediaList.GetPreviousItem());
         }
     }
 
@@ -129,20 +128,20 @@ public partial class MainViewModel : ViewModelBase
     void LoadMedia()
     {
 ListManagerDialog listManager = new();
-        ListManagerViewModel listVM = new(MediaList);
+        ListManagerViewModel listVM = new(_mediaList);
 
         listManager.DataContext = listVM;
 
         if (listManager.ShowDialog() == true)
         {
-MediaList.Items = listVM.MediaItems;            
+_mediaList.Items = listVM.MediaItems;            
 
 if (listVM.SelectedItem is not null)
-            MediaList.CurrentIndex = listVM.MediaItems.IndexOf(listVM.SelectedItem);
+            _mediaList.CurrentIndex = listVM.MediaItems.IndexOf(listVM.SelectedItem);
 else
-                MediaList.CurrentIndex = 0;
+                _mediaList.CurrentIndex = 0;
 
-            PlayItem(MediaList.CurrentItem);        
+            PlayItem(_mediaList.CurrentItem);        
         }
     }
 
