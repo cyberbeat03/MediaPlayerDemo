@@ -127,10 +127,8 @@ public partial class MainViewModel : ViewModelBase
     [RelayCommand]
     void LoadMedia()
     {
-ListManagerDialog listManager = new();
-        ListManagerViewModel listVM = new(_mediaList);
-
-        listManager.DataContext = listVM;
+            ListManagerViewModel listVM = new(_mediaList);
+        ListManagerDialog listManager = new(listVM);        
 
         if (listManager.ShowDialog() == true)
         {

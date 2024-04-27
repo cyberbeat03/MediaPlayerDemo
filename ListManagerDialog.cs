@@ -2,10 +2,10 @@
 
 public partial class ListManagerDialog : Window
 {    
-
-    public ListManagerDialog()
+    public ListManagerDialog(ListManagerViewModel viewModel)
     {                
-        InitializeComponent();        
+        InitializeComponent();
+        DataContext = viewModel;
     }
 
     private void SaveButton_Click(object sender, RoutedEventArgs e)

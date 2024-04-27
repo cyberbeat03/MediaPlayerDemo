@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="WinMix Desktop" WindowStartupLocation="CenterScreen" Height="600" Width="800" Closing="Window_Closing" Loaded="Window_Loaded">
+        Title="WinMix Desktop" WindowStartupLocation="CenterScreen" Height="600" Width="800">
     <Window.InputBindings>
         <KeyBinding Gesture="Alt+Up" Command="{Binding FastForwardCommand}"/>
         <KeyBinding Gesture="Alt+Down" Command="{Binding RewindCommand}"/>
