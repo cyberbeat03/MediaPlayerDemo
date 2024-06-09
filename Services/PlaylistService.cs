@@ -1,4 +1,6 @@
-﻿namespace WinMix.Services;
+﻿using System.Linq.Expressions;
+
+namespace WinMix.Services;
 
 public class PlaylistService
 {
@@ -8,29 +10,43 @@ public class PlaylistService
 
     public async Task<IList<string>> LoadDataAsync(string fileToLoad)
     {
-        List<string> outputList = new();
+        List<string> outputList = new List<string>();                
 
-        IReadOnlyList<string> lines = await File.ReadAllLinesAsync(fileToLoad);
+        try
+        {
+            IReadOnlyList<string> lines = await File.ReadAllLinesAsync(fileToLoad);
 
-            foreach (string line in lines)
-            {
-                if (!line.StartsWith("#") && !String.IsNullOrWhiteSpace(line))
-                    outputList.Add(line);                        
-            }        
+            foreach (string line in lines)            
+                if (!String.IsNullOrWhiteSpace(line) && !line.StartsWith("#"))
+                    outputList.Add(line.Trim());            
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Error loading the playlist file {fileToLoad}{Environment.NewLine}{ex.Message}");
+        }    
 
         return outputList;
-    }
+        }
 
-    public async Task SaveDataAsync(string fileToSave, IList<string> fileList)
+    public async Task<bool> SaveDataAsync(string fileToSave, IList<string> fileList)
     {
-        StringBuilder builder = new StringBuilder();
-        builder.AppendLine("#EXTM3U");
-        builder.AppendLine();
+        try
+        {
+            StringBuilder builder = new StringBuilder();
+            builder.AppendLine("#EXTM3U");
+            builder.AppendLine();
 
-        foreach (var filePath in fileList)
-            builder.AppendLine(filePath);        
-        
-await File.WriteAllTextAsync( fileToSave, builder.ToString());
+            foreach (var filePath in fileList)
+                builder.AppendLine(filePath);
+
+            await File.WriteAllTextAsync(fileToSave, builder.ToString());
+            return true;
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show(ex.Message);            
+            return false;
+        }
     }
 
 }
