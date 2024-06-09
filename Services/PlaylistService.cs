@@ -10,22 +10,27 @@ public class PlaylistService
     {
         List<string> outputList = new();
 
-        if (File.Exists(fileToLoad))
-        {
-            using FileStream FS = File.OpenRead(fileToLoad);
-            var jsonData = await JsonSerializer.DeserializeAsync<List<string>>(FS);
+        IReadOnlyList<string> lines = await File.ReadAllLinesAsync(fileToLoad);
 
-            if (jsonData is not null)
-                outputList = jsonData;
-        }
+            foreach (string line in lines)
+            {
+                if (!line.StartsWith("#") && !String.IsNullOrWhiteSpace(line))
+                    outputList.Add(line);                        
+            }        
 
         return outputList;
     }
 
     public async Task SaveDataAsync(string fileToSave, IList<string> fileList)
     {
-        using FileStream FS = File.Create(fileToSave);
-        await JsonSerializer.SerializeAsync(FS, fileList);
-    }    
+        StringBuilder builder = new StringBuilder();
+        builder.AppendLine("#EXTM3U");
+        builder.AppendLine();
+
+        foreach (var filePath in fileList)
+            builder.AppendLine(filePath);        
+        
+await File.WriteAllTextAsync( fileToSave, builder.ToString());
+    }
 
 }
