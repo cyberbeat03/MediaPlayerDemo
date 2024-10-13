@@ -27,7 +27,15 @@ if (_items != value)
 
     public MediaItem? CurrentItem
     {
-        get => (Items.Count > 0) ? Items[_currentIndex] : null;
+        get
+        {
+if (CurrentIndex >= 0 && CurrentIndex < Items.Count)
+            {
+                return Items[CurrentIndex];
+        }
+
+return null;
+    }
     }
 
     public PlaybackList()

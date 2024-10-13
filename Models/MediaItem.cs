@@ -2,9 +2,9 @@
 
 public class MediaItem(FileInfo mediaFileInfo)
 {
-    public string MediaName { get; } = mediaFileInfo.Name;
-    public string MediaPath { get; } = mediaFileInfo.FullName;
-    public Uri MediaUri => new Uri(mediaFileInfo.FullName);
+    public string DisplayName { get; set; } = mediaFileInfo.Name;
+    public string FullPath { get; set; } = mediaFileInfo.FullName;
+    public Uri UriPath => new Uri(FullPath);
     public DateTime CreationDate { get; } = mediaFileInfo.CreationTime;
     public string CreationString { get; } = mediaFileInfo.CreationTime.ToLongTimeString();
 }

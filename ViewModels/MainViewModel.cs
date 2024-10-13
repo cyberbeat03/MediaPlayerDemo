@@ -2,7 +2,7 @@
 
 namespace WinMix.ViewModels;
 
-public partial class MainViewModel : ViewModelBase
+public partial class MainViewModel : BaseViewModel
 {
     [ObservableProperty] MediaElement _mPlayer = new();    
     [ObservableProperty] bool _canRepeat = false;
@@ -49,9 +49,9 @@ public partial class MainViewModel : ViewModelBase
 
     private void PlayItem(MediaItem? currentItem)
     {
-        if ((currentItem is not null) && (MPlayer.Source != currentItem.MediaUri))
+        if ((currentItem is not null) && (MPlayer.Source != currentItem.UriPath))
         {
-            MPlayer.Source = currentItem.MediaUri;
+            MPlayer.Source = currentItem.UriPath;
             Play();
             GetMediaStatus();
         }

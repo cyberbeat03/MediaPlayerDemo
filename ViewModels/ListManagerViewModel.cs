@@ -2,7 +2,7 @@
 
 namespace WinMix.ViewModels;
 
-public partial class ListManagerViewModel : ViewModelBase
+public partial class ListManagerViewModel : BaseViewModel
 {
     [ObservableProperty] MediaItem? _selectedItem;
     [ObservableProperty] ObservableCollection<MediaItem> _mediaItems;    
@@ -28,7 +28,7 @@ public partial class ListManagerViewModel : ViewModelBase
             List<string> filePaths = new();
 
             foreach (var item in MediaItems)
-                filePaths.Add(item.MediaPath);
+                filePaths.Add(item.FullPath);
 
             PlaylistService listService = new();
             await listService.SaveDataAsync(fileName, filePaths);
@@ -88,7 +88,7 @@ MediaItems.Move(currentPosition, currentPosition + 1);
         if (SelectedItem is not null)
         {
             ClipBoardService clipboard = new();
-            clipboard.Copy(SelectedItem.MediaPath);
+            clipboard.Copy(SelectedItem.FullPath);
         }
     }
 
@@ -100,7 +100,7 @@ MediaItems.Move(currentPosition, currentPosition + 1);
                 List<string> filePaths = new();
 
                 foreach (var item in MediaItems)
-                    filePaths.Add(item.MediaPath);
+                    filePaths.Add(item.FullPath);
 
                 ClipBoardService clipboard = new();
                 clipboard.CopyAll(filePaths);
