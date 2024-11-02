@@ -52,7 +52,7 @@ public partial class MainViewModel : BaseViewModel
         if ((currentItem is not null) && (MPlayer.Source != currentItem.UriPath))
         {
             MPlayer.Source = currentItem.UriPath;
-            Play();
+            Play();            
             GetMediaStatus();
         }
     }

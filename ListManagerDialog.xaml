@@ -23,8 +23,8 @@
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Margin="10">
-                            <TextBlock Text="{Binding MediaName}"/>
-                            <TextBlock Text="{Binding CreationString}"/>
+                            <TextBlock Text="{Binding DisplayName}"/>
+                            <TextBlock Text="{Binding LastAccessed}"/>
                         </StackPanel>
                     </DataTemplate>
                 </ListView.ItemTemplate>
