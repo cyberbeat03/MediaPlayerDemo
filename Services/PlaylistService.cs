@@ -8,7 +8,7 @@ public class PlaylistService
         Environment.GetFolderPath(Environment.SpecialFolder.MyMusic),
     "playlists");
 
-    public async Task<IList<string>> LoadDataAsync(string fileToLoad)
+    public async Task<IReadOnlyList<string>> LoadAsync(string fileToLoad)
     {
         List<string> outputList = new List<string>();                
 
@@ -28,7 +28,7 @@ public class PlaylistService
         return outputList;
         }
 
-    public async Task<bool> SaveDataAsync(string fileToSave, IList<string> fileList)
+    public async Task<bool> SaveAsync(string fileToSave, IReadOnlyList<string> fileList)
     {
         try
         {

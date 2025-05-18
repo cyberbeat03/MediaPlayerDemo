@@ -15,7 +15,7 @@ public partial class ListManagerViewModel : BaseViewModel
     {
         PlaylistService listService = new();
         
-        IList<string> files = await listService.LoadDataAsync(fileName);
+        IReadOnlyList<string> files = await listService.LoadAsync(fileName);
         AddFiles(files);
     }
 
@@ -29,11 +29,11 @@ public partial class ListManagerViewModel : BaseViewModel
                 filePaths.Add(item.FullPath);
 
             PlaylistService listService = new();
-            await listService.SaveDataAsync(fileName, filePaths);
+            await listService.SaveAsync(fileName, filePaths);
         }
     }
     
-    void AddFiles(IList<string> mediaFiles)
+    void AddFiles(IReadOnlyList<string> mediaFiles)
     {        
             foreach (string mediaFile in mediaFiles)            
                 MediaItems.Add(new MediaItem(new FileInfo(mediaFile)));                    
@@ -44,7 +44,7 @@ public partial class ListManagerViewModel : BaseViewModel
     {
         FileOpenService fileService = new();
 
-        IList<string> pickedFiles = fileService.PickMediaFiles();
+        IReadOnlyList<string> pickedFiles = fileService.PickMediaFiles();
 
         if (pickedFiles.Count > 0)
             AddFiles(pickedFiles);
@@ -109,7 +109,7 @@ MediaItems.Move(currentPosition, currentPosition + 1);
     void PasteItems()
     {
         ClipBoardService clipBoard = new();
-        IList<string>? returnedFiles = clipBoard.Paste();
+        IReadOnlyList<string>? returnedFiles = clipBoard.Paste();
         if (returnedFiles is not null)
           AddFiles(returnedFiles);
     }

@@ -4,12 +4,12 @@ namespace WinMix.Services;
 
 public class ClipBoardService
 {
-    public bool Cut(string mediaURL)
+    public bool Cut(string mediaPath)
     {
         try
         {
             StringCollection dropList = new();
-            dropList.Add(mediaURL);
+            dropList.Add(mediaPath);
             Clipboard.SetFileDropList(dropList);
             return true;
         }
@@ -35,7 +35,7 @@ public class ClipBoardService
         }
     }
 
-    public void CopyAll(IList<string> allFiles)
+    public void CopyAll(IReadOnlyList<string> allFiles)
     {
         try
         {
@@ -54,7 +54,7 @@ public class ClipBoardService
         }
     }
 
-    public IList<string>? Paste()
+    public IReadOnlyList<string>? Paste()
     {
         try
         {

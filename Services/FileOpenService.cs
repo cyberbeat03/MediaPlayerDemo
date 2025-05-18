@@ -8,11 +8,11 @@ public class FileOpenService
     private readonly string title = "Select media files to add to playlist";
     private readonly string supportedFileTypes = "Audio Files (*.MP3;*.MP4;*.M4A;*.AAC;*.FLAC;*.ALAC;*.WMA;*.WAV)|*.mp3;*.mp4;*.m4a;*.aac;*.flac;*.alac;*.wma;*.wav|All Files (*.*)|*.*";
 
-    public IList<string> PickMediaFiles()
+    public IReadOnlyList<string> PickMediaFiles()
     {
         List<string> outputList = new();
 
-        OpenFileDialog OFD = new OpenFileDialog
+        OpenFileDialog OFD = new()
         {
             InitialDirectory = _musicFolder,
             Filter = supportedFileTypes,

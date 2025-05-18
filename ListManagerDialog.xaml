@@ -9,8 +9,8 @@
         
     <Grid>
         <StackPanel Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="24">
-            <Label Content="Media Items" FontSize="24"/>
-            <ListView x:Name="MediaListView" ItemsSource="{Binding MediaItems}" SelectedItem="{Binding SelectedItem, Mode=OneWayToSource}" Height="400" SelectionMode="Single">
+            <Label Content="Media Items" FontSize="16"/>
+            <ListView x:Name="MediaListView" ItemsSource="{Binding MediaItems}" SelectedItem="{Binding SelectedItem, Mode=TwoWay}" Height="400" IsTabStop="True" SelectionMode="Single">
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Margin="10">
