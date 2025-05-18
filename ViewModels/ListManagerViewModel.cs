@@ -1,6 +1,4 @@
-﻿using WinMix.Services;
-
-namespace WinMix.ViewModels;
+﻿namespace WinMix.ViewModels;
 
 public partial class ListManagerViewModel : BaseViewModel
 {

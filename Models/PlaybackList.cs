@@ -41,7 +41,7 @@ return null;
     public PlaybackList()
     {
         _items = new();
-        _currentIndex = 0;
+        _currentIndex = -1;
     }    
     
     public MediaItem? GetPreviousItem()

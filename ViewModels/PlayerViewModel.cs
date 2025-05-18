@@ -1,8 +1,6 @@
-﻿using WinMix.Services;
+﻿namespace WinMix.ViewModels;
 
-namespace WinMix.ViewModels;
-
-public partial class MainViewModel : BaseViewModel
+public partial class PlayerViewModel : BaseViewModel
 {
     [ObservableProperty] MediaElement _mPlayer = new();    
     [ObservableProperty] bool _canRepeat = false;
@@ -12,19 +10,11 @@ public partial class MainViewModel : BaseViewModel
     PlaybackList _mediaList = new();
     DispatcherTimer _timer = new();
 
-    public MainViewModel()
-    {
-        InitializePlayer();
-    }
-
-    private void InitializePlayer()
-    {                
+    public PlayerViewModel()
+    {        
         _timer.Interval = TimeSpan.FromSeconds(1);
         _timer.Tick += Timer_Tick;
-        
-        MPlayer.Volume = 0.5;
-        MPlayer.Balance = 0;
-        MPlayer.SpeedRatio = 1;
+
         MPlayer.LoadedBehavior = MediaState.Manual;
         MPlayer.MediaOpened += Media_Opened;
         MPlayer.MediaEnded += Media_Ended;
@@ -38,12 +28,10 @@ public partial class MainViewModel : BaseViewModel
     }
 
     private void GetMediaStatus()
-    {
-        const string noMediaMessage = "There is currently no media loaded.";
-
+    {        
         if (MPlayer.Source is null)
-            DisplayStatus = noMediaMessage;
-        else
+            DisplayStatus = "There is currently no media loaded.";
+                else
             DisplayStatus = MPlayer.Source.OriginalString;
     }
 

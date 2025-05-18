@@ -6,6 +6,7 @@ public partial class ListManagerDialog : Window
     {                
         InitializeComponent();
         DataContext = viewModel;
+        MediaListView.Focus();
     }
 
     private void SaveButton_Click(object sender, RoutedEventArgs e)

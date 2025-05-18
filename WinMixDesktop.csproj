@@ -20,13 +20,8 @@
   <ItemGroup>
     <None Remove=".gitattributes" />
     <None Remove=".gitignore" />
-    <None Remove="LICENSE.txt" />
-    <None Remove="Models\FileOpenService" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="Services\FileOpenService.cs" />
-  </ItemGroup>
+    <None Remove="LICENSE.txt" />    
+  </ItemGroup>  
 
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
