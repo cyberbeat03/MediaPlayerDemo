@@ -1,10 +1,11 @@
 ﻿<Window x:Class="WinMix.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                xmlns:d="http://schemas.microsoft.com/expression/blend/2008"       
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
         Title="WinMix Desktop" WindowStartupLocation="CenterScreen" Height="600" Width="800">
+    
     <Window.InputBindings>        
         <KeyBinding Gesture="Escape" Command="{Binding PauseCommand}"/>
         <KeyBinding Gesture="F6" Command="{Binding LoadMediaCommand}"/>
@@ -13,8 +14,8 @@
     <Grid>
         <StackPanel Margin="24" HorizontalAlignment="Center">
             <StackPanel Orientation="Horizontal">
-                <Label Content="Media Player Status"/>            
-                <TextBox x:Name="StatusText" IsReadOnly="True" IsReadOnlyCaretVisible="True" Text="{Binding DisplayStatus}" Height="25" Width="150"/>
+                <Label Content="Media Player Status" FontSize="16"/>
+                                <TextBox x:Name="StatusText" IsReadOnly="True" IsReadOnlyCaretVisible="True" Text="{Binding DisplayStatus}" Height="25" Width="150"/>
                 <Button Content="_Load Media..." Width="100" Command="{Binding LoadMediaCommand}"/>                
             </StackPanel>
             <TextBlock Text="{Binding ElapsedTime}" Focusable="True" Width="50" Height="25"/>
