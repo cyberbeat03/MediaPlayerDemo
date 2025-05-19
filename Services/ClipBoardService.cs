@@ -1,4 +1,5 @@
 ﻿using System.Collections.Specialized;
+using System.Security.Permissions;
 
 namespace WinMix.Services;
 
@@ -15,7 +16,7 @@ public class ClipBoardService
         }
         catch (Exception ex)
         {
-            MessageBox.Show($"Could not copy file to the clipboard. {Environment.NewLine}{ex.Message}");
+            MessageBox.Show($"Could not copy the file {mediaPath} to the clipboard. {Environment.NewLine}{ex.Message}");
             return false;
         }
     }
@@ -31,11 +32,11 @@ public class ClipBoardService
         }
         catch (Exception ex)
         {
-            MessageBox.Show($"Could not copy files to the clipboard.{Environment.NewLine}{ex.Message}");
+            MessageBox.Show($"Could not copy file {mediaPath} to the clipboard.{Environment.NewLine}{ex.Message}");
         }
     }
 
-    public void CopyAll(IReadOnlyList<string> allFiles)
+    public void CopyAll(IEnumerable<string> allFiles)
     {
         try
         {
@@ -63,6 +64,10 @@ public class ClipBoardService
                 StringCollection fileList = Clipboard.GetFileDropList();
 
                 return fileList.Cast<string>().ToList();
+            }
+            else
+                {
+                MessageBox.Show("The clipboard does not contain any supported media files.");
             }
         }
         catch (Exception)

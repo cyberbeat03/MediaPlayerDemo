@@ -33,7 +33,7 @@ public partial class ListManagerViewModel : BaseViewModel
         }
     }
     
-    void AddFiles(IReadOnlyList<string> mediaFiles)
+void AddFiles(IEnumerable<string> mediaFiles)
     {        
             foreach (string mediaFile in mediaFiles)            
                 MediaItems.Add(new MediaItem(new FileInfo(mediaFile)));                    
