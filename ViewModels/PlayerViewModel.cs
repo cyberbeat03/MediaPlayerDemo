@@ -96,20 +96,14 @@ public partial class PlayerViewModel : BaseViewModel
 
 [RelayCommand]
     void Next()
-    {
-        if (MPlayer.Source is not null)
-        {
-            PlayItem(_mediaList.GetNextItem());
-        }
+    {        
+            PlayItem(_mediaList.NextItem);        
     }
 
 [RelayCommand]
     void Previous()
-    {
-        if (MPlayer.Source is not null)
-        {
-            PlayItem(_mediaList.GetPreviousItem());
-        }
+    {        
+            PlayItem(_mediaList.PreviousItem);        
     }
 
     [RelayCommand]

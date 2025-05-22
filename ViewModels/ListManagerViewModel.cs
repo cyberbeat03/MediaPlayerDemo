@@ -9,7 +9,13 @@ public partial class ListManagerViewModel : BaseViewModel
     {
         MediaItems = playlist.Items;
         SelectedItem = playlist.CurrentItem;
-    }    
+    }
+
+    void AddFiles(IEnumerable<string> mediaFiles)
+    {
+        foreach (string mediaFile in mediaFiles)
+            MediaItems.Add(new MediaItem(new FileInfo(mediaFile)));
+    }
 
     async Task LoadPlaylistAsync(string fileName)
     {
@@ -33,12 +39,6 @@ public partial class ListManagerViewModel : BaseViewModel
         }
     }
     
-void AddFiles(IEnumerable<string> mediaFiles)
-    {        
-            foreach (string mediaFile in mediaFiles)            
-                MediaItems.Add(new MediaItem(new FileInfo(mediaFile)));                    
-    }
-
     [RelayCommand]
     void PickMediaFiles()
     {

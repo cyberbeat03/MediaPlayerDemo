@@ -25,6 +25,12 @@ if (_items != value)
         }
     }
 
+    public PlaybackList()
+    {
+        _items = new();
+        _currentIndex = -1;
+    }
+
     public MediaItem? CurrentItem
     {
         get
@@ -38,28 +44,28 @@ return null;
     }
     }
 
-    public PlaybackList()
+public MediaItem? PreviousItem
     {
-        _items = new();
-        _currentIndex = -1;
-    }    
-    
-    public MediaItem? GetPreviousItem()
-    {
-        if (CurrentIndex > 0)
+        get
         {
-            CurrentIndex--;
-        }        
-        return CurrentItem;
-    }            
+            if (CurrentIndex > 0)
+            {
+                CurrentIndex--;
+            }
 
-    public MediaItem? GetNextItem()
-    {
-        if (CurrentIndex < Items.Count - 1)
-        {
-            CurrentIndex++;
-        }        
-        return CurrentItem;
+            return CurrentItem;
+        }
     }
 
+    public MediaItem? NextItem
+    {
+        get
+        {
+            if (CurrentIndex < Items.Count - 1)
+            {
+                CurrentIndex++;
+            }
+            return CurrentItem;
+        }
+    }
 }            
