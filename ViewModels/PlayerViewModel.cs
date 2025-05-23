@@ -16,6 +16,12 @@ public partial class PlayerViewModel : BaseViewModel
         _timer.Tick += Timer_Tick;
 
         MPlayer.LoadedBehavior = MediaState.Manual;
+        MPlayer.Volume = 0.5;
+        MPlayer.Balance = 0;
+        MPlayer.SpeedRatio = 1;
+        
+        MPlayer.MediaOpened += Media_Opened;
+        MPlayer.LoadedBehavior = MediaState.Manual;
         MPlayer.MediaOpened += Media_Opened;
         MPlayer.MediaEnded += Media_Ended;
         GetMediaStatus();
@@ -37,12 +43,14 @@ public partial class PlayerViewModel : BaseViewModel
 
     private void PlayItem(MediaItem? currentItem)
     {
+
         if ((currentItem is not null) && (MPlayer.Source != currentItem.UriPath))
         {
             MPlayer.Source = currentItem.UriPath;
             Play();            
             GetMediaStatus();
         }
+
     }
 
     private void Media_Opened(object sender, RoutedEventArgs e)
@@ -64,12 +72,9 @@ public partial class PlayerViewModel : BaseViewModel
 
     [RelayCommand]
     void Play()
-    {
-        if (MPlayer.Source is not null)
-        {
+    {        
             _timer.IsEnabled = true;
-            MPlayer.Play();
-        }
+            MPlayer.Play();        
     }
 
     [RelayCommand]
@@ -107,6 +112,23 @@ public partial class PlayerViewModel : BaseViewModel
     }
 
     [RelayCommand]
+    void LoadFiles()
+    {
+        FileOpenService fileService = new();
+        IReadOnlyList<string> pickedFiles = fileService.PickMediaFiles();
+        if (pickedFiles.Count > 0)
+        {
+            foreach (string mediaFile in pickedFiles)
+            {
+                _mediaList.Items.Add(new MediaItem(new FileInfo(mediaFile)));
+        }
+
+            _mediaList.CurrentIndex = 0;
+        PlayItem(_mediaList.CurrentItem);
+        }        
+    }
+
+[RelayCommand]
     void LoadMedia()
     {
             ListManagerViewModel listVM = new(_mediaList);
