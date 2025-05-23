@@ -1,4 +1,7 @@
-﻿namespace WinMix.ViewModels;
+﻿using System.Runtime.ConstrainedExecution;
+using System.Text.RegularExpressions;
+
+namespace WinMix.ViewModels;
 
 public partial class PlayerViewModel : BaseViewModel
 {
@@ -15,15 +18,16 @@ public partial class PlayerViewModel : BaseViewModel
         _timer.Interval = TimeSpan.FromSeconds(1);
         _timer.Tick += Timer_Tick;
 
-        MPlayer.LoadedBehavior = MediaState.Manual;
+        MPlayer.LoadedBehavior = MediaState.Manual;        
         MPlayer.Volume = 0.5;
         MPlayer.Balance = 0;
-        MPlayer.SpeedRatio = 1;
-        
+        MPlayer.SpeedRatio = 1;        
+
         MPlayer.MediaOpened += Media_Opened;
         MPlayer.LoadedBehavior = MediaState.Manual;
         MPlayer.MediaOpened += Media_Opened;
         MPlayer.MediaEnded += Media_Ended;
+        MPlayer.MediaFailed += Media_Failed;
         GetMediaStatus();
     }
 
@@ -43,14 +47,12 @@ public partial class PlayerViewModel : BaseViewModel
 
     private void PlayItem(MediaItem? currentItem)
     {
-
         if ((currentItem is not null) && (MPlayer.Source != currentItem.UriPath))
         {
             MPlayer.Source = currentItem.UriPath;
             Play();            
             GetMediaStatus();
         }
-
     }
 
     private void Media_Opened(object sender, RoutedEventArgs e)
@@ -69,6 +71,15 @@ public partial class PlayerViewModel : BaseViewModel
         else
             Next();
     }
+
+    private void Media_Failed(object sender, RoutedEventArgs e)
+    {
+DisplayStatus = "Could not load media. Make sure the file path is valid and in a supported format.";
+        MPlayer.Source = null;
+        _timer.Stop();        
+    }
+
+
 
     [RelayCommand]
     void Play()
