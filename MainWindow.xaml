@@ -16,7 +16,7 @@
         <StackPanel Margin="24" HorizontalAlignment="Center">
             <StackPanel Orientation="Horizontal">
                 <Label Content="Media Player Status" FontSize="16"/>
-                                <TextBox x:Name="StatusText" IsReadOnly="True" IsReadOnlyCaretVisible="True" Text="{Binding DisplayStatus}" Height="25" Width="150"/>
+                                <TextBox x:Name="StatusText" Text="{Binding DisplayStatus}" Height="25" Width="150"/>
                 <Button Content="_Load Media..." Width="100" Command="{Binding LoadMediaCommand}"/>                
             </StackPanel>
             <TextBlock Text="{Binding ElapsedTime}" Focusable="True" Width="50" Height="25"/>

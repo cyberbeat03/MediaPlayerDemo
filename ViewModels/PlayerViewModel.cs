@@ -1,7 +1,4 @@
-﻿using System.Runtime.ConstrainedExecution;
-using System.Text.RegularExpressions;
-
-namespace WinMix.ViewModels;
+﻿namespace WinMix.ViewModels;
 
 public partial class PlayerViewModel : BaseViewModel
 {
@@ -11,30 +8,51 @@ public partial class PlayerViewModel : BaseViewModel
     [ObservableProperty] string _totalDuration = "00:00";
     [ObservableProperty] string _elapsedTime = "00:00";
     PlaybackList _mediaList = new();
-    DispatcherTimer _timer = new();
+readonly DispatcherTimer _timer = new();
 
     public PlayerViewModel()
-    {        
+    {                                
         _timer.Interval = TimeSpan.FromSeconds(1);
         _timer.Tick += Timer_Tick;
 
-        MPlayer.LoadedBehavior = MediaState.Manual;        
-        MPlayer.Volume = 0.5;
-        MPlayer.Balance = 0;
-        MPlayer.SpeedRatio = 1;        
+        _mPlayer.LoadedBehavior = MediaState.Manual;
+        _mPlayer.MediaOpened += OnMediaOpened;        
+        _mPlayer.MediaEnded += OnMediaEnded;
+        _mPlayer.MediaFailed += onMediaFailed;
 
-        MPlayer.MediaOpened += Media_Opened;
-        MPlayer.LoadedBehavior = MediaState.Manual;
-        MPlayer.MediaOpened += Media_Opened;
-        MPlayer.MediaEnded += Media_Ended;
-        MPlayer.MediaFailed += Media_Failed;
         GetMediaStatus();
     }
-
+    
     private void Timer_Tick(object? sender, EventArgs e)
     {
         if (MPlayer.NaturalDuration.HasTimeSpan)
             ElapsedTime = MPlayer.Position.ToString(@"mm\:ss");
+    }
+
+    private void onMediaFailed(object? sender, ExceptionRoutedEventArgs e)
+    {
+        DisplayStatus = $"Media failed: {e.ErrorException?.Message}";
+        MPlayer.Source = null;
+        ElapsedTime = "00:00";
+        TotalDuration = "00:00";
+    }
+
+
+    private void OnMediaOpened(object? sender, RoutedEventArgs e)
+    {
+        TotalDuration = MPlayer.NaturalDuration.TimeSpan.ToString(@"mm\:ss");
+        _timer.Start();
+    }
+
+    private void OnMediaEnded(object? sender, RoutedEventArgs e)
+    {
+        _timer.Stop();
+        MPlayer.Stop();
+        ElapsedTime = "00:00";
+        if (CanRepeat)
+            Play();
+        else
+            Next();
     }
 
     private void GetMediaStatus()
@@ -49,34 +67,9 @@ public partial class PlayerViewModel : BaseViewModel
     {
         if ((currentItem is not null) && (MPlayer.Source != currentItem.UriPath))
         {
-            MPlayer.Source = currentItem.UriPath;
-            Play();            
+            MPlayer.Source = currentItem.UriPath;            
             GetMediaStatus();
         }
-    }
-
-    private void Media_Opened(object sender, RoutedEventArgs e)
-    {
-        TotalDuration = MPlayer.NaturalDuration.TimeSpan.ToString(@"mm\:ss");
-        _timer.Start();
-    }
-
-    private void Media_Ended(object sender, RoutedEventArgs e)
-    {
-        _timer.Stop();
-        MPlayer.Stop();
-        ElapsedTime = "00:00";
-        if (CanRepeat)
-            Play();
-        else
-            Next();
-    }
-
-    private void Media_Failed(object sender, RoutedEventArgs e)
-    {
-DisplayStatus = "Could not load media. Make sure the file path is valid and in a supported format.";
-        MPlayer.Source = null;
-        _timer.Stop();        
     }
 
 

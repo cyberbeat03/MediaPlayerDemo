@@ -3,9 +3,9 @@
 public partial class MainWindow : Window
 {        
     public MainWindow()
-    {
-        InitializeComponent();
+    {        
         DataContext = new PlayerViewModel();
+        InitializeComponent();
         StatusText.Focus();
     }
 
