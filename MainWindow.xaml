@@ -9,24 +9,21 @@
     <Window.InputBindings>        
         <KeyBinding Gesture="Escape" Command="{Binding PauseCommand}"/>
         <KeyBinding Gesture="F6" Command="{Binding LoadMediaCommand}"/>
-        <KeyBinding Gesture="Ctrl+O" Command="{Binding LoadFilesCommand}"/>        
+        <KeyBinding Gesture="Ctrl+O" Command="{Binding OpenFilesCommand}"/>        
     </Window.InputBindings>
     
     <Grid>
-        <StackPanel Margin="24" HorizontalAlignment="Center">
+         <StackPanel Margin="4" HorizontalAlignment="Center">
             <StackPanel Orientation="Horizontal">
-                <Label Content="Media Player Status" FontSize="16"/>
-                                <TextBox x:Name="StatusText" Text="{Binding DisplayStatus}" Height="25" Width="150"/>
-                <Button Content="_Load Media..." Width="100" Command="{Binding LoadMediaCommand}"/>                
+                <TextBlock Text="Media Player Status" FontSize="16"/>
+                                <TextBox x:Name="StatusText" IsReadOnly="True" IsReadOnlyCaretVisible="True" Text="{Binding DisplayStatus}" Height="25" Width="150"/>
+                <Button Content="_Load Media..." Width="100" Height="25" Command="{Binding LoadMediaCommand}"/>                
             </StackPanel>
             <TextBlock Text="{Binding ElapsedTime}" Focusable="True" Width="50" Height="25"/>
-            <TextBlock Text="{Binding TotalDuration}" Focusable="True" Width="50" Height="25"/>
-
-            <Label Content="Adjust playback speed"/>
-            <Slider Minimum="0.5" Maximum="1.5" Value="{Binding MPlayer.SpeedRatio, Mode=TwoWay}" Width="200"/>
+            <TextBlock Text="{Binding TotalDuration}" Focusable="True" Width="50" Height="25"/>            
             
             <CheckBox Content="Repeat Mode" IsChecked="{Binding CanRepeat}" Margin="24"/>
-            <ContentControl Content="{Binding MPlayer}" Focusable="False" Height="400"/>
+            <ContentControl Content="{Binding MPlayer}" Focusable="False" MinHeight="300" MinWidth="450" Background="Black"/>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="64">                
                 <Button Content="_Rewind" Command="{Binding RewindCommand}" />
                 <Button Content="_Play" Width="100" Command="{Binding PlayCommand}" />

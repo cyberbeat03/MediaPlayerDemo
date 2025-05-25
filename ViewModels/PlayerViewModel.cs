@@ -23,28 +23,30 @@ readonly DispatcherTimer _timer = new();
         GetMediaStatus();
     }
     
-    private void Timer_Tick(object? sender, EventArgs e)
+    void Timer_Tick(object? sender, EventArgs e)
     {
         if (MPlayer.NaturalDuration.HasTimeSpan)
             ElapsedTime = MPlayer.Position.ToString(@"mm\:ss");
     }
 
-    private void onMediaFailed(object? sender, ExceptionRoutedEventArgs e)
+    void onMediaFailed(object? sender, ExceptionRoutedEventArgs e)
     {
-        DisplayStatus = $"Media failed: {e.ErrorException?.Message}";
+        MessageBox.Show($"Media failed: {e.ErrorException?.Message}");
         MPlayer.Source = null;
         ElapsedTime = "00:00";
         TotalDuration = "00:00";
-    }
+        _timer.Stop();
+        GetMediaStatus();
+        e.Handled = true;
+    }        
 
-
-    private void OnMediaOpened(object? sender, RoutedEventArgs e)
+    void OnMediaOpened(object? sender, RoutedEventArgs e)
     {
         TotalDuration = MPlayer.NaturalDuration.TimeSpan.ToString(@"mm\:ss");
         _timer.Start();
     }
 
-    private void OnMediaEnded(object? sender, RoutedEventArgs e)
+    void OnMediaEnded(object? sender, RoutedEventArgs e)
     {
         _timer.Stop();
         MPlayer.Stop();
@@ -55,7 +57,7 @@ readonly DispatcherTimer _timer = new();
             Next();
     }
 
-    private void GetMediaStatus()
+    void GetMediaStatus()
     {        
         if (MPlayer.Source is null)
             DisplayStatus = "There is currently no media loaded.";
@@ -63,16 +65,15 @@ readonly DispatcherTimer _timer = new();
             DisplayStatus = MPlayer.Source.OriginalString;
     }
 
-    private void PlayItem(MediaItem? currentItem)
+    void PlayItem(MediaItem? currentItem)
     {
         if ((currentItem is not null) && (MPlayer.Source != currentItem.UriPath))
         {
-            MPlayer.Source = currentItem.UriPath;            
+            MPlayer.Source = currentItem.UriPath;
+            Play();
             GetMediaStatus();
         }
     }
-
-
 
     [RelayCommand]
     void Play()
@@ -116,7 +117,7 @@ readonly DispatcherTimer _timer = new();
     }
 
     [RelayCommand]
-    void LoadFiles()
+    void OpenFiles()
     {
         FileOpenService fileService = new();
         IReadOnlyList<string> pickedFiles = fileService.PickMediaFiles();
