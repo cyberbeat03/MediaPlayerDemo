@@ -4,7 +4,7 @@
                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"       
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="WinMix Desktop" WindowStartupLocation="CenterScreen" Height="600" Width="800">
+        Title="WinMix Desktop" WindowStartupLocation="CenterScreen" Height="600" Width="800" Loaded="Window_Loaded" Closing="Window_Closing">
     
     <Window.InputBindings>        
         <KeyBinding Gesture="Escape" Command="{Binding PauseCommand}"/>
@@ -17,7 +17,7 @@
             <StackPanel Orientation="Horizontal">
                 <TextBlock Text="Media Player Status" FontSize="16"/>
                                 <TextBox x:Name="StatusText" IsReadOnly="True" IsReadOnlyCaretVisible="True" Text="{Binding DisplayStatus}" Height="25" Width="150"/>
-                <Button Content="_Load Media..." Width="100" Height="25" Command="{Binding LoadMediaCommand}"/>                
+                <Button Content="_Load Media..." Width="100" Height="25" Command="{Binding OpenFilesCommand}"/>                
             </StackPanel>
             <TextBlock Text="{Binding ElapsedTime}" Focusable="True" Width="50" Height="25"/>
             <TextBlock Text="{Binding TotalDuration}" Focusable="True" Width="50" Height="25"/>            

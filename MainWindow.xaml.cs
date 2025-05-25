@@ -9,4 +9,13 @@ public partial class MainWindow : Window
         StatusText.Focus();
     }
 
+    private void Window_Loaded(object sender, RoutedEventArgs e)
+    {
+
+    }
+
+    private void Window_Closing(object sender, CancelEventArgs e)
+    {
+
+    }
 }
