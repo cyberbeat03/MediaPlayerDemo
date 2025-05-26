@@ -15,10 +15,10 @@ readonly DispatcherTimer _timer = new();
         _timer.Interval = TimeSpan.FromSeconds(1);
         _timer.Tick += Timer_Tick;
 
-        _mPlayer.LoadedBehavior = MediaState.Manual;
-        _mPlayer.MediaOpened += OnMediaOpened;        
-        _mPlayer.MediaEnded += OnMediaEnded;
-        _mPlayer.MediaFailed += onMediaFailed;
+        MPlayer.LoadedBehavior = MediaState.Manual;
+        MPlayer.MediaOpened += OnMediaOpened;        
+        MPlayer.MediaEnded += OnMediaEnded;
+        MPlayer.MediaFailed += onMediaFailed;
 
         GetMediaStatus();
     }

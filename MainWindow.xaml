@@ -4,9 +4,17 @@
                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"       
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="WinMix Desktop" WindowStartupLocation="CenterScreen" Height="600" Width="800" Loaded="Window_Loaded" Closing="Window_Closing">
-    
-    <Window.InputBindings>        
+        Title="{Binding AppTitle}" WindowStartupLocation="CenterScreen" Height="600" Width="800" Loaded="Window_Loaded" Closing="Window_Closing">
+
+    <Window.Resources
+<Style TargetType="Button" x:Key="TransportButton">
+            <Setter Property="Height" Value="25"/>
+            <Setter Property="Width" Value="50"/>
+            <Setter Property="Margin" Value="10"/>
+            </Style>        
+        </Window.Resources>
+
+        <Window.InputBindings>        
         <KeyBinding Gesture="Escape" Command="{Binding PauseCommand}"/>
         <KeyBinding Gesture="F6" Command="{Binding LoadMediaCommand}"/>
         <KeyBinding Gesture="Ctrl+O" Command="{Binding OpenFilesCommand}"/>        
@@ -24,13 +32,13 @@
             
             <CheckBox Content="Repeat Mode" IsChecked="{Binding CanRepeat}" Margin="24"/>
             <ContentControl Content="{Binding MPlayer}" Focusable="False" MinHeight="300" MinWidth="450" Background="Black"/>
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="64">                
-                <Button Content="_Rewind" Command="{Binding RewindCommand}" />
-                <Button Content="_Play" Width="100" Command="{Binding PlayCommand}" />
-                <Button Content="Pa_use" Width="100" Command="{Binding PauseCommand}" />
-                <Button Content="_Fast Forward" Command="{Binding FastForwardCommand}" />
-                <Button Content="Pre_vious" Width="100" Command="{Binding PreviousCommand}"/>
-                <Button Content="_Next" Width="100" Command="{Binding NextCommand}"/>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="24">
+                <Button Content="_Play" Style="{StaticResource TransportButton}" Command="{Binding PlayCommand}" />
+                <Button Content="_Rewind" Style="{StaticResource TransportButton}" Command="{Binding RewindCommand}" />
+                <Button Content="Pa_use" Style="{StaticResource TransportButton}" Command="{Binding PauseCommand}" />
+                <Button Content="_Fast Forward" Style="{StaticResource TransportButton}" Command="{Binding FastForwardCommand}" />
+                <Button Content="Pre_vious" Style="{StaticResource TransportButton}" Command="{Binding PreviousCommand}"/>
+                <Button Content="_Next" Style="{StaticResource TransportButton}" Command="{Binding NextCommand}"/>
             </StackPanel>        
         </StackPanel>
     </Grid>
