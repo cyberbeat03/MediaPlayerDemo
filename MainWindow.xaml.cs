@@ -1,11 +1,13 @@
 ﻿namespace WinMix;
 
 public partial class MainWindow : Window
-{        
+{
+    readonly PlayerViewModel viewmodel = new PlayerViewModel(new PlaybackList());
+
     public MainWindow()
     {        
-        DataContext = new PlayerViewModel();
         InitializeComponent();
+        DataContext = viewmodel;
         StatusText.Focus();
     }
 

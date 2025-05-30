@@ -1,7 +1,7 @@
 ﻿namespace WinMix.Models;
 
-public class PlaybackList
-{    
+public class PlaybackList : IPlaybackList
+{
     private int _currentIndex;
     private ObservableCollection<MediaItem> _items;
 
@@ -10,8 +10,8 @@ public class PlaybackList
         get => _items;
         set
         {
-if (_items != value)
-            _items = value;
+            if (_items != value)
+                _items = value;
         }
     }
 
@@ -20,8 +20,8 @@ if (_items != value)
         get => _currentIndex;
         set
         {
-            if (_currentIndex != value)            
-                _currentIndex = value;            
+            if (_currentIndex != value)
+                _currentIndex = value;
         }
     }
 
@@ -35,16 +35,16 @@ if (_items != value)
     {
         get
         {
-if (CurrentIndex >= 0 && CurrentIndex < Items.Count)
+            if (CurrentIndex >= 0 && CurrentIndex < Items.Count)
             {
                 return Items[CurrentIndex];
+            }
+
+            return null;
         }
-
-return null;
-    }
     }
 
-public MediaItem? PreviousItem
+    public MediaItem? PreviousItem
     {
         get
         {
@@ -68,13 +68,13 @@ public MediaItem? PreviousItem
         }
     }
 
-public     void AddFiles(IEnumerable<string> mediaFiles)
+    public void AddFiles(IEnumerable<string> mediaFiles)
     {
         foreach (string mediaFile in mediaFiles)
             Items.Add(new MediaItem(new FileInfo(mediaFile)));
-    
-if (CurrentIndex == -1 && Items.Count > 0)            
-                CurrentIndex = 0;        
+
+        if (CurrentIndex == -1 && Items.Count > 0)
+            CurrentIndex = 0;
     }
 
 }

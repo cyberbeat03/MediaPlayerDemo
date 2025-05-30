@@ -2,15 +2,17 @@
 
 public partial class ListManagerViewModel : BaseViewModel
 {
-    [ObservableProperty] MediaItem? _selectedItem;
-    [ObservableProperty] ObservableCollection<MediaItem> _mediaItems;
-    PlaybackList _playlist;    
+    [ObservableProperty] MediaItem? _selectedItem;    
+    IPlaybackList _playlist;    
 
-    public ListManagerViewModel(PlaybackList playbackList)
+    public ObservableCollection<MediaItem> MediaItems
     {
-        _playlist = playbackList;
-        MediaItems = _playlist.Items;
-        SelectedItem = _playlist.CurrentItem;
+        get => _playlist.Items;
+    }
+
+    public ListManagerViewModel(IPlaybackList playbackList)
+    {
+        _playlist = playbackList;                
     }
     async Task LoadPlaylistAsync(string fileName)
     {

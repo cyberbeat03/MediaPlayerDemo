@@ -7,11 +7,13 @@ public partial class PlayerViewModel : BaseViewModel
     [ObservableProperty] string _displayStatus = string.Empty;
     [ObservableProperty] string _totalDuration = "00:00";
     [ObservableProperty] string _elapsedTime = "00:00";
-    PlaybackList _mediaList = new();
-readonly DispatcherTimer _timer = new();
+    IPlaybackList _mediaList;
+    readonly DispatcherTimer _timer;
 
-    public PlayerViewModel()
-    {                                
+    public PlayerViewModel(IPlaybackList playbackList)
+    {        
+        _mediaList = playbackList;
+        _timer = new();
         _timer.Interval = TimeSpan.FromSeconds(1);
         _timer.Tick += Timer_Tick;
 
