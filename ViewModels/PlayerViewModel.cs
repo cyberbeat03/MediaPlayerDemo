@@ -136,20 +136,23 @@ readonly DispatcherTimer _timer = new();
 [RelayCommand]
     void LoadMedia()
     {
-            ListManagerViewModel listVM = new(_mediaList);
-        ListManagerDialog listManager = new(listVM);        
+             var listVM = new ListManagerViewModel(_mediaList);
+        var listManagerView = new ListManagerDialog(listVM);
 
-        if (listManager.ShowDialog() == true)
+        if (listManagerView.ShowDialog() == true)
         {
-_mediaList.Items = listVM.MediaItems;            
+            _mediaList.Items = listVM.MediaItems;
 
-if (listVM.SelectedItem is not null)
-            _mediaList.CurrentIndex = listVM.MediaItems.IndexOf(listVM.SelectedItem);
-else
-                _mediaList.CurrentIndex = 0;
-
-            PlayItem(_mediaList.CurrentItem);        
-        }
-    }
+            if (listVM.SelectedItem is not null)
+            {
+                _mediaList.CurrentIndex = listVM.MediaItems.IndexOf(listVM.SelectedItem);
+                PlayItem(_mediaList.CurrentItem);
+            }
+            else if (_mediaList.Items.Count > 0)
+                    _mediaList.CurrentIndex = 0;
+                else
+                    _mediaList.CurrentIndex = -1;
+            }
+        }                        
 
 }

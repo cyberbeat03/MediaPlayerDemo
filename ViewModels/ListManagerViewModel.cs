@@ -3,26 +3,21 @@
 public partial class ListManagerViewModel : BaseViewModel
 {
     [ObservableProperty] MediaItem? _selectedItem;
-    [ObservableProperty] ObservableCollection<MediaItem> _mediaItems;    
+    [ObservableProperty] ObservableCollection<MediaItem> _mediaItems;
+    PlaybackList _playlist;    
 
-    public ListManagerViewModel(PlaybackList playlist)
+    public ListManagerViewModel(PlaybackList playbackList)
     {
-        MediaItems = playlist.Items;
-        SelectedItem = playlist.CurrentItem;
+        _playlist = playbackList;
+        MediaItems = _playlist.Items;
+        SelectedItem = _playlist.CurrentItem;
     }
-
-    void AddFiles(IEnumerable<string> mediaFiles)
-    {
-        foreach (string mediaFile in mediaFiles)
-            MediaItems.Add(new MediaItem(new FileInfo(mediaFile)));
-    }
-
     async Task LoadPlaylistAsync(string fileName)
     {
         PlaylistService listService = new();
         
         IReadOnlyList<string> files = await listService.LoadAsync(fileName);
-        AddFiles(files);
+_playlist.AddFiles(files);
     }
 
   async Task SavePlaylistAsync(string fileName)
@@ -47,7 +42,7 @@ public partial class ListManagerViewModel : BaseViewModel
         IReadOnlyList<string> pickedFiles = fileService.PickMediaFiles();
 
         if (pickedFiles.Count > 0)
-            AddFiles(pickedFiles);
+            _playlist.AddFiles(pickedFiles);
     }
     
     [RelayCommand]
@@ -111,7 +106,7 @@ MediaItems.Move(currentPosition, currentPosition + 1);
         ClipBoardService clipBoard = new();
         IReadOnlyList<string>? returnedFiles = clipBoard.Paste();
         if (returnedFiles is not null)
-          AddFiles(returnedFiles);
+          _playlist.AddFiles(returnedFiles);
     }
 
 }

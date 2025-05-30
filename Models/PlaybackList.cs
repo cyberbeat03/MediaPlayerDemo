@@ -48,11 +48,10 @@ public MediaItem? PreviousItem
     {
         get
         {
-            if (CurrentIndex > 0)
-            {
-                CurrentIndex--;
-            }
+            if (Items.Count == 0)
+                return null;
 
+            CurrentIndex = (CurrentIndex + 1) % Items.Count;
             return CurrentItem;
         }
     }
@@ -61,11 +60,21 @@ public MediaItem? PreviousItem
     {
         get
         {
-            if (CurrentIndex < Items.Count - 1)
-            {
-                CurrentIndex++;
-            }
+            if (Items.Count == 0)
+                return null;
+
+            CurrentIndex = (CurrentIndex + 1) % Items.Count;
             return CurrentItem;
         }
     }
-}            
+
+public     void AddFiles(IEnumerable<string> mediaFiles)
+    {
+        foreach (string mediaFile in mediaFiles)
+            Items.Add(new MediaItem(new FileInfo(mediaFile)));
+    
+if (CurrentIndex == -1 && Items.Count > 0)            
+                CurrentIndex = 0;        
+    }
+
+}
