@@ -1,4 +1,7 @@
-﻿namespace WinMix.ViewModels;
+﻿using System.Diagnostics.Eventing.Reader;
+using WinMix.Models;
+
+namespace WinMix.ViewModels;
 
 public partial class PlayerViewModel : BaseViewModel
 {
@@ -56,7 +59,7 @@ public partial class PlayerViewModel : BaseViewModel
         if (CanRepeat)
             Play();
         else
-            Next();
+            PlayNext();
     }
 
     void ResetPlayer()
@@ -118,13 +121,13 @@ public partial class PlayerViewModel : BaseViewModel
     }
 
 [RelayCommand]
-    void Next()
+    void PlayNext()
     {        
             PlayItem(_mediaList.NextItem);        
     }
 
 [RelayCommand]
-    void Previous()
+    void PlayPrevious()
     {        
             PlayItem(_mediaList.PreviousItem);        
     }
@@ -142,6 +145,58 @@ public partial class PlayerViewModel : BaseViewModel
     }
 
     [RelayCommand]
+    void RemoveItem()
+    {
+        MediaItem? currentItem = _mediaList.CurrentItem;
+
+        if (currentItem is MediaItem item)
+        {
+            _mediaList.Items.Remove(item);
+
+            if (_mediaList.Items.Count == 0)
+                ResetPlayer();
+            else
+                PlayNext();                
+            }
+        }
+
+    [RelayCommand]
+    void CopyItem()
+    {
+        MediaItem? currentItem = _mediaList.CurrentItem;
+
+        if (currentItem is MediaItem item)
+        {
+            ClipBoardService clipboard = new();
+            clipboard.Copy(item.FullPath);
+        }
+    }
+
+    [RelayCommand]
+    void CopyAllItems()
+    {
+        if (_mediaList.Items.Count > 0)
+        {
+            List<string> filePaths = new();
+
+            foreach (var item in _mediaList.Items)
+                filePaths.Add(item.FullPath);
+
+            ClipBoardService clipboard = new();
+            clipboard.CopyAll(filePaths);
+        }
+    }
+
+    [RelayCommand]
+    void PasteItems()
+    {
+        ClipBoardService clipBoard = new();
+        IReadOnlyList<string>? returnedFiles = clipBoard.Paste();
+        if (returnedFiles is not null)
+            _mediaList.AddFiles(returnedFiles);
+    }
+
+    [RelayCommand]
     void LoadMedia()
     {
         var listVM = new ListManagerViewModel(_mediaList);
@@ -150,16 +205,12 @@ public partial class PlayerViewModel : BaseViewModel
         if (listManagerView.ShowDialog() == true)
         {
 
-            if (_mediaList.Items.Count == 0)
+            if (listVM.SelectedItem is not null)
             {
-                ResetPlayer();
-                return;
-            }
-
-            if (listVM.SelectedItem is not null)            
                 _mediaList.CurrentIndex = listVM.MediaItems.IndexOf(listVM.SelectedItem);
-
-                PlayItem(_mediaList.CurrentItem);            
+                PlayItem(_mediaList.CurrentItem);
+            }
         }
     }
+
 }

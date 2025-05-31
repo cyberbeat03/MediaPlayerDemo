@@ -19,6 +19,16 @@
         <KeyBinding Gesture="F6" Command="{Binding LoadMediaCommand}"/>
         <KeyBinding Gesture="Ctrl+O" Command="{Binding OpenFilesCommand}"/>        
     </Window.InputBindings>
+
+    <Window.ContextMenu>
+        <ContextMenu>
+            <MenuItem Header="_Add" Command="{Binding OpenFilesCommand}"/>
+            <MenuItem Header="_Remove" Command="{Binding RemoveItemCommand}"/>
+            <MenuItem Header="_Copy" Command="{Binding CopyItemCommand}"/>
+            <MenuItem Header="Copy _All" Command="{Binding CopyAllItemsCommand}"/>
+            <MenuItem Header="_Paste" Command="{Binding PasteItemsCommand}"/>
+        </ContextMenu>
+    </Window.ContextMenu>                    
     
     <Grid>
          <StackPanel Margin="4" HorizontalAlignment="Center">
@@ -37,8 +47,8 @@
                 <Button Content="_Rewind" Style="{StaticResource TransportButton}" Command="{Binding RewindCommand}" />
                 <Button Content="Pa_use" Style="{StaticResource TransportButton}" Command="{Binding PauseCommand}" />
                 <Button Content="_Fast Forward" Style="{StaticResource TransportButton}" Command="{Binding FastForwardCommand}" />
-                <Button Content="Pre_vious" Style="{StaticResource TransportButton}" Command="{Binding PreviousCommand}"/>
-                <Button Content="_Next" Style="{StaticResource TransportButton}" Command="{Binding NextCommand}"/>
+                <Button Content="Pre_vious" Style="{StaticResource TransportButton}" Command="{Binding PlayPreviousCommand}"/>
+                <Button Content="_Next" Style="{StaticResource TransportButton}" Command="{Binding PlayNextCommand}"/>
             </StackPanel>        
         </StackPanel>
     </Grid>
