@@ -51,7 +51,8 @@ public class PlaybackList : IPlaybackList
             if (Items.Count == 0)
                 return null;
 
-            CurrentIndex = (CurrentIndex + 1) % Items.Count;
+            CurrentIndex = (CurrentIndex - 1 + Items.Count) % Items.Count;
+
             return CurrentItem;
         }
     }

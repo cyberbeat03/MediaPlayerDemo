@@ -2,7 +2,7 @@
 
 public partial class MainWindow : Window
 {
-    readonly PlayerViewModel viewmodel = new PlayerViewModel(new PlaybackList());
+    PlayerViewModel viewmodel = new PlayerViewModel(new PlaybackList());
 
     public MainWindow()
     {        

@@ -59,6 +59,17 @@ public partial class PlayerViewModel : BaseViewModel
             Next();
     }
 
+    void ResetPlayer()
+    {
+        _mediaList.CurrentIndex = -1;
+        _timer.Stop();
+        MPlayer.Stop();
+        MPlayer.Source = null;
+        ElapsedTime = "00:00";
+        TotalDuration = "00:00";        
+        GetMediaStatus();
+    }    
+
     void GetMediaStatus()
     {        
         if (MPlayer.Source is null)
@@ -125,36 +136,30 @@ public partial class PlayerViewModel : BaseViewModel
         IReadOnlyList<string> pickedFiles = fileService.PickMediaFiles();
         if (pickedFiles.Count > 0)
         {
-            foreach (string mediaFile in pickedFiles)
-            {
-                _mediaList.Items.Add(new MediaItem(new FileInfo(mediaFile)));
-        }
-
-            _mediaList.CurrentIndex = 0;
+            _mediaList.AddFiles(pickedFiles);            
         PlayItem(_mediaList.CurrentItem);
         }        
     }
 
-[RelayCommand]
+    [RelayCommand]
     void LoadMedia()
     {
-             var listVM = new ListManagerViewModel(_mediaList);
-        var listManagerView = new ListManagerDialog(listVM);
+        var listVM = new ListManagerViewModel(_mediaList);
+        var listManagerView = new ListManagerWindow(listVM);
 
         if (listManagerView.ShowDialog() == true)
         {
-            _mediaList.Items = listVM.MediaItems;
 
-            if (listVM.SelectedItem is not null)
+            if (_mediaList.Items.Count == 0)
             {
-                _mediaList.CurrentIndex = listVM.MediaItems.IndexOf(listVM.SelectedItem);
-                PlayItem(_mediaList.CurrentItem);
+                ResetPlayer();
+                return;
             }
-            else if (_mediaList.Items.Count > 0)
-                    _mediaList.CurrentIndex = 0;
-                else
-                    _mediaList.CurrentIndex = -1;
-            }
-        }                        
 
+            if (listVM.SelectedItem is not null)            
+                _mediaList.CurrentIndex = listVM.MediaItems.IndexOf(listVM.SelectedItem);
+
+                PlayItem(_mediaList.CurrentItem);            
+        }
+    }
 }

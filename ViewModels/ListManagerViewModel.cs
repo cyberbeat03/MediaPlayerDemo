@@ -14,6 +14,7 @@ public partial class ListManagerViewModel : BaseViewModel
     {
         _playlist = playbackList;                
     }
+
     async Task LoadPlaylistAsync(string fileName)
     {
         PlaylistService listService = new();
