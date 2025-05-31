@@ -168,8 +168,10 @@ public partial class PlayerViewModel : BaseViewModel
         if (currentItem is MediaItem item)
         {
             ClipBoardService clipboard = new();
-            clipboard.Copy(item.FullPath);
+            clipboard.Copy(item.FullPath);            
         }
+        else            
+            MessageBox.Show("There is no media to copy.");        
     }
 
     [RelayCommand]
@@ -183,8 +185,10 @@ public partial class PlayerViewModel : BaseViewModel
                 filePaths.Add(item.FullPath);
 
             ClipBoardService clipboard = new();
-            clipboard.CopyAll(filePaths);
+            clipboard.CopyAll(filePaths);            
         }
+        else        
+            MessageBox.Show("There are no items to copy.");        
     }
 
     [RelayCommand]
@@ -193,7 +197,9 @@ public partial class PlayerViewModel : BaseViewModel
         ClipBoardService clipBoard = new();
         IReadOnlyList<string>? returnedFiles = clipBoard.Paste();
         if (returnedFiles is not null)
-            _mediaList.AddFiles(returnedFiles);
+        {
+            _mediaList.AddFiles(returnedFiles);            
+        }
     }
 
     [RelayCommand]

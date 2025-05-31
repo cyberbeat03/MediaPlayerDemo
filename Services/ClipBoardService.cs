@@ -32,6 +32,7 @@ public class ClipBoardService
             }
 
             Clipboard.SetFileDropList(dropFiles);
+            MessageBox.Show($"All {dropFiles.Count} files were copied to the clipboard.");
         }
         catch (Exception ex)
         {
@@ -45,8 +46,7 @@ public class ClipBoardService
         {
             if (Clipboard.ContainsFileDropList())
             {
-                StringCollection fileList = Clipboard.GetFileDropList();
-
+                StringCollection fileList = Clipboard.GetFileDropList();                
                 return fileList.Cast<string>().ToList();
             }
             else
