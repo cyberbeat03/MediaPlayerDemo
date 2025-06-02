@@ -52,7 +52,7 @@ _playlist.AddItems(files);
     void RemoveItem()
     {
         if (SelectedItem is not null)
-            _playlist.RemoveItem(SelectedItem);
+            _playlist.Items.Remove(SelectedItem);
         }    
 
     [RelayCommand]
