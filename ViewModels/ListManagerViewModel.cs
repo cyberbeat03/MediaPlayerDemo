@@ -3,14 +3,14 @@
 public partial class ListManagerViewModel : BaseViewModel
 {
     [ObservableProperty] MediaItem? _selectedItem;    
-    IPlaybackList _playlist;    
+    PlaybackList _playlist;    
 
     public ObservableCollection<MediaItem> MediaItems
     {
         get => _playlist.Items;
     }
 
-    public ListManagerViewModel(IPlaybackList playbackList)
+    public ListManagerViewModel(PlaybackList playbackList)
     {
         _playlist = playbackList;                
     }

@@ -1,7 +1,4 @@
-﻿using System.Diagnostics.Eventing.Reader;
-using WinMix.Models;
-
-namespace WinMix.ViewModels;
+﻿namespace WinMix.ViewModels;
 
 public partial class PlayerViewModel : BaseViewModel
 {
@@ -10,10 +7,10 @@ public partial class PlayerViewModel : BaseViewModel
     [ObservableProperty] string _displayStatus = string.Empty;
     [ObservableProperty] string _totalDuration = "00:00";
     [ObservableProperty] string _elapsedTime = "00:00";
-    IPlaybackList _mediaList;
-    readonly DispatcherTimer _timer;
+    PlaybackList _mediaList;
+    DispatcherTimer _timer;
 
-    public PlayerViewModel(IPlaybackList playbackList)
+    public PlayerViewModel(PlaybackList playbackList)
     {        
         _mediaList = playbackList;
         _timer = new();
@@ -126,20 +123,19 @@ public partial class PlayerViewModel : BaseViewModel
     [RelayCommand]
     void RemoveItem()
     {
-        MediaItem? item = _mediaList.GetCurrentItem();        
-            if (item is not null)
-            {
-                _mediaList.Items.Remove(item);
-                DisplayStatus = $"Media index is now {_mediaList.CurrentIndex} of {_mediaList.Items.Count - 1}";
+        MediaItem? item = _mediaList.GetCurrentItem();
 
-                if (_mediaList.Items.Count == 0)
+        if (item is not null)
+        {
+            _mediaList.RemoveItem(item);            
+
+            if (_mediaList.Items.Count == 0)
                 {
                     ResetPlayer();
                     return;
                 }
 
-                PlayItem(_mediaList.GetCurrentItem());
-            
+            PlayItem(_mediaList.GetCurrentItem());
         }
     }
 

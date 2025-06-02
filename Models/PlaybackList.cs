@@ -1,6 +1,9 @@
-﻿namespace WinMix.Models;
+﻿using Accessibility;
+using System.Diagnostics;
 
-public class PlaybackList : IPlaybackList
+namespace WinMix.Models;
+
+public class PlaybackList
 {
     private int _currentIndex;
     private ObservableCollection<MediaItem> _items;
@@ -42,6 +45,7 @@ public class PlaybackList : IPlaybackList
         if (IsIndexValid(CurrentIndex - 1))
         {
             CurrentIndex--;
+            Debug.WriteLine($"From previous method,  CurrentIndex is now {CurrentIndex} of {Items.Count - 1}");
             return Items[CurrentIndex];
         }
 
@@ -53,7 +57,8 @@ public class PlaybackList : IPlaybackList
         if (IsIndexValid(CurrentIndex + 1))
 {
    CurrentIndex++;
-    return Items[CurrentIndex];
+            Debug.WriteLine($"From next method,  CurrentIndex is now {CurrentIndex} of {Items.Count - 1}");
+            return Items[CurrentIndex];
 }
 
 return null;
@@ -66,11 +71,16 @@ return null;
     }
 
     public void RemoveItem(MediaItem? itemToRemove)
-{                            
+{
+        if (itemToRemove is null) return;
         Items.Remove(itemToRemove);
+        Debug.WriteLine($"After removing,  CurrentIndex is now  {CurrentIndex}  of  {Items.Count - 1}");
 
         if (CurrentIndex >= Items.Count)
+        {
             CurrentIndex = Items.Count - 1;
+            Debug.WriteLine($"CurrentIndex was moved back to {CurrentIndex} of {Items.Count - 1}");
+        }
     }
 
 }
