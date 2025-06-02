@@ -23,59 +23,54 @@ public class PlaybackList : IPlaybackList
             if (_currentIndex != value)
                 _currentIndex = value;
         }
-    }
+    }    
 
     public PlaybackList()
     {
         _items = new();
-        _currentIndex = -1;
+        _currentIndex = 0;
     }
 
-    public MediaItem? CurrentItem
+    private bool IsIndexValid(int index) =>
+        index >= 0 && index < Items.Count;
+
+    public MediaItem? GetCurrentItem() =>
+        IsIndexValid(CurrentIndex) ? Items[CurrentIndex] : null;
+
+    public MediaItem? GetPreviousItem()
     {
-        get
+        if (IsIndexValid(CurrentIndex - 1))
         {
-            if (CurrentIndex >= 0 && CurrentIndex < Items.Count)
-            {
-                return Items[CurrentIndex];
-            }
-
-            return null;
+            CurrentIndex--;
+            return Items[CurrentIndex];
         }
+
+        return null;
     }
 
-    public MediaItem? PreviousItem
-    {
-        get
-        {
-            if (Items.Count == 0)
-                return null;
+    public MediaItem? GetNextItem()
+{
+        if (IsIndexValid(CurrentIndex + 1))
+{
+   CurrentIndex++;
+    return Items[CurrentIndex];
+}
 
-            CurrentIndex = (CurrentIndex - 1 + Items.Count) % Items.Count;
-
-            return CurrentItem;
-        }
+return null;
     }
 
-    public MediaItem? NextItem
-    {
-        get
-        {
-            if (Items.Count == 0)
-                return null;
-
-            CurrentIndex = (CurrentIndex + 1) % Items.Count;
-            return CurrentItem;
-        }
-    }
-
-    public void AddFiles(IEnumerable<string> mediaFiles)
+    public void AddItems(IEnumerable<string> mediaFiles)
     {
         foreach (string mediaFile in mediaFiles)
-            Items.Add(new MediaItem(new FileInfo(mediaFile)));
+            Items.Add(new MediaItem(new FileInfo(mediaFile)));        
+    }
 
-        if (CurrentIndex == -1 && Items.Count > 0)
-            CurrentIndex = 0;
+    public void RemoveItem(MediaItem? itemToRemove)
+{                            
+        Items.Remove(itemToRemove);
+
+        if (CurrentIndex >= Items.Count)
+            CurrentIndex = Items.Count - 1;
     }
 
 }

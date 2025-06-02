@@ -20,7 +20,7 @@ public partial class ListManagerViewModel : BaseViewModel
         PlaylistService listService = new();
         
         IReadOnlyList<string> files = await listService.LoadAsync(fileName);
-_playlist.AddFiles(files);
+_playlist.AddItems(files);
     }
 
   async Task SavePlaylistAsync(string fileName)
@@ -45,14 +45,14 @@ _playlist.AddFiles(files);
         IReadOnlyList<string> pickedFiles = fileService.PickMediaFiles();
 
         if (pickedFiles.Count > 0)
-            _playlist.AddFiles(pickedFiles);
+            _playlist.AddItems(pickedFiles);
     }
     
     [RelayCommand]
     void RemoveItem()
-    {        
-        if (SelectedItem is not null)        
-          MediaItems.Remove(SelectedItem);            
+    {
+        if (SelectedItem is not null)
+            _playlist.RemoveItem(SelectedItem);
         }    
 
     [RelayCommand]
@@ -109,7 +109,7 @@ MediaItems.Move(currentPosition, currentPosition + 1);
         ClipBoardService clipBoard = new();
         IReadOnlyList<string>? returnedFiles = clipBoard.Paste();
         if (returnedFiles is not null)
-          _playlist.AddFiles(returnedFiles);
+          _playlist.AddItems(returnedFiles);
     }
 
 }

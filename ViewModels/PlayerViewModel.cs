@@ -37,11 +37,7 @@ public partial class PlayerViewModel : BaseViewModel
     void onMediaFailed(object? sender, ExceptionRoutedEventArgs e)
     {
         MessageBox.Show($"Media failed: {e.ErrorException?.Message}");
-        MPlayer.Source = null;
-        ElapsedTime = "00:00";
-        TotalDuration = "00:00";
-        _timer.Stop();
-        GetMediaStatus();
+        ResetPlayer();        
         e.Handled = true;
     }        
 
@@ -59,12 +55,12 @@ public partial class PlayerViewModel : BaseViewModel
         if (CanRepeat)
             Play();
         else
-            PlayNext();
+            PlayNext();            
     }
 
     void ResetPlayer()
     {
-        _mediaList.CurrentIndex = -1;
+        _mediaList.CurrentIndex = 0;
         _timer.Stop();
         MPlayer.Stop();
         MPlayer.Source = null;
@@ -73,13 +69,8 @@ public partial class PlayerViewModel : BaseViewModel
         GetMediaStatus();
     }    
 
-    void GetMediaStatus()
-    {        
-        if (MPlayer.Source is null)
-            DisplayStatus = "There is currently no media loaded.";
-                else
-            DisplayStatus = MPlayer.Source.OriginalString;
-    }
+    void GetMediaStatus() =>    
+         DisplayStatus = (MPlayer.Source is null) ? "There is no media loaded." : MPlayer.Source.OriginalString;    
 
     void PlayItem(MediaItem? currentItem)
     {
@@ -109,28 +100,16 @@ public partial class PlayerViewModel : BaseViewModel
     }
 
     [RelayCommand]
-    void Rewind()
-    {
-        MPlayer.Position -= TimeSpan.FromSeconds(10);
-    }
+    void Rewind() => MPlayer.Position -= TimeSpan.FromSeconds(10);
 
     [RelayCommand]
-    void FastForward()
-    {
-        MPlayer.Position += TimeSpan.FromSeconds(10);
-    }
+    void FastForward() => MPlayer.Position += TimeSpan.FromSeconds(10);
 
-[RelayCommand]
-    void PlayNext()
-    {        
-            PlayItem(_mediaList.NextItem);        
-    }
+    [RelayCommand]
+    void PlayNext() => PlayItem(_mediaList.GetNextItem());
 
-[RelayCommand]
-    void PlayPrevious()
-    {        
-            PlayItem(_mediaList.PreviousItem);        
-    }
+    [RelayCommand]
+    void PlayPrevious() => PlayItem(_mediaList.GetPreviousItem());
 
     [RelayCommand]
     void OpenFiles()
@@ -139,31 +118,35 @@ public partial class PlayerViewModel : BaseViewModel
         IReadOnlyList<string> pickedFiles = fileService.PickMediaFiles();
         if (pickedFiles.Count > 0)
         {
-            _mediaList.AddFiles(pickedFiles);            
-        PlayItem(_mediaList.CurrentItem);
+            _mediaList.AddItems(pickedFiles);
+            PlayItem(_mediaList.GetCurrentItem());
         }        
     }
 
     [RelayCommand]
     void RemoveItem()
     {
-        MediaItem? currentItem = _mediaList.CurrentItem;
+        MediaItem? item = _mediaList.GetCurrentItem();        
+            if (item is not null)
+            {
+                _mediaList.Items.Remove(item);
+                DisplayStatus = $"Media index is now {_mediaList.CurrentIndex} of {_mediaList.Items.Count - 1}";
 
-        if (currentItem is MediaItem item)
-        {
-            _mediaList.Items.Remove(item);
+                if (_mediaList.Items.Count == 0)
+                {
+                    ResetPlayer();
+                    return;
+                }
 
-            if (_mediaList.Items.Count == 0)
-                ResetPlayer();
-            else
-                PlayNext();                
-            }
+                PlayItem(_mediaList.GetCurrentItem());
+            
         }
+    }
 
     [RelayCommand]
     void CopyItem()
     {
-        MediaItem? currentItem = _mediaList.CurrentItem;
+        MediaItem? currentItem = _mediaList.GetCurrentItem();
 
         if (currentItem is MediaItem item)
         {
@@ -198,25 +181,30 @@ public partial class PlayerViewModel : BaseViewModel
         IReadOnlyList<string>? returnedFiles = clipBoard.Paste();
         if (returnedFiles is not null)
         {
-            _mediaList.AddFiles(returnedFiles);            
+            _mediaList.AddItems(returnedFiles);            
         }
     }
 
     [RelayCommand]
     void LoadMedia()
-    {
-        var listVM = new ListManagerViewModel(_mediaList);
-        var listManagerView = new ListManagerWindow(listVM);
-
-        if (listManagerView.ShowDialog() == true)
         {
+            var listVM = new ListManagerViewModel(_mediaList);
+            var listManagerView = new ListManagerWindow(listVM);
 
-            if (listVM.SelectedItem is not null)
+            if (listManagerView.ShowDialog() == true)
             {
-                _mediaList.CurrentIndex = listVM.MediaItems.IndexOf(listVM.SelectedItem);
-                PlayItem(_mediaList.CurrentItem);
+
+                if (_mediaList.Items.Count == 0)
+                {
+                    ResetPlayer();
+                    return;
+                }
+
+                if (listVM.SelectedItem is not null)
+                {
+                    _mediaList.CurrentIndex = listVM.MediaItems.IndexOf(listVM.SelectedItem);
+                    PlayItem(_mediaList.GetCurrentItem());
+                }
             }
         }
-    }
-
 }
