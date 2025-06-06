@@ -20,24 +20,22 @@ public partial class PlayerViewModel : BaseViewModel
         MPlayer.LoadedBehavior = MediaState.Manual;
         MPlayer.MediaOpened += OnMediaOpened;        
         MPlayer.MediaEnded += OnMediaEnded;
-        MPlayer.MediaFailed += onMediaFailed;
+        MPlayer.MediaFailed += (s, e) =>
+        {
+            MessageBox.Show($"Media failed: {e.ErrorException?.Message}");
+            ResetPlayer();            
+        };
 
         GetMediaStatus();
     }
     
-    void Timer_Tick(object? sender, EventArgs e)
+    void Timer_Tick(object? s, EventArgs e)
     {
         if (MPlayer.NaturalDuration.HasTimeSpan)
             ElapsedTime = MPlayer.Position.ToString(@"mm\:ss");
     }
 
-    void onMediaFailed(object? sender, ExceptionRoutedEventArgs e)
-    {
-        MessageBox.Show($"Media failed: {e.ErrorException?.Message}");
-        ResetPlayer();        
-        e.Handled = true;
-    }        
-
+    
     void OnMediaOpened(object? sender, RoutedEventArgs e)
     {
         TotalDuration = MPlayer.NaturalDuration.TimeSpan.ToString(@"mm\:ss");
