@@ -32,10 +32,11 @@
                 </ListView.ContextMenu>                
             </ListView>
 
-            <StackPanel Orientation="Horizontal" Margin="24">
-                <Button Content="Add Files..." Command="{Binding PickMediaFilesCommand}"/>
-                <Button Content="Close" IsDefault="True" Click="CloseButton_Click" />                
-            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="4">
+                <Button Content="Add Files..." Padding="12,4" Command="{Binding PickMediaFilesCommand}"/>
+                <Button Content="_Play" Width="80" IsDefault="True" Click="CloseButton_Click" />
+                <Button Content="_Cancel" Width="80" IsCancel="True" Click="CancelButton_Click" />
+</StackPanel>
         </StackPanel>
     </Grid>
 </Window>
