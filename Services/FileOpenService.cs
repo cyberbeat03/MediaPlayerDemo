@@ -20,6 +20,7 @@ public class FileOpenService
             RestoreDirectory = true,
             Multiselect = true,
             CheckFileExists = true,
+             ValidateNames= true,
             DefaultExt = ".mp3"
         };
 

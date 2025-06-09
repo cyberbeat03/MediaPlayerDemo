@@ -7,29 +7,38 @@ public partial class InputDialog : Window
     public InputDialog()
     {
         InitializeComponent();
-        InputBox.Focus();
+        InputText.Focus();
     }
 
     bool IsValidFileName =>
-(!string.IsNullOrWhiteSpace(InputBox.Text.Trim()) && InputBox.Text.IndexOfAny(System.IO.Path.GetInvalidFileNameChars()) < 0);
+(!string.IsNullOrWhiteSpace(InputText.Text.Trim()) && InputText.Text.IndexOfAny(System.IO.Path.GetInvalidFileNameChars()) < 0);
 
-    private void OkButton_Click(object sender, RoutedEventArgs e)
+void OnSaveButtonClick(object s, RoutedEventArgs e)
     {
         try
         {
-            Response = IsValidFileName ? InputBox.Text.Trim() : throw new InvalidOperationException("Please enter a valid name");
+            Response = IsValidFileName ? InputText.Text.Trim() : throw new InvalidOperationException("Please enter a valid name");
 
             DialogResult = true;
         }
         catch (Exception ex)
         {
             MessageBox.Show(ex.Message);
-            InputBox.Focus();
+            InputText.Focus();
         }
     }
 
-    private void CancelButton_Click(object sender, RoutedEventArgs e)
+    void OnCancelButtonClick(object s, RoutedEventArgs e)
     {
         DialogResult = false;
     }
+
+    void OnPreviewTextInput(object s, System.Windows.Input.TextCompositionEventArgs e)
+    {
+        char[] invalidChars = Path.GetInvalidFileNameChars();
+
+        if (invalidChars.Any(c => e.Text.Contains(c)))        
+            e.Handled = true;        
+    }
+    
 }
