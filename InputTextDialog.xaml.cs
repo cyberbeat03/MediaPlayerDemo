@@ -1,10 +1,10 @@
 namespace WinMix;
 
-public partial class InputDialog : Window
+public partial class InputTextDialog : Window
 {
     public string Response { get; private set; } = string.Empty;
 
-    public InputDialog()
+    public InputTextDialog()
     {
         InitializeComponent();
         InputText.Focus();
