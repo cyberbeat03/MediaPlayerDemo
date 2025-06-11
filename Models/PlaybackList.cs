@@ -1,5 +1,4 @@
-﻿using Accessibility;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 
 namespace WinMix.Models;
 
@@ -72,7 +71,8 @@ return null;
 
     public void RemoveItem(MediaItem? itemToRemove)
 {
-        if (itemToRemove is null) throw new ArgumentNullException("No item to delete.");
+        if (itemToRemove is null) return;
+
         Items.Remove(itemToRemove);
         Debug.WriteLine($"After removing,  CurrentIndex is now  {CurrentIndex}  of  {Items.Count - 1}");
 
