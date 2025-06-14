@@ -26,10 +26,7 @@
     <Window.ContextMenu>
         <ContextMenu>
             <MenuItem Header="_Add Files" Command="{Binding OpenFilesCommand}"/>
-            <MenuItem Header="_Remove Current Item" Command="{Binding RemoveItemCommand}"/>
-            <MenuItem Header="_Copy To Clipboard" Command="{Binding CopyItemCommand}"/>
-            <MenuItem Header="Copy _All Items To Clipboard" Command="{Binding CopyAllItemsCommand}"/>
-            <MenuItem Header="_Paste Files from Clipboard" Command="{Binding PasteItemsCommand}"/>
+            <MenuItem Header="_Remove Current Item" Command="{Binding RemoveItemCommand}"/>                        
             <MenuItem Header="View _List Manager" Command="{Binding LoadMediaCommand}"/>
         </ContextMenu>
     </Window.ContextMenu>                    

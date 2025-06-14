@@ -2,31 +2,33 @@
 
 public class PlaylistService
 {
-    private readonly string _playlistFolder = Path.Combine(
+    private readonly string _playlistLocation = Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.MyMusic),
         "playlists");
 
-    private bool EnsurePlaylistFolder()
+    bool ValidatePlaylistLocation()
     {
         try
         {
-            if (!Directory.Exists(_playlistFolder))
-                Directory.CreateDirectory(_playlistFolder);
-            return true;
+            if (!Directory.Exists(_playlistLocation))
+                Directory.CreateDirectory(_playlistLocation);            
         }
         catch (Exception ex)
         {
-            MessageBox.Show($"Could not create or access playlist folder: {ex.Message}");
+            MessageBox.Show($"Could not create or access playlist location: {ex.Message}");
             return false;
         }
+
+        return true;
     }
 
-    public async Task<IReadOnlyList<string>> LoadAsync(string fileName)
+    public async Task<IReadOnlyList<string>> LoadAsync(string playlistName)
     {
         var outputList = new List<string>();
-        if (!EnsurePlaylistFolder()) return outputList;
 
-        var fullPath = Path.Combine(_playlistFolder, fileName);
+        if (!ValidatePlaylistLocation()) return outputList;
+
+        var fullPath = Path.Combine(_playlistLocation, playlistName);
         try
         {
             if (File.Exists(fullPath))
@@ -39,15 +41,16 @@ public class PlaylistService
         }
         catch (Exception ex)
         {
-            MessageBox.Show($"Could not load {fileName}: {ex.Message}");
+            MessageBox.Show($"Could not load {playlistName}: {ex.Message}");
         }
+
         return outputList;
     }
 
     public async Task<bool> SaveAsync(string fileName, IEnumerable<string> fileList)
     {
-        if (!EnsurePlaylistFolder()) return false;
-        var fullPath = Path.Combine(_playlistFolder, fileName);
+        if (!ValidatePlaylistLocation()) return false;
+        var fullPath = Path.Combine(_playlistLocation, fileName);
         try
         {
             var builder = new StringBuilder();

@@ -64,7 +64,7 @@ public partial class PlayerViewModel : BaseViewModel
     }    
 
     void GetMediaStatus() =>    
-         DisplayStatus = (MPlayer.Source is null) ? "There is no media loaded." : MPlayer.Source.OriginalString;    
+         DisplayStatus = (MPlayer.Source is null) ? "There is no media loaded." : _mediaList.GetCurrentItem().DisplayName;
 
     void PlayItem(MediaItem? currentItem)
     {
@@ -117,23 +117,9 @@ ElapsedTime = TimeSpan.Zero;
     void PlayPrevious() => PlayItem(_mediaList.GetPreviousItem());
 
     [RelayCommand]
-    void OpenFiles()
-    {
-        FileOpenService fileService = new();
-        IReadOnlyList<string> pickedFiles = fileService.PickMediaFiles();
-        if (pickedFiles.Count > 0)
-        {
-            _mediaList.AddItems(pickedFiles);
-            PlayItem(_mediaList.GetCurrentItem());
-        }        
-    }
-
-    [RelayCommand]
     void RemoveItem()
-    {
-        MediaItem? item = _mediaList.GetCurrentItem();
-
-        if (item is not null)
+    {       
+        if (_mediaList.GetCurrentItem() is MediaItem item)
         {
             _mediaList.RemoveItem(item);            
 
@@ -148,44 +134,14 @@ ElapsedTime = TimeSpan.Zero;
     }
 
     [RelayCommand]
-    void CopyItem()
+    void OpenFiles()
     {
-        MediaItem? currentItem = _mediaList.GetCurrentItem();
-
-        if (currentItem is MediaItem item)
+        FileOpenService fileService = new();
+        IReadOnlyList<string> pickedFiles = fileService.PickMediaFiles();
+        if (pickedFiles.Count > 0)
         {
-            ClipBoardService clipboard = new();
-            clipboard.Copy(item.FullPath);            
-        }
-        else            
-            MessageBox.Show("There is no media to copy.");        
-    }
-
-    [RelayCommand]
-    void CopyAllItems()
-    {
-        if (_mediaList.Items.Count > 0)
-        {
-            List<string> filePaths = new();
-
-            foreach (var item in _mediaList.Items)
-                filePaths.Add(item.FullPath);
-
-            ClipBoardService clipboard = new();
-            clipboard.CopyAll(filePaths);            
-        }
-        else        
-            MessageBox.Show("There are no items to copy.");        
-    }
-
-    [RelayCommand]
-    void PasteItems()
-    {
-        ClipBoardService clipBoard = new();
-        IReadOnlyList<string>? returnedFiles = clipBoard.Paste();
-        if (returnedFiles is not null)
-        {
-            _mediaList.AddItems(returnedFiles);            
+            _mediaList.AddItems(pickedFiles);
+            PlayItem(_mediaList.GetCurrentItem());
         }
     }
 
@@ -195,8 +151,7 @@ ElapsedTime = TimeSpan.Zero;
             var listVM = new ListManagerViewModel(_mediaList);
             var listManagerView = new ListManagerWindow(listVM);
 
-            if (listManagerView.ShowDialog() == true)
-            {
+        listManagerView.ShowDialog();            
 
                 if (_mediaList.Items.Count == 0)
                 {
@@ -208,7 +163,7 @@ ElapsedTime = TimeSpan.Zero;
                 {
                     _mediaList.CurrentIndex = listVM.MediaItems.IndexOf(listVM.SelectedItem);
                     PlayItem(_mediaList.GetCurrentItem());
-                }
-            }
+                }            
         }
+
 }
