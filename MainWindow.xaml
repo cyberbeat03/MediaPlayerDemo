@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"       
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WinMix"
         mc:Ignorable="d"
         Title="{Binding AppTitle}" WindowStartupLocation="CenterScreen" Height="600" Width="800" Loaded="Window_Loaded" Closing="Window_Closing">
 
@@ -11,11 +12,13 @@
             <Setter Property="Height" Value="25"/>
             <Setter Property="Width" Value="50"/>
             <Setter Property="Margin" Value="10"/>
-            </Style>        
-        </Window.Resources>
+            </Style>
+
+        <local:TimeSpanToStringConverter x:Key="TimeSpanToString"/>
+    </Window.Resources>
 
         <Window.InputBindings>        
-        <KeyBinding Gesture="Escape" Command="{Binding PauseCommand}"/>
+        <KeyBinding Gesture="Escape" Command="{Binding StopCommand}"/>
         <KeyBinding Gesture="F6" Command="{Binding LoadMediaCommand}"/>
         <KeyBinding Gesture="Ctrl+O" Command="{Binding OpenFilesCommand}"/>        
     </Window.InputBindings>
@@ -34,12 +37,12 @@
     <Grid>
          <StackPanel Margin="4" HorizontalAlignment="Center">
             <StackPanel Orientation="Horizontal">
-                <TextBlock Text="Media Player Status" FontSize="16"/>
+                <TextBlock Text="Current Item:" FontSize="16"/>
                                 <TextBox x:Name="StatusText" IsReadOnly="True" IsReadOnlyCaretVisible="True" Text="{Binding DisplayStatus}" Height="25" Width="150"/>
                 <Button Content="_Load Media..." Width="100" Height="25" Command="{Binding OpenFilesCommand}"/>                
             </StackPanel>
-            <TextBlock Text="{Binding ElapsedTime}" Focusable="True" Width="50" Height="25"/>
-            <TextBlock Text="{Binding TotalDuration}" Focusable="True" Width="50" Height="25"/>            
+            <TextBlock Text="{Binding ElapsedTime, Converter={StaticResource TimeSpanToString}}" Focusable="True" Width="50" Height="25"/>
+            <TextBlock Text="{Binding TotalDuration, Converter={StaticResource TimeSpanToString}}" Focusable="True" Width="50" Height="25"/>            
             
             <CheckBox Content="Repeat Mode" IsChecked="{Binding CanRepeat}" Margin="24"/>
             <ContentControl Content="{Binding MPlayer}" Focusable="False" MinHeight="300" MinWidth="450" Background="Black"/>

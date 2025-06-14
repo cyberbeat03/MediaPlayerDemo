@@ -5,8 +5,8 @@ public partial class PlayerViewModel : BaseViewModel
     [ObservableProperty] MediaElement _mPlayer = new();    
     [ObservableProperty] bool _canRepeat = false;
     [ObservableProperty] string _displayStatus = string.Empty;
-    [ObservableProperty] string _totalDuration = "00:00";
-    [ObservableProperty] string _elapsedTime = "00:00";
+    [ObservableProperty] TimeSpan _totalDuration;
+    [ObservableProperty] TimeSpan _elapsedTime;
     PlaybackList _mediaList;
     DispatcherTimer _timer;
 
@@ -32,12 +32,12 @@ public partial class PlayerViewModel : BaseViewModel
     void Timer_Tick(object? s, EventArgs e)
     {
         if (MPlayer.NaturalDuration.HasTimeSpan)
-            ElapsedTime = MPlayer.Position.ToString(@"mm\:ss");
+            ElapsedTime = MPlayer.Position;
     }
     
     void OnMediaOpened(object? sender, RoutedEventArgs e)
     {
-        TotalDuration = MPlayer.NaturalDuration.TimeSpan.ToString(@"mm\:ss");
+        TotalDuration = MPlayer.NaturalDuration.TimeSpan;
         _timer.Start();
     }
 
@@ -45,7 +45,7 @@ public partial class PlayerViewModel : BaseViewModel
     {
         _timer.Stop();
         MPlayer.Stop();
-        ElapsedTime = "00:00";
+        ElapsedTime = TimeSpan.Zero;
         if (CanRepeat)
             Play();
         else
@@ -58,8 +58,8 @@ public partial class PlayerViewModel : BaseViewModel
         _timer.Stop();
         MPlayer.Stop();
         MPlayer.Source = null;
-        ElapsedTime = "00:00";
-        TotalDuration = "00:00";        
+        ElapsedTime = TimeSpan.Zero;
+        TotalDuration = TimeSpan.Zero;        
         GetMediaStatus();
     }    
 
@@ -100,7 +100,7 @@ public partial class PlayerViewModel : BaseViewModel
         {
             _timer.IsEnabled = false;
             MPlayer.Stop();
-ElapsedTime = "00:00";  
+ElapsedTime = TimeSpan.Zero;  
         }
 }
 
