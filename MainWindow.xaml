@@ -44,9 +44,10 @@
             <CheckBox Content="Repeat Mode" IsChecked="{Binding CanRepeat}" Margin="24"/>
             <ContentControl Content="{Binding MPlayer}" Focusable="False" MinHeight="300" MinWidth="450" Background="Black"/>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="24">
-                <Button Content="_Play" Style="{StaticResource TransportButton}" Command="{Binding PlayCommand}" />
-                <Button Content="_Rewind" Style="{StaticResource TransportButton}" Command="{Binding RewindCommand}" />
+                <Button Content="_Play" Style="{StaticResource TransportButton}" Command="{Binding PlayCommand}" />                
                 <Button Content="Pa_use" Style="{StaticResource TransportButton}" Command="{Binding PauseCommand}" />
+                <Button Content="_Stop" Style="{StaticResource TransportButton}" Command="{Binding StopCommand}" />
+                <Button Content="_Rewind" Style="{StaticResource TransportButton}" Command="{Binding RewindCommand}" />
                 <Button Content="_Fast Forward" Style="{StaticResource TransportButton}" Command="{Binding FastForwardCommand}" />
                 <Button Content="Pre_vious" Style="{StaticResource TransportButton}" Command="{Binding PlayPreviousCommand}"/>
                 <Button Content="_Next" Style="{StaticResource TransportButton}" Command="{Binding PlayNextCommand}"/>

@@ -34,7 +34,6 @@ public partial class PlayerViewModel : BaseViewModel
         if (MPlayer.NaturalDuration.HasTimeSpan)
             ElapsedTime = MPlayer.Position.ToString(@"mm\:ss");
     }
-
     
     void OnMediaOpened(object? sender, RoutedEventArgs e)
     {
@@ -93,6 +92,17 @@ public partial class PlayerViewModel : BaseViewModel
             MPlayer.Pause();
         }
     }
+
+    [RelayCommand]
+    void Stop()
+    {
+        if (MPlayer.Source is not null)
+        {
+            _timer.IsEnabled = false;
+            MPlayer.Stop();
+ElapsedTime = "00:00";  
+        }
+}
 
     [RelayCommand]
     void Rewind() => MPlayer.Position -= TimeSpan.FromSeconds(10);
