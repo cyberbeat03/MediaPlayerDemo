@@ -1,4 +1,6 @@
-﻿namespace WinMix.Services;
+﻿using System.Xml.Linq;
+
+namespace WinMix.Services;
 
 public class PlaylistService
 {
@@ -11,7 +13,7 @@ public class PlaylistService
         try
         {
             if (!Directory.Exists(_playlistLocation))
-                Directory.CreateDirectory(_playlistLocation);            
+                Directory.CreateDirectory(_playlistLocation);
         }
         catch (Exception ex)
         {
@@ -22,7 +24,7 @@ public class PlaylistService
         return true;
     }
 
-    public async Task<IReadOnlyList<string>> LoadAsync(string playlistName)
+    public async Task<IReadOnlyList<string>> LoadM3U8Async(string playlistName)
     {
         var outputList = new List<string>();
 
@@ -47,7 +49,7 @@ public class PlaylistService
         return outputList;
     }
 
-    public async Task<bool> SaveAsync(string fileName, IEnumerable<string> fileList)
+    public async Task<bool> SaveToM3U8Async(string fileName, IEnumerable<string> fileList)
     {
         if (!ValidatePlaylistLocation()) return false;
         var fullPath = Path.Combine(_playlistLocation, fileName);
@@ -67,4 +69,31 @@ public class PlaylistService
             return false;
         }
     }
+
+    public async Task<IReadOnlyList<string>> ConvertWplToM3u8Async(string wplPath)
+    {
+        var outputList = new List<string>();
+        if (!ValidatePlaylistLocation()) return outputList;
+
+        if (!File.Exists(wplPath)) return outputList;
+        
+            XDocument doc = XDocument.Load(wplPath);
+
+            string basePath = Path.GetDirectoryName(wplPath)!;
+
+            var mediaElements = doc.Descendants("media");
+
+        foreach (var media in mediaElements)
+        {
+            string? src = media.Attribute("src")?.Value;
+            if (!string.IsNullOrWhiteSpace(src))
+            {                
+                string fullPath = Path.GetFullPath(Path.Combine(basePath, src));
+                outputList.Add(fullPath);
+            }
+        }
+
+        return outputList;
+    }
+
 }

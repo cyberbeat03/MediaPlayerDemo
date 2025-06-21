@@ -19,7 +19,7 @@ public partial class ListManagerViewModel : BaseViewModel
     {
         PlaylistService listService = new();
 
-        IReadOnlyList<string> files = await listService.LoadAsync(fileName);
+        IReadOnlyList<string> files = await listService.LoadM3U8Async(fileName);
 
         if (files.Count > 0)
         {
@@ -38,7 +38,7 @@ public partial class ListManagerViewModel : BaseViewModel
                 filePaths.Add(item.FullPath);
 
             PlaylistService listService = new();
-            await listService.SaveAsync(fileName, filePaths);
+            await listService.SaveToM3U8Async(fileName, filePaths);
         }
     }
 
