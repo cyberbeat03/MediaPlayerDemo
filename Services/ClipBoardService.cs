@@ -5,17 +5,18 @@ namespace WinMix.Services;
 public class ClipBoardService
 {
     public bool Copy(string mediaPath)
-    {        
+    {                
         try
-        {            
+        {                    
             StringCollection dropFiles = new();
             dropFiles.Add(mediaPath);
             Clipboard.SetFileDropList(dropFiles);
+            MessageBox.Show($"File '{mediaPath}' was copied to the clipboard.");    
             return true;
         }
         catch (Exception ex)
         {
-            MessageBox.Show($"Could not copy the file '{Path.GetFileName(mediaPath)}' to the clipboard.{Environment.NewLine}{ex.Message}");
+            MessageBox.Show(ex.Message);
             return false;
         }
     }

@@ -1,14 +1,12 @@
 ﻿namespace WinMix;
 
 public partial class MainWindow : Window
-{
-    PlayerViewModel viewmodel = new PlayerViewModel(new PlaybackList());
-
+{    
     public MainWindow()
     {        
         InitializeComponent();
-        DataContext = viewmodel;
-        StatusText.Focus();
+        DataContext = new PlayerViewModel(new PlaybackList());
+MediaItemsList        .Focus();
     }
 
     private void Window_Loaded(object sender, RoutedEventArgs e)

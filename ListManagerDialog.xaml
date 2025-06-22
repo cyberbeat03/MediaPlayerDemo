@@ -8,34 +8,7 @@
         Title="PlaylistManager" Height="610" Width="500" WindowStartupLocation="CenterScreen">
     
     <Grid>
-        <StackPanel Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="24">
-            <TextBlock Text="Media Items" FontSize="16"/>
-            <ListView x:Name="MediaListView" ItemsSource="{Binding MediaItems}" SelectedItem="{Binding SelectedItem, Mode=TwoWay}" MinHeight="400" IsTabStop="True" SelectionMode="Single">
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <StackPanel Margin="10">
-                            <TextBlock Text="{Binding DisplayName}"/>
-                            <TextBlock Text="{Binding LastAccessed}"/>
-                        </StackPanel>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
 
-                <ListView.ContextMenu>
-                    <ContextMenu>
-                        <MenuItem Header="_Remove" Command="{Binding RemoveItemCommand}"/>
-                        <MenuItem Header="Move _Up" Command="{Binding MoveItemUpCommand}"/>
-                        <MenuItem Header="Move _Down" Command="{Binding MoveItemDownCommand}"/>
-                        <MenuItem Header="_Copy" Command="{Binding CopyItemCommand}"/>
-                        <MenuItem Header="Copy _All" Command="{Binding CopyAllItemsCommand}"/>
-                        <MenuItem Header="_Paste" Command="{Binding PasteItemsCommand}"/>
-                    </ContextMenu>
-                </ListView.ContextMenu>                
-            </ListView>
-
-            <StackPanel Orientation="Horizontal" Margin="4">
-                <Button Content="Add Files..." Padding="12,4" Command="{Binding PickMediaFilesCommand}"/>
-                <Button Content="_Close" IsDefault="True" Click="CloseButton_Click" />                
-</StackPanel>
-        </StackPanel>
+        
     </Grid>
 </Window>

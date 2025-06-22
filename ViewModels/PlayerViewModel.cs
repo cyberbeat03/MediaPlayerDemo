@@ -2,13 +2,10 @@
 
 public partial class PlayerViewModel : BaseViewModel
 {
-    [ObservableProperty] MediaElement _mPlayer = new();    
-    [ObservableProperty] bool _canRepeat = false;
-    [ObservableProperty] string _displayStatus = string.Empty;
-    [ObservableProperty] TimeSpan _totalDuration;
-    [ObservableProperty] TimeSpan _elapsedTime;
-    PlaybackList _mediaList;
     DispatcherTimer _timer;
+    PlaybackList _mediaList;
+
+public     ObservableCollection<MediaItem> MediaItems => _mediaList.Items;
 
     public PlayerViewModel(PlaybackList playbackList)
     {        
@@ -119,7 +116,7 @@ ElapsedTime = TimeSpan.Zero;
     [RelayCommand]
     void RemoveItem()
     {       
-        if (_mediaList.GetCurrentItem() is MediaItem item)
+        if (SelectedItem is MediaItem item)
         {
             _mediaList.RemoveItem(item);            
 
@@ -129,41 +126,92 @@ ElapsedTime = TimeSpan.Zero;
                     return;
                 }
 
-            PlayItem(_mediaList.GetCurrentItem());
+            //PlayItem(_mediaList.GetCurrentItem());
         }
     }
 
     [RelayCommand]
-    void OpenFiles()
+    void PickFiles()
     {
-        FileOpenService fileService = new();
-        IReadOnlyList<string> pickedFiles = fileService.PickMediaFiles();
+        var pickedFiles = new FileOpenService().PickMediaFiles();
+
         if (pickedFiles.Count > 0)
-        {
             _mediaList.AddItems(pickedFiles);
-            PlayItem(_mediaList.GetCurrentItem());
+    }
+
+    [RelayCommand]
+    void MoveItemUp()
+    {
+        if (SelectedItem is MediaItem item)
+        {
+            int currentPosition = MediaItems.IndexOf(item);
+            if (currentPosition > 0)
+                MediaItems.Move(currentPosition, currentPosition - 1);
         }
     }
 
     [RelayCommand]
-    void LoadMedia()
+    void MoveItemDown()
+    {
+        if (SelectedItem is MediaItem item)
         {
-            var listVM = new ListManagerViewModel(_mediaList);
-            var listManagerView = new ListManagerWindow(listVM);
+            int currentPosition = MediaItems.IndexOf(item);
 
-        listManagerView.ShowDialog();            
-
-                if (_mediaList.Items.Count == 0)
-                {
-                    ResetPlayer();
-                    return;
-                }
-
-                if (listVM.SelectedItem is not null)
-                {
-                    _mediaList.CurrentIndex = listVM.MediaItems.IndexOf(listVM.SelectedItem);
-                    PlayItem(_mediaList.GetCurrentItem());
-                }            
+            if (currentPosition < MediaItems.Count - 1)
+                MediaItems.Move(currentPosition, currentPosition + 1);
         }
+    }
 
+    [RelayCommand]
+    void CopyItem()
+    {
+        if (SelectedItem is MediaItem item)
+        new ClipBoardService().Copy(item.FullPath);
+        else
+            MessageBox.Show("There is no media item selected.");
+    }
+
+    [RelayCommand]
+    void CopyAllItems()
+    {
+        if (MediaItems.Count > 0)
+        {
+            List<string> filePaths = new();
+
+            foreach (var item in MediaItems)
+                filePaths.Add(item.FullPath);
+
+            new ClipBoardService().CopyAll(filePaths);            
+        }
+        else
+            MessageBox.Show("There are no media items to copy.");
+    }
+
+    [RelayCommand]
+    void PasteItems()
+    {
+        ClipBoardService clipBoard = new();
+var files = clipBoard.Paste();
+
+        if (files is not null)
+            _mediaList.AddItems(files);        
+    }
+
+    [RelayCommand]
+    void LoadPlaylist()
+    {
+        var listVM = new ListManagerViewModel();
+        var listManagerView = new ListManagerWindow(listVM);
+
+        if (listManagerView.ShowDialog() == true) 
+        {            
+                _mediaList.Items.Clear();            
+        }
+    }
+
+    [RelayCommand]
+    void SavePlaylist()
+{
+
+}
 }

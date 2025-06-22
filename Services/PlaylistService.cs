@@ -24,18 +24,15 @@ public class PlaylistService
         return true;
     }
 
-    public async Task<IReadOnlyList<string>> LoadM3U8Async(string playlistName)
+    public async Task<IReadOnlyList<string>> LoadM3UAsync(string playlistFilePath)
     {
-        var outputList = new List<string>();
-
-        if (!ValidatePlaylistLocation()) return outputList;
-
-        var fullPath = Path.Combine(_playlistLocation, playlistName);
+        var outputList = new List<string>();        
+        
         try
         {
-            if (File.Exists(fullPath))
+            if (File.Exists(playlistFilePath))
             {
-                var lines = await File.ReadAllLinesAsync(fullPath);
+                var lines = await File.ReadAllLinesAsync(playlistFilePath);
                 foreach (var line in lines)
                     if (!string.IsNullOrWhiteSpace(line) && !line.StartsWith("#"))
                         outputList.Add(line.Trim());
@@ -43,16 +40,17 @@ public class PlaylistService
         }
         catch (Exception ex)
         {
-            MessageBox.Show($"Could not load {playlistName}: {ex.Message}");
+            MessageBox.Show($"Could not load playlist: {ex.Message}");
+            return outputList;
         }
 
         return outputList;
     }
 
-    public async Task<bool> SaveToM3U8Async(string fileName, IEnumerable<string> fileList)
+    public async Task<bool> SaveToM3UAsync(string playlistName, IEnumerable<string> fileList)
     {
         if (!ValidatePlaylistLocation()) return false;
-        var fullPath = Path.Combine(_playlistLocation, fileName);
+        var fullPath = Path.Combine(_playlistLocation, playlistName);
         try
         {
             var builder = new StringBuilder();
@@ -70,10 +68,9 @@ public class PlaylistService
         }
     }
 
-    public async Task<IReadOnlyList<string>> ConvertWplToM3u8Async(string wplPath)
+    public IReadOnlyList<string> ConvertWplToM3u(string wplPath)
     {
-        var outputList = new List<string>();
-        if (!ValidatePlaylistLocation()) return outputList;
+        var outputList = new List<string>();        
 
         if (!File.Exists(wplPath)) return outputList;
         

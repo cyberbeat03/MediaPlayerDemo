@@ -14,36 +14,59 @@
             <Setter Property="Margin" Value="10"/>
             </Style>
 
+        <DataTemplate x:Key="MediaItemLayout">
+            <StackPanel Margin="10">
+                <TextBlock Text="{Binding DisplayName}"/>
+                <TextBlock Text="{Binding LastAccessed}"/>
+            </StackPanel>
+        </DataTemplate>
+
         <local:TimeSpanToStringConverter x:Key="TimeSpanToString"/>
     </Window.Resources>
 
         <Window.InputBindings>        
-        <KeyBinding Gesture="Escape" Command="{Binding StopCommand}"/>
-        <KeyBinding Gesture="F6" Command="{Binding LoadMediaCommand}"/>
-        <KeyBinding Gesture="Ctrl+O" Command="{Binding OpenFilesCommand}"/>        
+        <KeyBinding Gesture="Escape" Command="{Binding StopCommand}"/>        
+        <KeyBinding Gesture="Ctrl+O" Command="{Binding PickFilesCommand}"/>        
     </Window.InputBindings>
-
-    <Window.ContextMenu>
-        <ContextMenu>
-            <MenuItem Header="_Add Files" Command="{Binding OpenFilesCommand}"/>
-            <MenuItem Header="_Remove Current Item" Command="{Binding RemoveItemCommand}"/>                        
-            <MenuItem Header="View _List Manager" Command="{Binding LoadMediaCommand}"/>
-        </ContextMenu>
-    </Window.ContextMenu>                    
     
     <Grid>
-         <StackPanel Margin="4" HorizontalAlignment="Center">
-            <StackPanel Orientation="Horizontal">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition MaxWidth="300"/>
+            <ColumnDefinition Width="*"/>            
+        </Grid.ColumnDefinitions>
+
+        <StackPanel x:Name="MediaList" Grid.Column="0" VerticalAlignment="Center" Margin="24">
+            <TextBlock Text="Media Items" FontSize="16"/>
+            <ListView x:Name="MediaItemsList" ItemsSource="{Binding MediaItems}" SelectedItem="{Binding SelectedItem, Mode=TwoWay}" MinHeight="400" IsTabStop="True" SelectionMode="Single" ItemTemplate="{StaticResource MediaItemLayout}">
+                <ListView.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="_Add" Command="{Binding PickFilesCommand}"/>
+                        <MenuItem Header="_Remove" Command="{Binding RemoveItemCommand}"/>
+                        <MenuItem Header="Move _Up" Command="{Binding MoveItemUpCommand}"/>
+                        <MenuItem Header="Move _Down" Command="{Binding MoveItemDownCommand}"/>
+                        <MenuItem Header="_Copy" Command="{Binding CopyItemCommand}"/>
+                        <MenuItem Header="Copy _All" Command="{Binding CopyAllItemsCommand}"/>
+                        <MenuItem Header="_Paste" Command="{Binding PasteItemsCommand}"/>
+                        <MenuItem Header="_Load Playlist" Command="{Binding LoadPlaylistCommand}"/>
+                        <MenuItem Header="_Save Playlist" Command="{Binding SavePlaylistCommand}"/>
+                    </ContextMenu>
+                </ListView.ContextMenu>
+            </ListView>
+        </StackPanel>        
+        
+            <StackPanel x:Name="CurrentItemStatus" Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Top" Margin="24">
                 <TextBlock Text="Current Item:" FontSize="16"/>
-                                <TextBox x:Name="StatusText" IsReadOnly="True" IsReadOnlyCaretVisible="True" Text="{Binding DisplayStatus}" Height="25" Width="150"/>
-                <Button Content="_Load Media..." Width="100" Height="25" Command="{Binding OpenFilesCommand}"/>                
+                                <TextBox IsReadOnly="True" IsReadOnlyCaretVisible="True" Text="{Binding DisplayStatus}" Height="25" Width="150"/>
+                <Button Content="_Add Files..." Width="100" Height="25" HorizontalAlignment="Right" Command="{Binding PickFilesCommand}"/>              
             </StackPanel>
-            <TextBlock Text="{Binding ElapsedTime, Converter={StaticResource TimeSpanToString}}" Focusable="True" Width="50" Height="25"/>
-            <TextBlock Text="{Binding TotalDuration, Converter={StaticResource TimeSpanToString}}" Focusable="True" Width="50" Height="25"/>            
-            
-            <CheckBox Content="Repeat Mode" IsChecked="{Binding CanRepeat}" Margin="24"/>
-            <ContentControl Content="{Binding MPlayer}" Focusable="False" MinHeight="300" MinWidth="450" Background="Black"/>
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="24">
+                
+                <StackPanel x:Name="MainPlayer" Grid.Column="1" Margin="4">
+                    <TextBlock Text="{Binding ElapsedTime, Converter={StaticResource TimeSpanToString}}" Focusable="True" Width="50" Height="25"/>
+            <TextBlock Text="{Binding TotalDuration, Converter={StaticResource TimeSpanToString}}" Focusable="True" Width="50" Height="25"/>
+                <ContentControl Content="{Binding MPlayer}" Focusable="False" MinHeight="300" MinWidth="450" Background="Black"/>
+                <CheckBox Content="Repeat Mode" IsChecked="{Binding CanRepeat}" Margin="24"/>            
+                    
+            <StackPanel x:Name="TransportControls" Orientation="Horizontal" HorizontalAlignment="Center" Margin="24">
                 <Button Content="_Play" Style="{StaticResource TransportButton}" Command="{Binding PlayCommand}" />                
                 <Button Content="Pa_use" Style="{StaticResource TransportButton}" Command="{Binding PauseCommand}" />
                 <Button Content="_Stop" Style="{StaticResource TransportButton}" Command="{Binding StopCommand}" />
@@ -51,7 +74,7 @@
                 <Button Content="_Fast Forward" Style="{StaticResource TransportButton}" Command="{Binding FastForwardCommand}" />
                 <Button Content="Pre_vious" Style="{StaticResource TransportButton}" Command="{Binding PlayPreviousCommand}"/>
                 <Button Content="_Next" Style="{StaticResource TransportButton}" Command="{Binding PlayNextCommand}"/>
-            </StackPanel>        
-        </StackPanel>
+            </StackPanel>
+                </StackPanel>
     </Grid>
 </Window>

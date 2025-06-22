@@ -18,7 +18,6 @@ void OnSaveButtonClick(object s, RoutedEventArgs e)
         try
         {
             Response = IsValidFileName ? InputText.Text.Trim() : throw new InvalidOperationException("Please enter a valid name");
-
             DialogResult = true;
         }
         catch (Exception ex)

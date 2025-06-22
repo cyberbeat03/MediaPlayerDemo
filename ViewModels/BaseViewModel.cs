@@ -1,6 +1,12 @@
 ﻿namespace WinMix.ViewModels;
 
 public partial class BaseViewModel : ObservableObject
-{    
-[ObservableProperty] string _appTitle = "WinMix Desktop Player";
+{
+    [ObservableProperty] MediaElement _mPlayer = new();
+    [ObservableProperty] bool _canRepeat = false;
+    [ObservableProperty] string _displayStatus = string.Empty;
+    [ObservableProperty] TimeSpan _totalDuration;
+    [ObservableProperty] TimeSpan _elapsedTime;
+    [ObservableProperty] string _appTitle = "WinMix Desktop Player";
+    [ObservableProperty] MediaItem? _selectedItem;
 }

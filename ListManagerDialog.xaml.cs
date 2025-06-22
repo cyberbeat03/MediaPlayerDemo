@@ -6,7 +6,6 @@ public partial class ListManagerWindow : Window
     {
         InitializeComponent();
         DataContext = viewModel;
-        MediaListView.Focus();
     }    
 
     private void CloseButton_Click(object sender, RoutedEventArgs e)
