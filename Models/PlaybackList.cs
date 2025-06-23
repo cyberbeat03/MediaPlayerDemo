@@ -30,7 +30,7 @@ public class PlaybackList
     public PlaybackList()
     {
         _items = new();
-        _currentIndex = 0;
+        _currentIndex = -1;
     }
 
     private bool IsIndexValid(int index) =>
@@ -67,6 +67,14 @@ return null;
     {
         foreach (string mediaFile in mediaFiles)
             Items.Add(new MediaItem(new FileInfo(mediaFile)));        
+
+        if (CurrentIndex <= -1 && Items.Count > 0)
+        {
+            CurrentIndex = 0;
+            Debug.WriteLine($"After adding files, CurrentIndex was set to {CurrentIndex} of {Items.Count - 1}");
+        }
+        else        
+            Debug.WriteLine($"CurrentIndex remains at {CurrentIndex} of {Items.Count - 1}");        
     }
 
     public void RemoveItem(MediaItem? itemToRemove)
@@ -74,7 +82,7 @@ return null;
         if (itemToRemove is null) return;
 
         Items.Remove(itemToRemove);
-        Debug.WriteLine($"After removing,  CurrentIndex is now  {CurrentIndex}  of  {Items.Count - 1}");
+        Debug.WriteLine($"After removing {itemToRemove.DisplayName},  CurrentIndex is now  {CurrentIndex}  of  {Items.Count - 1}");
 
         if (CurrentIndex >= Items.Count)
         {

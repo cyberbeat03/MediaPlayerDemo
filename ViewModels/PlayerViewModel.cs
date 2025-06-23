@@ -3,35 +3,36 @@
 public partial class PlayerViewModel : BaseViewModel
 {
     DispatcherTimer _timer;
-    PlaybackList _mediaList;
+    PlaybackList _playlist;
+    bool IsMediaLoaded => MPlayer.Source is not null;
 
-public     ObservableCollection<MediaItem> MediaItems => _mediaList.Items;
+    public ObservableCollection<MediaItem> MediaItems => _playlist.Items;
 
     public PlayerViewModel(PlaybackList playbackList)
-    {        
-        _mediaList = playbackList;
+    {
+        _playlist = playbackList;
         _timer = new();
         _timer.Interval = TimeSpan.FromSeconds(1);
         _timer.Tick += Timer_Tick;
 
         MPlayer.LoadedBehavior = MediaState.Manual;
-        MPlayer.MediaOpened += OnMediaOpened;        
+        MPlayer.MediaOpened += OnMediaOpened;
         MPlayer.MediaEnded += OnMediaEnded;
         MPlayer.MediaFailed += (s, e) =>
         {
             MessageBox.Show($"Media failed: {e.ErrorException?.Message}");
-            ResetPlayer();            
-        };
+            ResetPlayer();
+        };   
 
         GetMediaStatus();
     }
-    
+
     void Timer_Tick(object? s, EventArgs e)
     {
         if (MPlayer.NaturalDuration.HasTimeSpan)
             ElapsedTime = MPlayer.Position;
     }
-    
+
     void OnMediaOpened(object? sender, RoutedEventArgs e)
     {
         TotalDuration = MPlayer.NaturalDuration.TimeSpan;
@@ -46,24 +47,24 @@ public     ObservableCollection<MediaItem> MediaItems => _mediaList.Items;
         if (CanRepeat)
             Play();
         else
-            PlayNext();            
+            PlayNext();
     }
+
+    void GetMediaStatus() =>
+         DisplayStatus = IsMediaLoaded ? _playlist.GetCurrentItem().DisplayName : "There is no media loaded.";
 
     void ResetPlayer()
     {
-        _mediaList.CurrentIndex = 0;
+        _playlist.CurrentIndex = -1;
         _timer.Stop();
         MPlayer.Stop();
         MPlayer.Source = null;
         ElapsedTime = TimeSpan.Zero;
-        TotalDuration = TimeSpan.Zero;        
+        TotalDuration = TimeSpan.Zero;
         GetMediaStatus();
-    }    
-
-    void GetMediaStatus() =>    
-         DisplayStatus = (MPlayer.Source is null) ? "There is no media loaded." : _mediaList.GetCurrentItem().DisplayName;
-
-    void PlayItem(MediaItem? currentItem)
+    }        
+        
+        void PlayItem(MediaItem? currentItem)
     {
         if ((currentItem is not null) && (MPlayer.Source != currentItem.UriPath))
         {
@@ -75,11 +76,22 @@ public     ObservableCollection<MediaItem> MediaItems => _mediaList.Items;
 
     [RelayCommand]
     void Play()
-    {        
-            _timer.IsEnabled = true;
-            MPlayer.Play();        
+    {
+        _timer.IsEnabled = true;
+        MPlayer.Play();
     }
 
+    [RelayCommand]
+    void PlaySelected()
+    {
+        if (SelectedItem is MediaItem item)
+        {
+            int currentPosition = MediaItems.IndexOf(item);
+            _playlist.CurrentIndex = currentPosition;
+            PlayItem(item);
+        }
+    }
+    
     [RelayCommand]
     void Pause()
     {
@@ -97,9 +109,9 @@ public     ObservableCollection<MediaItem> MediaItems => _mediaList.Items;
         {
             _timer.IsEnabled = false;
             MPlayer.Stop();
-ElapsedTime = TimeSpan.Zero;  
+            ElapsedTime = TimeSpan.Zero;
         }
-}
+    }
 
     [RelayCommand]
     void Rewind() => MPlayer.Position -= TimeSpan.FromSeconds(10);
@@ -108,24 +120,26 @@ ElapsedTime = TimeSpan.Zero;
     void FastForward() => MPlayer.Position += TimeSpan.FromSeconds(10);
 
     [RelayCommand]
-    void PlayNext() => PlayItem(_mediaList.GetNextItem());
+    void PlayNext() => PlayItem(_playlist.GetNextItem());
 
     [RelayCommand]
-    void PlayPrevious() => PlayItem(_mediaList.GetPreviousItem());
+    void PlayPrevious() => PlayItem(_playlist.GetPreviousItem());
 
     [RelayCommand]
     void RemoveItem()
-    {       
+    {
         if (SelectedItem is MediaItem item)
         {
-            _mediaList.RemoveItem(item);            
+            _playlist.RemoveItem(item);
+            
+            
+            if (IsMediaLoaded && _playlist.CurrentIndex == -1)
+            {
+                ResetPlayer();
+                return;
+            }                        
 
-            if (_mediaList.Items.Count == 0)
-                {
-                    ResetPlayer();
-                    return;
-                }
-
+                
             //PlayItem(_mediaList.GetCurrentItem());
         }
     }
@@ -136,7 +150,8 @@ ElapsedTime = TimeSpan.Zero;
         var pickedFiles = new FileOpenService().PickMediaFiles();
 
         if (pickedFiles.Count > 0)
-            _mediaList.AddItems(pickedFiles);
+            _playlist.AddItems(pickedFiles);
+        PlayItem(_playlist.GetCurrentItem());
     }
 
     [RelayCommand]
@@ -166,7 +181,7 @@ ElapsedTime = TimeSpan.Zero;
     void CopyItem()
     {
         if (SelectedItem is MediaItem item)
-        new ClipBoardService().Copy(item.FullPath);
+            new ClipBoardService().Copy(item.FullPath);
         else
             MessageBox.Show("There is no media item selected.");
     }
@@ -181,7 +196,7 @@ ElapsedTime = TimeSpan.Zero;
             foreach (var item in MediaItems)
                 filePaths.Add(item.FullPath);
 
-            new ClipBoardService().CopyAll(filePaths);            
+            new ClipBoardService().CopyAll(filePaths);
         }
         else
             MessageBox.Show("There are no media items to copy.");
@@ -191,27 +206,26 @@ ElapsedTime = TimeSpan.Zero;
     void PasteItems()
     {
         ClipBoardService clipBoard = new();
-var files = clipBoard.Paste();
+        var files = clipBoard.Paste();
 
         if (files is not null)
-            _mediaList.AddItems(files);        
+            _playlist.AddItems(files);
     }
 
     [RelayCommand]
     void LoadPlaylist()
     {
         var listVM = new ListManagerViewModel();
-        var listManagerView = new ListManagerWindow(listVM);
+        var listManager = new ListManagerWindow(listVM);
 
-        if (listManagerView.ShowDialog() == true) 
-        {            
-                _mediaList.Items.Clear();            
-        }
+        if (listManager.ShowDialog() == true        )
+            _playlist.Items.Clear();        
     }
 
     [RelayCommand]
     void SavePlaylist()
-{
+    {
 
-}
+    }
+
 }

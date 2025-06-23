@@ -6,7 +6,7 @@ public partial class MainWindow : Window
     {        
         InitializeComponent();
         DataContext = new PlayerViewModel(new PlaybackList());
-MediaItemsList        .Focus();
+        MediaItemsList.Focus();
     }
 
     private void Window_Loaded(object sender, RoutedEventArgs e)
