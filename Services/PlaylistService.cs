@@ -1,4 +1,5 @@
 ﻿using System.Xml.Linq;
+using System.Text.Json;
 
 namespace WinMix.Services;
 
@@ -14,16 +15,15 @@ public class PlaylistService
         {
             if (!Directory.Exists(_playlistLocation))
                 Directory.CreateDirectory(_playlistLocation);
+            return true;
         }
         catch (Exception ex)
         {
             MessageBox.Show($"Could not create or access playlist location: {ex.Message}");
             return false;
-        }
-
-        return true;
+        }        
     }
-
+/*
     public async Task<IReadOnlyList<string>> LoadM3UAsync(string playlistFilePath)
     {
         var outputList = new List<string>();        
@@ -64,6 +64,46 @@ public class PlaylistService
         catch (Exception ex)
         {
             MessageBox.Show($"Could not save playlist: {ex.Message}");
+            return false;
+        }
+    }
+*/
+
+    public async Task<PlaybackList> LoadPlaybackListAsync(string playlistFilePath)
+    {
+        if (string.IsNullOrWhiteSpace(playlistFilePath) || !File.Exists(playlistFilePath))
+            return new PlaybackList();
+
+        try
+        {
+            await using var stream = File.OpenRead(playlistFilePath);
+            var playlist = await JsonSerializer.DeserializeAsync<PlaybackList>(stream);
+            return playlist ?? new PlaybackList();
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Could not load list: {ex.Message}");
+            return new PlaybackList();
+        }
+    }
+
+    public async Task<bool> SavePlaybackListAsync(string playlistName, PlaybackList playbackList)
+    {
+        if (string.IsNullOrWhiteSpace(playlistName) || playbackList == null)
+            return false;
+
+        if (!ValidatePlaylistLocation()) return false;
+
+        try
+        {
+            var fullPath = Path.Combine(_playlistLocation, playlistName);
+            await using var stream = File.Create(fullPath);
+            await JsonSerializer.SerializeAsync(stream, playbackList);
+            return true;
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Could not save playback list: {ex.Message}");
             return false;
         }
     }
