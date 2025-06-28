@@ -1,4 +1,8 @@
-﻿namespace WinMix.ViewModels;
+﻿using System.Diagnostics.Eventing.Reader;
+using System.Threading.Tasks;
+using WinMix.Models;
+
+namespace WinMix.ViewModels;
 
 public partial class PlayerViewModel : BaseViewModel
 {
@@ -51,7 +55,7 @@ public partial class PlayerViewModel : BaseViewModel
     }
 
     void GetMediaStatus() =>
-         DisplayStatus = IsMediaLoaded ? _playlist.GetCurrentItem().DisplayName : "There is no media loaded.";
+         DisplayStatus = IsMediaLoaded ? _playlist.GetCurrentItem()?.DisplayName : "There is no media loaded.";
 
     void ResetPlayer()
     {
@@ -180,52 +184,100 @@ public partial class PlayerViewModel : BaseViewModel
     [RelayCommand]
     void CopyItem()
     {
-        if (SelectedItem is MediaItem item)
-            new ClipBoardService().Copy(item.FullPath);
-        else
-            MessageBox.Show("There is no media item selected.");
+        try
+        {
+            if (SelectedItem is MediaItem item)
+            {
+                new ClipBoardService().Copy(item.FullPath);
+                MessageBox.Show($"File {item.DisplayName} was copied to the clipboard.");
+            }
+            else
+                MessageBox.Show("No item to copy.");
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message);
+            }                            
     }
 
     [RelayCommand]
     void CopyAllItems()
-    {
-        if (MediaItems.Count > 0)
-        {
-            List<string> filePaths = new();
+    {        
+            if (MediaItems.Count == 0)
+            {
+                MessageBox.Show("There are no items to copy.");
+                return;
+        }   
+
+        List<string> filePaths = new();
 
             foreach (var item in MediaItems)
                 filePaths.Add(item.FullPath);
 
-            new ClipBoardService().CopyAll(filePaths);
+            try
+            {
+                new ClipBoardService().CopyAll(filePaths);
+            MessageBox.Show("All files were copied to the clipboard.");
         }
-        else
-            MessageBox.Show("There are no media items to copy.");
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message);
+            }        
     }
 
     [RelayCommand]
-    void PasteItems()
+     void PasteItems()
     {
-        ClipBoardService clipBoard = new();
-        var files = clipBoard.Paste();
-
-        if (files is not null)
+        try
+        {
+var files = new ClipBoardService().Paste();           
+if (files.Count > 0)                
             _playlist.AddItems(files);
+        }
+        catch (Exception e)
+        {
+            MessageBox.Show(e.Message);
+                }
     }
 
     [RelayCommand]
-    void LoadPlaylist()
+    async Task LoadPlaylist()
     {
-        var listVM = new ListManagerViewModel();
-        var listManager = new ListManagerWindow(listVM);
+        try
+        {
+            var playlists = await new PlaylistService().LoadM3UAsync("MyWinMixPlaylist.m3u8");
 
-        if (listManager.ShowDialog() == true        )
-            _playlist.Items.Clear();        
-    }
+            _playlist.Items.Clear();
+            _playlist.CurrentIndex = 0;
+            AppTitle = "MyWinMixPlaylist -- WinMix Desktop";
+            if (playlists.Count > 0)
+                _playlist.AddItems(playlists);
+        }
+        catch (Exception e)
+        {
+            MessageBox.Show(e.Message);
+        }
+    }    
 
     [RelayCommand]
-    void SavePlaylist()
+    async Task SavePlaylist()
     {
+        if (MediaItems.Count > 0)
+        {
+            List<string> pathList = new();
 
-    }
+            foreach (var item in MediaItems)
+                pathList.Add(item.FullPath);
+
+            try
+            {
+                await new PlaylistService().SaveToM3UAsync("MyWinMixPlaylist.m3u8", pathList);
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message);
+            }
+        }
+            }
 
 }

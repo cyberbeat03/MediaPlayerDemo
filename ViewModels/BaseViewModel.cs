@@ -7,6 +7,6 @@ public partial class BaseViewModel : ObservableObject
     [ObservableProperty] string _displayStatus = string.Empty;
     [ObservableProperty] TimeSpan _totalDuration;
     [ObservableProperty] TimeSpan _elapsedTime;
-    [ObservableProperty] string _appTitle = "WinMix Desktop Player";
+    [ObservableProperty] string _appTitle = "WinMix Desktop";
     [ObservableProperty] MediaItem? _selectedItem;
 }

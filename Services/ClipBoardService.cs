@@ -4,63 +4,33 @@ namespace WinMix.Services;
 
 public class ClipBoardService
 {
-    public bool Copy(string mediaPath)
-    {                
-        try
-        {                    
-            StringCollection dropFiles = new();
-            dropFiles.Add(mediaPath);
+    public bool Copy(string mediaItem)
+    {        
+        StringCollection dropFiles = new();
+            dropFiles.Add(mediaItem);
             Clipboard.SetFileDropList(dropFiles);
-            MessageBox.Show($"File '{mediaPath}' was copied to the clipboard.");    
-            return true;
-        }
-        catch (Exception ex)
-        {
-            MessageBox.Show(ex.Message);
-            return false;
-        }
+            return true;        
     }
 
     public void CopyAll(IEnumerable<string> allFiles)
     {
-        try
-        {
-            StringCollection dropFiles = new StringCollection();
+        StringCollection dropFiles = new();
 
-            foreach (string file in allFiles)
-            {
-                dropFiles.Add(file);
-            }
+            foreach (string file in allFiles)            
+                dropFiles.Add(file);            
 
-            Clipboard.SetFileDropList(dropFiles);
-            MessageBox.Show($"All {dropFiles.Count} files were copied to the clipboard.");
-        }
-        catch (Exception ex)
-        {
-            MessageBox.Show($"Could not copy media to the clipboard.{Environment.NewLine}{ex.Message}");
-        }
+            Clipboard.SetFileDropList(dropFiles);            
     }
 
-    public IReadOnlyList<string>? Paste()
+    public IReadOnlyList<string> Paste()
     {
-        try
+        if (!Clipboard.ContainsFileDropList())
+            throw new InvalidOperationException("The clipboard does not contain any files.");
+        else
         {
-            if (Clipboard.ContainsFileDropList())
-            {
-                StringCollection fileList = Clipboard.GetFileDropList();                
-                return fileList.Cast<string>().ToList();
-            }
-            else
-                {
-                MessageBox.Show("The clipboard does not contain any supported media files.");
-                return null;
-            }
-        }
-        catch (Exception)
-        {
-            MessageBox.Show("Error accessing the clipboard.");
-            return null;
-        }        
+            StringCollection fileList = Clipboard.GetFileDropList();
+            return fileList.Cast<string>().ToList();
+        }    
     }
 
 }

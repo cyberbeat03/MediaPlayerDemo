@@ -16,8 +16,7 @@
 
         <DataTemplate x:Key="MediaItemLayout">
             <StackPanel Margin="10">
-                <TextBlock Text="{Binding DisplayName}"/>
-                <TextBlock Text="{Binding LastAccessed}"/>
+                <TextBlock Text="{Binding DisplayName}"/>                
             </StackPanel>
         </DataTemplate>
 
