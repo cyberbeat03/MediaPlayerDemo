@@ -7,39 +7,25 @@ public class PlaylistService
 {
     private readonly string _playlistLocation = Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.MyMusic),
-        "playlists");
-
-    bool IsLocationValid
-    {
-        get
-        {
-            if (!Directory.Exists(_playlistLocation))
-                Directory.CreateDirectory(_playlistLocation);
-
-            return true;
-        }
-    }    
+        "playlists");    
 
     public async Task<IReadOnlyList<string>> LoadM3UAsync(string playlistFilePath)
-    {                
-        if (!IsLocationValid) throw new IOException("Could not create or access playlist location.");
-
-        var fullPath = Path.Combine(_playlistLocation, playlistFilePath);
+    {                                
         var outputList = new List<string>();
 
+String fullPath = Path.Combine(_playlistLocation, playlistFilePath);
         var lines = await File.ReadAllLinesAsync(fullPath);
-
-                foreach (var line in lines)
+        foreach (var line in lines)
                     if (!string.IsNullOrWhiteSpace(line) && !line.StartsWith("#"))
-                        outputList.Add(line.Trim());            
-        
+                        outputList.Add(line.Trim());                    
             
         return outputList;
     }
 
     public async Task<bool> SaveToM3UAsync(string playlistName, IEnumerable<string> fileList)
     {
-        if (!IsLocationValid) throw new IOException("Could not create or access playlist location.");
+        if (Directory.Exists(_playlistLocation) == false)
+            Directory.CreateDirectory(_playlistLocation);
         var fullPath = Path.Combine(_playlistLocation, playlistName);
         
             var builder = new StringBuilder();
@@ -51,28 +37,7 @@ public class PlaylistService
             await File.WriteAllTextAsync(fullPath, builder.ToString());
             return true;        
     }
-
-    public async Task<ObservableCollection<MediaItem>> LoadAsync(string playlistFilePath)
-    {        
-        
-
-        var fullPath = Path.Combine(_playlistLocation, playlistFilePath);
-
-        await using var stream = File.OpenRead(fullPath);
-        return await JsonSerializer.DeserializeAsync < ObservableCollection<MediaItem>>(stream) ?? [];
-    }
-
-    public async Task<bool> SaveAsync(string playlistName, IEnumerable<MediaItem> items)
-    {
-        if (!IsLocationValid) throw new IOException("Could not create or access playlist.");            
-
-            var fullPath = Path.Combine(_playlistLocation, playlistName);
-            await using var stream = File.Create(fullPath);
-            await JsonSerializer.SerializeAsync(stream, items);
-
-            return true;        
-    }
-
+    
     public IReadOnlyList<string> ConvertWplToM3u(string wplPath)
     {
         var outputList = new List<string>();        

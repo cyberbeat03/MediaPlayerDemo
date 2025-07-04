@@ -246,13 +246,14 @@ if (files.Count > 0)
         try
         {
             var playlists = await new PlaylistService().LoadM3UAsync("MyWinMixPlaylist.m3u8");
-
-            _playlist.Items.Clear();
-            _playlist.CurrentIndex = 0;
-            AppTitle = "MyWinMixPlaylist -- WinMix Desktop";
             if (playlists.Count > 0)
+            {
+                _playlist.Items.Clear();
+                _playlist.CurrentIndex = 0;
+                AppTitle = "MyWinMixPlaylist -- WinMix Desktop";
                 _playlist.AddItems(playlists);
-        }
+            }
+            }
         catch (Exception e)
         {
             MessageBox.Show(e.Message);
