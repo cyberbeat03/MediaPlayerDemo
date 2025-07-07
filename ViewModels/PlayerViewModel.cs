@@ -51,7 +51,7 @@ public partial class PlayerViewModel : BaseViewModel
     }
 
     void GetMediaStatus() =>
-         DisplayStatus = IsMediaLoaded && _playlist.GetCurrentItem() is not null ? _playlist.GetCurrentItem().DisplayName : "There is no media loaded.";
+         DisplayStatus = IsMediaLoaded ? _playlist.GetCurrentItem().DisplayName : "There is no media loaded.";
 
     void ResetPlayer()
     {
