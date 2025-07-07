@@ -5,8 +5,7 @@ namespace WinMix.Services;
 public class FileOpenService
 {
     private readonly string _musicFolder = Environment.GetFolderPath(Environment.SpecialFolder.MyMusic);
-    private readonly string title = "Select media files to add to playlist";
-    private readonly string supportedFileTypes = "Audio Files (*.MP3;*.MP4;*.M4A;*.AAC;*.FLAC;*.ALAC;*.WMA;*.WAV)|*.mp3;*.mp4;*.m4a;*.aac;*.flac;*.alac;*.wma;*.wav|All Files (*.*)|*.*";
+    private readonly string _supportedFileTypes = "Audio Files (*.MP3;*.M4A;*.AAC;*.FLAC;*.WMA;*.WAV)|*.mp3;*.m4a;*.aac;*.flac;*.wma;*.wav";
 
     public IReadOnlyList<string> PickMediaFiles()
     {
@@ -15,8 +14,8 @@ public class FileOpenService
         OpenFileDialog OFD = new()
         {
             InitialDirectory = _musicFolder,
-            Filter = supportedFileTypes,
-            Title = title,
+            Filter = _supportedFileTypes,
+            Title = "Select media files to add to playlist",
             RestoreDirectory = true,
             Multiselect = true,
             CheckFileExists = true,
@@ -24,12 +23,31 @@ public class FileOpenService
             DefaultExt = ".mp3"
         };
 
-        if (OFD.ShowDialog() == true)
-        {
-            outputList = OFD.FileNames.ToList();
-        }
+        if (OFD.ShowDialog() == true)        
+            outputList = OFD.FileNames.ToList();        
 
         return outputList;
+    }
+
+    public string PickPlaylistFile()
+    {
+        OpenFileDialog OFD = new()
+        {
+            Title = "Select a playlist file to load",
+            InitialDirectory = Path.Combine(_musicFolder, "Playlists"),
+            Multiselect = false,
+            RestoreDirectory = true,
+            CheckFileExists = true,            
+            DefaultExt = ".m3u8",
+            Filter = "Playlist Files (*.WPL;*.M3U;*.M3U8)|*.wpl;*.m3u;*.m3u8"
+        };   
+        
+        if (OFD.ShowDialog() == true)
+        {
+            return OFD.FileName;
+        }
+
+        return string.Empty;
     }
 
 }

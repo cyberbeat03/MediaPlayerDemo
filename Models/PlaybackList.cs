@@ -79,7 +79,7 @@ return null;
 
     public void RemoveItem(MediaItem? itemToRemove)
 {
-        if (itemToRemove is null) throw new NullReferenceException(nameof(itemToRemove));
+        if (itemToRemove is null) return;
 
         Items.Remove(itemToRemove);
         Debug.WriteLine($"After removing {itemToRemove.DisplayName},  CurrentIndex is now  {CurrentIndex}  of  {Items.Count - 1}");

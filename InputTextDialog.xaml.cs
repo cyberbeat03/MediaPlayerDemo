@@ -1,8 +1,10 @@
+using System.Windows.Input;
+
 namespace WinMix;
 
 public partial class InputTextDialog : Window
 {
-    public string Response { get; private set; } = string.Empty;
+    public string Response { get; set; } = string.Empty;
 
     public InputTextDialog()
     {
@@ -32,7 +34,7 @@ void OnSaveButtonClick(object s, RoutedEventArgs e)
         DialogResult = false;
     }
 
-    void OnPreviewTextInput(object s, System.Windows.Input.TextCompositionEventArgs e)
+    void OnPreviewTextInput(object s, TextCompositionEventArgs e)
     {
         char[] invalidChars = Path.GetInvalidFileNameChars();
 

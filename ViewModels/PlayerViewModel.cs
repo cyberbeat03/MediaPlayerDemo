@@ -1,8 +1,4 @@
-﻿using System.Diagnostics.Eventing.Reader;
-using System.Threading.Tasks;
-using WinMix.Models;
-
-namespace WinMix.ViewModels;
+﻿namespace WinMix.ViewModels;
 
 public partial class PlayerViewModel : BaseViewModel
 {
@@ -55,7 +51,7 @@ public partial class PlayerViewModel : BaseViewModel
     }
 
     void GetMediaStatus() =>
-         DisplayStatus = IsMediaLoaded ? _playlist.GetCurrentItem()?.DisplayName : "There is no media loaded.";
+         DisplayStatus = IsMediaLoaded && _playlist.GetCurrentItem() is not null ? _playlist.GetCurrentItem().DisplayName : "There is no media loaded.";
 
     void ResetPlayer()
     {
@@ -242,18 +238,22 @@ if (files.Count > 0)
 
     [RelayCommand]
     async Task LoadPlaylist()
-    {
+    {        
+string playlistFileName = new FileOpenService().PickPlaylistFile();
+if (string.IsNullOrEmpty(playlistFileName)) return;
+
         try
         {
-            var playlists = await new PlaylistService().LoadM3UAsync("MyWinMixPlaylist.m3u8");
-            if (playlists.Count > 0)
+            var mediaFiles = await new PlaylistService().LoadM3UAsync(playlistFileName);
+            if (mediaFiles.Count > 0)
             {
                 _playlist.Items.Clear();
-                _playlist.CurrentIndex = 0;
-                AppTitle = "MyWinMixPlaylist -- WinMix Desktop";
-                _playlist.AddItems(playlists);
+                _playlist.CurrentIndex = 0;                
+                _playlist.AddItems(mediaFiles);
+                AppTitle = Path.GetFileNameWithoutExtension(playlistFileName);
+                    PlayItem(_playlist.GetCurrentItem());
             }
-            }
+        }
         catch (Exception e)
         {
             MessageBox.Show(e.Message);
@@ -272,7 +272,13 @@ if (files.Count > 0)
 
             try
             {
-                await new PlaylistService().SaveToM3UAsync("MyWinMixPlaylist.m3u8", pathList);
+                var inputText = new InputTextDialog()
+                {                    
+                    Response = AppTitle
+                };
+
+if (inputText.ShowDialog() == true)                    
+                await new PlaylistService().SaveToM3UAsync($"{inputText.Response}.m3u8", pathList);
             }
             catch (Exception e)
             {
