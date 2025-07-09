@@ -10,7 +10,7 @@ public partial class PlayerViewModel : BaseViewModel
     public PlayerViewModel(PlaybackList playbackList)
     {
         _playlist = playbackList;
-        AppTitle = $"{ _playlist.Name} - WinMix Desktop"; 
+        AppTitle = $"{_playlist.Name} - WinMix Desktop";
         _timer = new();
         _timer.Interval = TimeSpan.FromSeconds(1);
         _timer.Tick += Timer_Tick;
@@ -24,7 +24,7 @@ public partial class PlayerViewModel : BaseViewModel
             ResetPlayer();
         };   
 
-        UpdateMediaStatus();
+        UpdateStatus();
     }
 
     void Timer_Tick(object? s, EventArgs e)
@@ -50,7 +50,7 @@ public partial class PlayerViewModel : BaseViewModel
             PlayNext();
     }
 
-    void UpdateMediaStatus()
+    void UpdateStatus()
     {
         if (MPlayer.Source is null)
         {
@@ -69,7 +69,7 @@ public partial class PlayerViewModel : BaseViewModel
         MPlayer.Source = null;
         ElapsedTime = TimeSpan.Zero;
         TotalDuration = TimeSpan.Zero;
-        UpdateMediaStatus();
+        UpdateStatus();
     }        
         
         void PlayItem(MediaItem? currentItem)
@@ -78,7 +78,7 @@ public partial class PlayerViewModel : BaseViewModel
         {
             MPlayer.Source = currentItem.UriPath;
             Play();
-            UpdateMediaStatus();
+            UpdateStatus();
         }
     }
 

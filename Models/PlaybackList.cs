@@ -13,7 +13,7 @@ public class PlaybackList
     {
         Items = new();
         CurrentIndex = -1;
-        Name = "New Playlist";
+        Name = "Untitled Playlist";
     }            
     
     public MediaItem? GetCurrentItem() =>

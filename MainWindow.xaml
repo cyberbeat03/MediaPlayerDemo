@@ -36,7 +36,7 @@
 
         <StackPanel x:Name="MediaList" Grid.Column="0" VerticalAlignment="Center" Margin="24">
             <TextBlock Text="Media Items" FontSize="16"/>
-            <ListView x:Name="MediaItemsList" SelectionMode="Single" ItemsSource="{Binding MediaItems}" SelectedItem="{Binding SelectedItem, Mode=TwoWay}" MinHeight="400" IsTabStop="True" ItemTemplate="{StaticResource MediaItemLayout}">
+            <ListView x:Name="MediaItemsList" SelectionMode="Single" ItemsSource="{Binding MediaItems}" SelectedItem="{Binding SelectedItem, Mode=OneWayToSource}" MinHeight="400" IsTabStop="True" ItemTemplate="{StaticResource MediaItemLayout}">
                 
                 <ListView.InputBindings>
                     <KeyBinding Key="Enter" Command="{Binding PlaySelectedCommand}" />
