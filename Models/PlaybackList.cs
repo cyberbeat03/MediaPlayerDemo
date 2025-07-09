@@ -41,7 +41,7 @@ public class PlaybackList
 return null;
     }
 
-    public IEnumerable<string> GetFileList()
+    public IEnumerable<string> GetFiles()
     {
         List<string> pathList = new();
 
@@ -51,7 +51,7 @@ return null;
         return pathList;
     }        
 
-    public void AddItems(IEnumerable<string> filePaths)
+    public void AddFiles(IEnumerable<string> filePaths)
     {
         foreach (var path in filePaths)
         {

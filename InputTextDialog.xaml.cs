@@ -13,13 +13,14 @@ public partial class InputTextDialog : Window
     }
 
     bool IsValidFileName =>
-(!string.IsNullOrWhiteSpace(InputText.Text.Trim()) && InputText.Text.IndexOfAny(System.IO.Path.GetInvalidFileNameChars()) < 0);
+(!string.IsNullOrWhiteSpace(InputText.Text.Trim()) && InputText.Text.IndexOfAny(Path.GetInvalidFileNameChars()) < 0);
 
 void OnSaveButtonClick(object s, RoutedEventArgs e)
     {
         try
         {
-            Response = IsValidFileName ? InputText.Text.Trim() : throw new InvalidOperationException("Please enter a valid name");
+            Response = IsValidFileName ? Path.GetFileNameWithoutExtension(InputText.Text.Trim()) : throw new InvalidOperationException("Please enter a valid name. Do not include a file extension.");
+            
             DialogResult = true;
         }
         catch (Exception ex)

@@ -3,14 +3,14 @@
 public partial class PlayerViewModel : BaseViewModel
 {
     DispatcherTimer _timer;
-    PlaybackList _playlist;
-    bool IsMediaLoaded => MPlayer.Source is not null;
+    PlaybackList _playlist;    
 
     public ObservableCollection<MediaItem> MediaItems => _playlist.Items;
 
     public PlayerViewModel(PlaybackList playbackList)
     {
         _playlist = playbackList;
+        AppTitle = $"{ _playlist.Name} - WinMix Desktop"; 
         _timer = new();
         _timer.Interval = TimeSpan.FromSeconds(1);
         _timer.Tick += Timer_Tick;
@@ -24,7 +24,7 @@ public partial class PlayerViewModel : BaseViewModel
             ResetPlayer();
         };   
 
-        GetMediaStatus();
+        UpdateMediaStatus();
     }
 
     void Timer_Tick(object? s, EventArgs e)
@@ -50,8 +50,16 @@ public partial class PlayerViewModel : BaseViewModel
             PlayNext();
     }
 
-    void GetMediaStatus() =>
-         DisplayStatus = IsMediaLoaded ? _playlist.GetCurrentItem().DisplayName : "There is no media loaded.";
+    void UpdateMediaStatus()
+    {
+        if (MPlayer.Source is null)
+        {
+            DisplayStatus = "No media is currently loaded.";
+            return;
+        }
+
+        DisplayStatus = (_playlist.GetCurrentItem() is null) ? "There is no current item" : _playlist.GetCurrentItem().DisplayName;        
+    }
 
     void ResetPlayer()
     {
@@ -61,7 +69,7 @@ public partial class PlayerViewModel : BaseViewModel
         MPlayer.Source = null;
         ElapsedTime = TimeSpan.Zero;
         TotalDuration = TimeSpan.Zero;
-        GetMediaStatus();
+        UpdateMediaStatus();
     }        
         
         void PlayItem(MediaItem? currentItem)
@@ -70,7 +78,7 @@ public partial class PlayerViewModel : BaseViewModel
         {
             MPlayer.Source = currentItem.UriPath;
             Play();
-            GetMediaStatus();
+            UpdateMediaStatus();
         }
     }
 
@@ -130,28 +138,32 @@ public partial class PlayerViewModel : BaseViewModel
     {
         if (SelectedItem is MediaItem item)
         {
-            _playlist.RemoveItem(item);
+            _playlist.RemoveItem(item);            
             
-            
-            if (IsMediaLoaded && _playlist.CurrentIndex == -1)
+            if (MPlayer.Source is null && _playlist.CurrentIndex == -1)
             {
                 ResetPlayer();
                 return;
-            }                        
-
-                
-            //PlayItem(_mediaList.GetCurrentItem());
+            }                                                    
         }
     }
 
     [RelayCommand]
     void PickFiles()
-    {
-        var pickedFiles = new FileOpenService().PickMediaFiles();
-
-        if (pickedFiles.Count > 0)
-            _playlist.AddItems(pickedFiles);
-        PlayItem(_playlist.GetCurrentItem());
+    {                        
+            try
+            {
+            var pickedFiles = new FileOpenService().PickMediaFiles();
+            if (pickedFiles.Count > 0)
+            {
+                _playlist.AddFiles(pickedFiles);
+                PlayItem(_playlist.GetCurrentItem());
+            }
+        }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message);
+            }
     }
 
     [RelayCommand]
@@ -207,7 +219,7 @@ public partial class PlayerViewModel : BaseViewModel
 
             try
             {
-                new ClipBoardService().CopyAll(_playlist.GetFileList());
+                new ClipBoardService().CopyAll(_playlist.GetFiles());
             MessageBox.Show("All files were copied to the clipboard.");
         }
             catch (Exception e)
@@ -223,7 +235,7 @@ public partial class PlayerViewModel : BaseViewModel
         {
 var files = new ClipBoardService().Paste();           
 if (files.Count > 0)                
-            _playlist.AddItems(files);
+            _playlist.AddFiles(files);
         }
         catch (Exception e)
         {
@@ -237,16 +249,17 @@ if (files.Count > 0)
         try
         {
             string playlistFileName = new FileOpenService().PickPlaylistFile();
-if (string.IsNullOrEmpty(playlistFileName)) return;
+            if (string.IsNullOrEmpty(playlistFileName)) return;
         
             var mediaFiles = await new PlaylistService().LoadM3UAsync(playlistFileName);
 
             if (mediaFiles.Count > 0)
             {
-                _playlist.Items.Clear();
+                _playlist = new PlaybackList();
                 _playlist.CurrentIndex = 0;                
-                _playlist.AddItems(mediaFiles);
+                _playlist.AddFiles(mediaFiles);
 _playlist.Name = Path.GetFileNameWithoutExtension(playlistFileName);
+                    AppTitle = $"{ _playlist.Name} -WinMix Desktop"; 
                 PlayItem(_playlist.GetCurrentItem());
             }
         }
@@ -263,11 +276,8 @@ _playlist.Name = Path.GetFileNameWithoutExtension(playlistFileName);
             {
                 var inputDialog = new InputTextDialog() { Response = _playlist.Name };
 
-                if (inputDialog.ShowDialog() == true)
-                {
-                    _playlist.Name = inputDialog.Response;
-                    await new PlaylistService().SaveToM3UAsync($"{inputDialog.Response}.m3u8", _playlist.GetFileList());
-                }
+                if (inputDialog.ShowDialog() == true)                
+                    await new PlaylistService().SaveToM3UAsync(inputDialog.Response, _playlist.GetFiles());
             }
             catch (Exception e)
             {

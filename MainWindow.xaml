@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WinMix"
         mc:Ignorable="d"
-        Title="{Binding AppTitle}" WindowStartupLocation="CenterScreen" Height="600" Width="800" Loaded="Window_Loaded" Closing="Window_Closing">
+        Title="{Binding AppTitle}" WindowStartupLocation="CenterScreen" Height="600" Width="800">
 
     <Window.Resources>
         <Style TargetType="Button" x:Key="TransportButton">
@@ -36,7 +36,7 @@
 
         <StackPanel x:Name="MediaList" Grid.Column="0" VerticalAlignment="Center" Margin="24">
             <TextBlock Text="Media Items" FontSize="16"/>
-            <ListView x:Name="MediaItemsList" ItemsSource="{Binding MediaItems}" SelectedItem="{Binding SelectedItem, Mode=TwoWay}" MinHeight="400" IsTabStop="True" SelectionMode="Single" ItemTemplate="{StaticResource MediaItemLayout}">
+            <ListView x:Name="MediaItemsList" SelectionMode="Single" ItemsSource="{Binding MediaItems}" SelectedItem="{Binding SelectedItem, Mode=TwoWay}" MinHeight="400" IsTabStop="True" ItemTemplate="{StaticResource MediaItemLayout}">
                 
                 <ListView.InputBindings>
                     <KeyBinding Key="Enter" Command="{Binding PlaySelectedCommand}" />
@@ -69,7 +69,7 @@
                     <TextBlock Text="{Binding ElapsedTime, Converter={StaticResource TimeSpanToString}}" Focusable="True" Width="50" Height="25"/>
             <TextBlock Text="{Binding TotalDuration, Converter={StaticResource TimeSpanToString}}" Focusable="True" Width="50" Height="25"/>
                 <ContentControl Content="{Binding MPlayer}" Focusable="False" MinHeight="300" MinWidth="450" Background="Black"/>
-                <CheckBox Content="Repeat Mode" IsChecked="{Binding CanRepeat}" Margin="24"/>            
+                <CheckBox Content="Repeat" IsChecked="{Binding CanRepeat}" Margin="24"/>            
                     
             <StackPanel x:Name="TransportControls" Orientation="Horizontal" HorizontalAlignment="Center" Margin="24">
                 <Button Content="_Play" Style="{StaticResource TransportButton}" Command="{Binding PlayCommand}" />                
