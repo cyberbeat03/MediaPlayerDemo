@@ -41,9 +41,19 @@ public class PlaybackList
 return null;
     }
 
-    public void AddItems(IEnumerable<string> mediaPaths)
+    public IEnumerable<string> GetFileList()
     {
-        foreach (var path in mediaPaths)
+        List<string> pathList = new();
+
+        foreach (var item in Items)
+            pathList.Add(item.FullPath);
+
+        return pathList;
+    }        
+
+    public void AddItems(IEnumerable<string> filePaths)
+    {
+        foreach (var path in filePaths)
         {
             if (File.Exists(path))
             Items.Add(new MediaItem(new FileInfo(path)));

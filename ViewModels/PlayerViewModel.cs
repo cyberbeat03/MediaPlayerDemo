@@ -205,14 +205,9 @@ public partial class PlayerViewModel : BaseViewModel
                 return;
         }   
 
-        List<string> filePaths = new();
-
-            foreach (var item in MediaItems)
-                filePaths.Add(item.FullPath);
-
             try
             {
-                new ClipBoardService().CopyAll(filePaths);
+                new ClipBoardService().CopyAll(_playlist.GetFileList());
             MessageBox.Show("All files were copied to the clipboard.");
         }
             catch (Exception e)
@@ -238,20 +233,21 @@ if (files.Count > 0)
 
     [RelayCommand]
     async Task LoadPlaylist()
-    {        
-string playlistFileName = new FileOpenService().PickPlaylistFile();
-if (string.IsNullOrEmpty(playlistFileName)) return;
-
+    {
         try
         {
+            string playlistFileName = new FileOpenService().PickPlaylistFile();
+if (string.IsNullOrEmpty(playlistFileName)) return;
+        
             var mediaFiles = await new PlaylistService().LoadM3UAsync(playlistFileName);
+
             if (mediaFiles.Count > 0)
             {
                 _playlist.Items.Clear();
                 _playlist.CurrentIndex = 0;                
                 _playlist.AddItems(mediaFiles);
-                AppTitle = Path.GetFileNameWithoutExtension(playlistFileName);
-                    PlayItem(_playlist.GetCurrentItem());
+_playlist.Name = Path.GetFileNameWithoutExtension(playlistFileName);
+                PlayItem(_playlist.GetCurrentItem());
             }
         }
         catch (Exception e)
@@ -262,29 +258,21 @@ if (string.IsNullOrEmpty(playlistFileName)) return;
 
     [RelayCommand]
     async Task SavePlaylist()
-    {
-        if (MediaItems.Count > 0)
-        {
-            List<string> pathList = new();
-
-            foreach (var item in MediaItems)
-                pathList.Add(item.FullPath);
-
+    {        
             try
             {
-                var inputText = new InputTextDialog()
-                {                    
-                    Response = AppTitle
-                };
+                var inputDialog = new InputTextDialog() { Response = _playlist.Name };
 
-if (inputText.ShowDialog() == true)                    
-                await new PlaylistService().SaveToM3UAsync($"{inputText.Response}.m3u8", pathList);
+                if (inputDialog.ShowDialog() == true)
+                {
+                    _playlist.Name = inputDialog.Response;
+                    await new PlaylistService().SaveToM3UAsync($"{inputDialog.Response}.m3u8", _playlist.GetFileList());
+                }
             }
             catch (Exception e)
             {
                 MessageBox.Show(e.Message);
             }
-        }
-            }
+        }            
 
 }
