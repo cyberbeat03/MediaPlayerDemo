@@ -9,8 +9,11 @@ public class PlaylistService
         Environment.GetFolderPath(Environment.SpecialFolder.MyMusic),
         "playlists");    
 
-    public async Task<IReadOnlyList<string>> LoadM3UAsync(string playlistFilePath)
-    {                                
+    public async Task<IReadOnlyList<string>> LoadAsync(string playlistFilePath)
+    {
+        if (Path.GetExtension(playlistFilePath).ToLower() == ".wpl")
+            return ConvertWplToM3u(playlistFilePath);
+
         var outputList = new List<string>();
 
 String fullPath = Path.Combine(_playlistLocation, playlistFilePath);
@@ -22,11 +25,11 @@ String fullPath = Path.Combine(_playlistLocation, playlistFilePath);
         return outputList;
     }
 
-    public async Task<bool> SaveToM3UAsync(string playlistName, IEnumerable<string> fileList)
+    public async Task<bool> SaveAsync(string playlistName, IEnumerable<string> fileList)
     {
         if (Directory.Exists(_playlistLocation) == false)
             Directory.CreateDirectory(_playlistLocation);
-        var fullPath = Path.Combine(_playlistLocation, playlistName);
+        var fullPath = Path.Combine(_playlistLocation, $"{playlistName}.m3u8");
         
             var builder = new StringBuilder();
             builder.AppendLine("#EXTM3U");
@@ -40,9 +43,7 @@ String fullPath = Path.Combine(_playlistLocation, playlistFilePath);
     
     public IReadOnlyList<string> ConvertWplToM3u(string wplPath)
     {
-        var outputList = new List<string>();        
-
-        if (!File.Exists(wplPath)) throw new FileNotFoundException("The file was not found.");
+        var outputList = new List<string>();                
 
         XDocument doc = XDocument.Load(wplPath);
 

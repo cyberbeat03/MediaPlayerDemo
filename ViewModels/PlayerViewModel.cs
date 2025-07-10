@@ -140,11 +140,8 @@ public partial class PlayerViewModel : BaseViewModel
         {
             _playlist.RemoveItem(item);            
             
-            if (MPlayer.Source is null && _playlist.CurrentIndex == -1)
-            {
-                ResetPlayer();
-                return;
-            }                                                    
+            if (_playlist.Items.Count == 0)            
+                ResetPlayer();                            
         }
     }
 
@@ -251,15 +248,14 @@ if (files.Count > 0)
             string playlistFileName = new FileOpenService().PickPlaylistFile();
             if (string.IsNullOrEmpty(playlistFileName)) return;
         
-            var mediaFiles = await new PlaylistService().LoadM3UAsync(playlistFileName);
-
+            var mediaFiles = await new PlaylistService().LoadAsync(playlistFileName);
+            _playlist.Items.Clear();
+            _playlist.CurrentIndex = -1;
             if (mediaFiles.Count > 0)
-            {
-                _playlist = new PlaybackList();
-                _playlist.CurrentIndex = 0;                
-                _playlist.AddFiles(mediaFiles);
-_playlist.Name = Path.GetFileNameWithoutExtension(playlistFileName);
-                    AppTitle = $"{ _playlist.Name} -WinMix Desktop"; 
+            {                                                
+                _playlist.AddFiles(mediaFiles);                
+                _playlist.Name = Path.GetFileNameWithoutExtension(playlistFileName);
+                AppTitle = $"{_playlist.Name} -WinMix Desktop";
                 PlayItem(_playlist.GetCurrentItem());
             }
         }
@@ -273,11 +269,8 @@ _playlist.Name = Path.GetFileNameWithoutExtension(playlistFileName);
     async Task SavePlaylist()
     {        
             try
-            {
-                var inputDialog = new InputTextDialog() { Response = _playlist.Name };
-
-                if (inputDialog.ShowDialog() == true)                
-                    await new PlaylistService().SaveToM3UAsync(inputDialog.Response, _playlist.GetFiles());
+            {                
+                    await new PlaylistService().SaveAsync(_playlist.Name, _playlist.GetFiles());
             }
             catch (Exception e)
             {
