@@ -57,9 +57,7 @@ public partial class PlayerViewModel : BaseViewModel
             DisplayStatus = "No media is currently loaded.";
             return;
         }
-
-if (_playlist.GetCurrentItem() is not null)
-        DisplayStatus = _playlist.GetCurrentItem().DisplayName;        
+        DisplayStatus = _playlist.GetCurrentItem().DisplayName;
     }
 
     void ResetPlayer()
@@ -70,6 +68,7 @@ if (_playlist.GetCurrentItem() is not null)
         MPlayer.Source = null;
         ElapsedTime = TimeSpan.Zero;
         TotalDuration = TimeSpan.Zero;
+        MPlayer.SpeedRatio = 1.0;   
         UpdateStatus();
     }        
         
@@ -125,6 +124,14 @@ if (_playlist.GetCurrentItem() is not null)
     [RelayCommand]
     void Rewind() => MPlayer.Position -= TimeSpan.FromSeconds(10);
 
+
+    [RelayCommand]
+    void SetSpeed(string speedRatio)
+    {
+        if (double.TryParse(speedRatio, out double ratio))
+            MPlayer.SpeedRatio = ratio;
+    }           
+    
     [RelayCommand]
     void FastForward() => MPlayer.Position += TimeSpan.FromSeconds(10);
 

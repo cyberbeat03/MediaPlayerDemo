@@ -54,6 +54,11 @@
                         <MenuItem Header="_Copy" Command="{Binding CopyItemCommand}"/>
                         <MenuItem Header="Copy _All" Command="{Binding CopyAllItemsCommand}"/>
                         <MenuItem Header="_Paste" Command="{Binding PasteItemsCommand}"/>
+                        <MenuItem Header="Playback _Speed">                            
+                            <MenuItem Header="Speed Up" Command="{Binding SetSpeedCommand}" CommandParameter="1.5"/>
+                            <MenuItem Header="Slow Down" Command="{Binding SetSpeedCommand}" CommandParameter="0.5"/>
+                            <MenuItem Header="Reset To Normal" Command="{Binding SetSpeedCommand}" CommandParameter="1.0"/>
+                        </MenuItem>
                         <MenuItem Header="_Load Playlist" Command="{Binding LoadPlaylistCommand}"/>
                         <MenuItem Header="_Save Playlist" Command="{Binding SavePlaylistCommand}"/>
                     </ContextMenu>
@@ -63,8 +68,7 @@
         
             <StackPanel x:Name="CurrentItemStatus" Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Top" Margin="24">
                 <TextBlock Text="Current Item:" FontSize="16"/>
-                                <TextBox IsReadOnly="True" IsReadOnlyCaretVisible="True" Text="{Binding DisplayStatus}" Height="35" Width="250"/>
-            <!-- <Button Content="_Add Files..." Width="100" Height="25" HorizontalAlignment="Right" Command="{Binding PickFilesCommand}"/> -->
+                                <TextBox IsReadOnly="True" IsReadOnlyCaretVisible="True" Text="{Binding DisplayStatus}" Height="35" Width="250"/>            
         </StackPanel>
                 
                 <StackPanel x:Name="MainPlayer" Grid.Column="1" Margin="4">
