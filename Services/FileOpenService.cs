@@ -5,7 +5,7 @@ namespace WinMix.Services;
 public class FileOpenService
 {
     private readonly string _musicFolder = Environment.GetFolderPath(Environment.SpecialFolder.MyMusic);
-    private readonly string _supportedFileTypes = "Audio Files (*.MP3;*.M4A;*.AAC;*.FLAC;*.WMA;*.WAV)|*.mp3;*.m4a;*.aac;*.flac;*.wma;*.wav";
+    private readonly string _supportedFileTypes = "Audio Files (*.MP3;*.M4A;*.AAC;*.FLAC;*.WMA;*.WAV)|*.mp3;*.m4a;*.aac;*.flac;*.wma;*.wav|Video Files (*.MP4;*.WMV)|*.mp4;*.wmv";
 
     public IReadOnlyList<string> PickMediaFiles()
     {

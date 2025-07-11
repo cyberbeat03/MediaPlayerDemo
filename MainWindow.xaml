@@ -25,8 +25,10 @@
 
         <Window.InputBindings>        
         <KeyBinding Gesture="Escape" Command="{Binding StopCommand}"/>        
-        <KeyBinding Gesture="Ctrl+O" Command="{Binding PickFilesCommand}"/>        
-    </Window.InputBindings>
+        <KeyBinding Gesture="Ctrl+O" Command="{Binding PickFilesCommand}"/>
+        <KeyBinding Gesture="Ctrl+Shift+O" Command="{Binding LoadPlaylistCommand}"/>
+<KeyBinding Gesture="Ctrl+S" Command="{Binding SavePlaylistCommand}"/>        
+        </Window.InputBindings>
     
     <Grid>
         <Grid.ColumnDefinitions>
@@ -61,9 +63,9 @@
         
             <StackPanel x:Name="CurrentItemStatus" Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Top" Margin="24">
                 <TextBlock Text="Current Item:" FontSize="16"/>
-                                <TextBox IsReadOnly="True" IsReadOnlyCaretVisible="True" Text="{Binding DisplayStatus}" Height="25" Width="150"/>
-                <Button Content="_Add Files..." Width="100" Height="25" HorizontalAlignment="Right" Command="{Binding PickFilesCommand}"/>              
-            </StackPanel>
+                                <TextBox IsReadOnly="True" IsReadOnlyCaretVisible="True" Text="{Binding DisplayStatus}" Height="35" Width="250"/>
+            <!-- <Button Content="_Add Files..." Width="100" Height="25" HorizontalAlignment="Right" Command="{Binding PickFilesCommand}"/> -->
+        </StackPanel>
                 
                 <StackPanel x:Name="MainPlayer" Grid.Column="1" Margin="4">
                     <TextBlock Text="{Binding ElapsedTime, Converter={StaticResource TimeSpanToString}}" Focusable="True" Width="50" Height="25"/>

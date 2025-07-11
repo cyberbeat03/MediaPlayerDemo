@@ -58,7 +58,8 @@ public partial class PlayerViewModel : BaseViewModel
             return;
         }
 
-        DisplayStatus = (_playlist.GetCurrentItem() is null) ? "There is no current item" : _playlist.GetCurrentItem().DisplayName;        
+if (_playlist.GetCurrentItem() is not null)
+        DisplayStatus = _playlist.GetCurrentItem().DisplayName;        
     }
 
     void ResetPlayer()
@@ -140,9 +141,17 @@ public partial class PlayerViewModel : BaseViewModel
         {
             _playlist.RemoveItem(item);            
             
-            if (_playlist.Items.Count == 0)            
-                ResetPlayer();                            
-        }
+            if (_playlist.Items.Count == 0)
+            {
+                ResetPlayer();
+                return;
+            }
+
+            if (_playlist.GetCurrentItem() is not null)
+                PlayItem(_playlist.GetCurrentItem());
+            else
+                PlayNext();
+            }            
     }
 
     [RelayCommand]
@@ -250,7 +259,7 @@ if (files.Count > 0)
         
             var mediaFiles = await new PlaylistService().LoadAsync(playlistFileName);
             _playlist.Items.Clear();
-            _playlist.CurrentIndex = -1;
+            ResetPlayer();
             if (mediaFiles.Count > 0)
             {                                                
                 _playlist.AddFiles(mediaFiles);                
