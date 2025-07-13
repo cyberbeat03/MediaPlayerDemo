@@ -3,7 +3,7 @@
 public partial class PlayerViewModel : BaseViewModel
 {
     DispatcherTimer _timer;
-    PlaybackList _playlist;    
+    PlaybackList _playlist;
 
     public ObservableCollection<MediaItem> MediaItems => _playlist.Items;
 
@@ -22,7 +22,7 @@ public partial class PlayerViewModel : BaseViewModel
         {
             MessageBox.Show($"Media failed: {e.ErrorException?.Message}");
             ResetPlayer();
-        };   
+        };
 
         UpdateStatus();
     }
@@ -68,11 +68,11 @@ public partial class PlayerViewModel : BaseViewModel
         MPlayer.Source = null;
         ElapsedTime = TimeSpan.Zero;
         TotalDuration = TimeSpan.Zero;
-        MPlayer.SpeedRatio = 1.0;   
+        MPlayer.SpeedRatio = 1.0;
         UpdateStatus();
-    }        
-        
-        void PlayItem(MediaItem? currentItem)
+    }
+
+    void PlayItem(MediaItem? currentItem)
     {
         if ((currentItem is not null) && (MPlayer.Source != currentItem.UriPath))
         {
@@ -99,7 +99,7 @@ public partial class PlayerViewModel : BaseViewModel
             PlayItem(item);
         }
     }
-    
+
     [RelayCommand]
     void Pause()
     {
@@ -130,8 +130,8 @@ public partial class PlayerViewModel : BaseViewModel
     {
         if (double.TryParse(speedRatio, out double ratio))
             MPlayer.SpeedRatio = ratio;
-    }           
-    
+    }
+
     [RelayCommand]
     void FastForward() => MPlayer.Position += TimeSpan.FromSeconds(10);
 
@@ -146,8 +146,8 @@ public partial class PlayerViewModel : BaseViewModel
     {
         if (SelectedItem is MediaItem item)
         {
-            _playlist.RemoveItem(item);            
-            
+            _playlist.RemoveItem(item);
+
             if (_playlist.Items.Count == 0)
             {
                 ResetPlayer();
@@ -158,14 +158,14 @@ public partial class PlayerViewModel : BaseViewModel
                 PlayItem(_playlist.GetCurrentItem());
             else
                 PlayNext();
-            }            
+        }
     }
 
     [RelayCommand]
     void PickFiles()
-    {                        
-            try
-            {
+    {
+        try
+        {
             var pickedFiles = new FileOpenService().PickMediaFiles();
             if (pickedFiles.Count > 0)
             {
@@ -173,10 +173,10 @@ public partial class PlayerViewModel : BaseViewModel
                 PlayItem(_playlist.GetCurrentItem());
             }
         }
-            catch (Exception e)
-            {
-                MessageBox.Show(e.Message);
-            }
+        catch (Exception e)
+        {
+            MessageBox.Show(e.Message);
+        }
     }
 
     [RelayCommand]
@@ -214,46 +214,67 @@ public partial class PlayerViewModel : BaseViewModel
             }
             else
                 MessageBox.Show("No item to copy.");
-            }
-            catch (Exception e)
-            {
-                MessageBox.Show(e.Message);
-            }                            
-    }
-
-    [RelayCommand]
-    void CopyAllItems()
-    {        
-            if (MediaItems.Count == 0)
-            {
-                MessageBox.Show("There are no items to copy.");
-                return;
-        }   
-
-            try
-            {
-                new ClipBoardService().CopyAll(_playlist.GetFiles());
-            MessageBox.Show("All files were copied to the clipboard.");
-        }
-            catch (Exception e)
-            {
-                MessageBox.Show(e.Message);
-            }        
-    }
-
-    [RelayCommand]
-     void PasteItems()
-    {
-        try
-        {
-var files = new ClipBoardService().Paste();           
-if (files.Count > 0)                
-            _playlist.AddFiles(files);
         }
         catch (Exception e)
         {
             MessageBox.Show(e.Message);
-                }
+        }
+    }
+
+    [RelayCommand]
+    void CopyAllItems()
+    {
+        if (MediaItems.Count == 0)
+        {
+            MessageBox.Show("There are no items to copy.");
+            return;
+        }
+
+        try
+        {
+            new ClipBoardService().CopyAll(_playlist.GetFiles());
+            MessageBox.Show("All files were copied to the clipboard.");
+        }
+        catch (Exception e)
+        {
+            MessageBox.Show(e.Message);
+        }
+    }
+
+    [RelayCommand]
+    void PasteItems()
+    {
+        try
+        {
+            var files = new ClipBoardService().Paste();
+            if (files.Count > 0)
+                _playlist.AddFiles(files);
+        }
+        catch (Exception e)
+        {
+            MessageBox.Show(e.Message);
+        }
+    }
+
+    [RelayCommand]
+    void NewPlaylist()
+    {
+        try
+        {
+            var inputDialog = new InputTextDialog();
+
+            if (inputDialog.ShowDialog() == true)
+            {
+                _playlist.Name = inputDialog.Response;
+                AppTitle = $"{_playlist.Name} - WinMix Desktop";
+                _playlist.Items.Clear();
+                ResetPlayer();
+            }
+        }
+        catch (Exception e)
+        {
+            MessageBox.Show(e.Message);
+        }
     }
 
     [RelayCommand]
@@ -263,15 +284,15 @@ if (files.Count > 0)
         {
             string playlistFileName = new FileOpenService().PickPlaylistFile();
             if (string.IsNullOrEmpty(playlistFileName)) return;
-        
+
             var mediaFiles = await new PlaylistService().LoadAsync(playlistFileName);
             _playlist.Items.Clear();
             ResetPlayer();
+            _playlist.Name = Path.GetFileNameWithoutExtension(playlistFileName);
+            AppTitle = $"{_playlist.Name} -WinMix Desktop";
             if (mediaFiles.Count > 0)
-            {                                                
-                _playlist.AddFiles(mediaFiles);                
-                _playlist.Name = Path.GetFileNameWithoutExtension(playlistFileName);
-                AppTitle = $"{_playlist.Name} -WinMix Desktop";
+            {
+                _playlist.AddFiles(mediaFiles);
                 PlayItem(_playlist.GetCurrentItem());
             }
         }
@@ -279,19 +300,20 @@ if (files.Count > 0)
         {
             MessageBox.Show(e.Message);
         }
-    }    
+    }
 
     [RelayCommand]
     async Task SavePlaylist()
-    {        
-            try
-            {                
-                    await new PlaylistService().SaveAsync(_playlist.Name, _playlist.GetFiles());
-            }
-            catch (Exception e)
-            {
-                MessageBox.Show(e.Message);
-            }
-        }            
+    {
+        try
+        {
+            if (await new PlaylistService().SaveAsync(_playlist.Name, _playlist.GetFiles()) == false)
+                MessageBox.Show($"Playlist '{_playlist.Name}' could not be saved.");
+        }
+        catch (Exception e)
+        {
+            MessageBox.Show(e.Message);
+        }
+    }
 
 }

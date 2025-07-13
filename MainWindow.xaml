@@ -12,24 +12,26 @@
             <Setter Property="Height" Value="25"/>
             <Setter Property="Width" Value="50"/>
             <Setter Property="Margin" Value="10"/>
-            </Style>
+        </Style>
 
         <DataTemplate x:Key="MediaItemLayout">
             <StackPanel Margin="10">
-                <TextBlock Text="{Binding DisplayName}"/>                
+                <TextBlock Text="{Binding DisplayName}"/>
             </StackPanel>
         </DataTemplate>
 
         <local:TimeSpanToStringConverter x:Key="TimeSpanToString"/>
     </Window.Resources>
 
-        <Window.InputBindings>        
-        <KeyBinding Gesture="Escape" Command="{Binding StopCommand}"/>        
-        <KeyBinding Gesture="Ctrl+O" Command="{Binding PickFilesCommand}"/>
-        <KeyBinding Gesture="Ctrl+Shift+O" Command="{Binding LoadPlaylistCommand}"/>
-<KeyBinding Gesture="Ctrl+S" Command="{Binding SavePlaylistCommand}"/>        
-        </Window.InputBindings>
-    
+    <Window.InputBindings>
+        <KeyBinding Gesture="Esc" Command="{Binding StopCommand}"/>                              
+            <KeyBinding Gesture="CTRL+O" Command="{Binding PickFilesCommand}"/>
+            <KeyBinding Gesture="CTRL+SHIFT+O" Command="{Binding LoadPlaylistCommand}"/>
+            <KeyBinding Gesture="CTRL+N" Command="{Binding NewPlaylistCommand}"/>
+            <KeyBinding Gesture="CTRL+O" Command="{Binding PickMediaCommand}"/>
+            <KeyBinding Gesture="CTRL+S" Command="{Binding SavePlaylistCommand}"/>            
+    </Window.InputBindings>            
+
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition MaxWidth="300"/>
@@ -37,13 +39,15 @@
         </Grid.ColumnDefinitions>
 
         <StackPanel x:Name="MediaList" Grid.Column="0" VerticalAlignment="Center" Margin="24">
-            <TextBlock Text="Media Items" FontSize="16"/>
-            <ListView x:Name="MediaItemsList" SelectionMode="Single" ItemsSource="{Binding MediaItems}" SelectedItem="{Binding SelectedItem, Mode=OneWayToSource}" MinHeight="400" IsTabStop="True" ItemTemplate="{StaticResource MediaItemLayout}">
+            <TextBlock Text="Media List" FontSize="16"/>
+            <ListView x:Name="MediaItemsList" SelectionMode="Single" ItemsSource="{Binding MediaItems}" SelectedItem="{Binding SelectedItem, Mode=TwoWay}" MinHeight="300" IsTabStop="True" ItemTemplate="{StaticResource MediaItemLayout}">
                 
                 <ListView.InputBindings>
-                    <KeyBinding Key="Enter" Command="{Binding PlaySelectedCommand}" />
-                    <KeyBinding Key="Delete" Command="{Binding RemoveItemCommand}" />
-                </ListView.InputBindings>
+                    <KeyBinding Gesture="Enter" Command="{Binding PlaySelectedCommand}" />
+                    <KeyBinding Gesture="Delete" Command="{Binding RemoveItemCommand}" />
+                    <KeyBinding Gesture="CTRL+C" Command="{Binding CopyItemCommand}"/>
+                    <KeyBinding Gesture="CTRL+V" Command="{Binding PasteItemsCommand}"/>
+                                </ListView.InputBindings>
 
                 <ListView.ContextMenu>
                     <ContextMenu>
@@ -67,7 +71,7 @@
         </StackPanel>        
         
             <StackPanel x:Name="CurrentItemStatus" Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Top" Margin="24">
-                <TextBlock Text="Current Item:" FontSize="16"/>
+                <TextBlock Text="Player Status:" FontSize="16"/>
                                 <TextBox IsReadOnly="True" IsReadOnlyCaretVisible="True" Text="{Binding DisplayStatus}" Height="35" Width="250"/>            
         </StackPanel>
                 

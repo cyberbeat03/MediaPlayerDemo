@@ -7,16 +7,16 @@ public class PlaylistService
 {
     private readonly string _playlistLocation = Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.MyMusic),
-        "playlists");    
+        "playlists");
 
-    public async Task<IReadOnlyList<string>> LoadAsync(string playlistFilePath)
+    public async Task<IReadOnlyList<string>> LoadAsync(string playlistFile)
     {
-        if (Path.GetExtension(playlistFilePath).ToLower() == ".wpl")
-            return ConvertWplToM3u(playlistFilePath);
+        if (Path.GetExtension(playlistFile).ToLower() == ".wpl")
+            return ConvertWplToM3u(playlistFile);
 
         var outputList = new List<string>();
 
-String fullPath = Path.Combine(_playlistLocation, playlistFilePath);
+var fullPath = Path.Combine(_playlistLocation, playlistFile);
         var lines = await File.ReadAllLinesAsync(fullPath);
         foreach (var line in lines)
                     if (!string.IsNullOrWhiteSpace(line) && !line.StartsWith("#"))
@@ -37,8 +37,16 @@ String fullPath = Path.Combine(_playlistLocation, playlistFilePath);
             foreach (var filePath in fileList)
                 builder.AppendLine(filePath);
 
-            await File.WriteAllTextAsync(fullPath, builder.ToString());
-            return true;        
+        using var fileStream = File.Create(fullPath);
+        if (fileStream is not null)
+        {
+            using var writer = new StreamWriter(fileStream);
+            await writer.WriteAsync(builder.ToString());
+
+            return true;
+        }
+
+        return false;
     }
     
     public IReadOnlyList<string> ConvertWplToM3u(string wplPath)
