@@ -1,5 +1,4 @@
 ﻿using System.Xml.Linq;
-using System.Text.Json;
 
 namespace WinMix.Services;
 
@@ -9,7 +8,7 @@ public class PlaylistService
         Environment.GetFolderPath(Environment.SpecialFolder.MyMusic),
         "playlists");
 
-    public async Task<IReadOnlyList<string>> LoadAsync(string playlistFile)
+    public async Task<IEnumerable<string>> LoadAsync(string playlistFile)
     {
         if (Path.GetExtension(playlistFile).ToLower() == ".wpl")
             return ConvertWplToM3u(playlistFile);
@@ -30,7 +29,9 @@ var fullPath = Path.Combine(_playlistLocation, playlistFile);
         if (Directory.Exists(_playlistLocation) == false)
             Directory.CreateDirectory(_playlistLocation);
         var fullPath = Path.Combine(_playlistLocation, $"{playlistName}.m3u8");
-        
+
+if (fileList.Count() != 0)
+        {
             var builder = new StringBuilder();
             builder.AppendLine("#EXTM3U");
             builder.AppendLine();
@@ -47,7 +48,7 @@ var fullPath = Path.Combine(_playlistLocation, playlistFile);
         return false;
     }
     
-    public IReadOnlyList<string> ConvertWplToM3u(string wplPath)
+    public IEnumerable<string> ConvertWplToM3u(string wplPath)
     {
         var outputList = new List<string>();                
 

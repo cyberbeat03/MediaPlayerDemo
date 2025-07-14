@@ -22,7 +22,7 @@ public class ClipBoardService
             Clipboard.SetFileDropList(dropFiles);            
     }
 
-    public IReadOnlyList<string> Paste()
+    public IEnumerable<string> Paste()
     {
         if (!Clipboard.ContainsFileDropList()) throw new InvalidOperationException("The clipboard does not contain any files.");
 

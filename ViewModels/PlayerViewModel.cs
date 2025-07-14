@@ -52,7 +52,7 @@ public partial class PlayerViewModel : BaseViewModel
 
     void UpdateStatus()
     {        
-        DisplayStatus = (_playlist.GetCurrentItem() is null) ? "No media is currently loaded." : _playlist.GetCurrentItem().DisplayName;
+        DisplayStatus = _playlist.GetCurrentItem()?.DisplayName ?? "No media is currently loaded.";
     }
 
     void ResetPlayer()
@@ -239,7 +239,7 @@ public partial class PlayerViewModel : BaseViewModel
             try
             {
 var pastedItems = new ClipBoardService().Paste();
-if (pastedItems.Count > 0)                            
+if (pastedItems.Count() > 0)                            
             _playlist.AddFiles(pastedItems);
             }
             catch (Exception e)
@@ -281,7 +281,7 @@ if (pastedItems.Count > 0)
             ResetPlayer();
             _playlist.Name = Path.GetFileNameWithoutExtension(playlistFileName);
             AppTitle = $"{_playlist.Name} -WinMix Desktop";
-            if (mediaFiles.Count > 0)
+            if (mediaFiles.Count() > 0)
             {
                 _playlist.AddFiles(mediaFiles);
                 PlayItem(_playlist.GetCurrentItem());
