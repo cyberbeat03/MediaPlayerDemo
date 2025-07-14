@@ -37,9 +37,7 @@ var fullPath = Path.Combine(_playlistLocation, playlistFile);
             foreach (var filePath in fileList)
                 builder.AppendLine(filePath);
 
-        using var fileStream = File.Create(fullPath);
-        if (fileStream is not null)
-        {
+        using var fileStream = File.Create(fullPath);        
             using var writer = new StreamWriter(fileStream);
             await writer.WriteAsync(builder.ToString());
 

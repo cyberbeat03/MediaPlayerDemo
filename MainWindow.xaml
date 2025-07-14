@@ -27,8 +27,7 @@
         <KeyBinding Gesture="Esc" Command="{Binding StopCommand}"/>                              
             <KeyBinding Gesture="CTRL+O" Command="{Binding PickFilesCommand}"/>
             <KeyBinding Gesture="CTRL+SHIFT+O" Command="{Binding LoadPlaylistCommand}"/>
-            <KeyBinding Gesture="CTRL+N" Command="{Binding NewPlaylistCommand}"/>
-            <KeyBinding Gesture="CTRL+O" Command="{Binding PickMediaCommand}"/>
+            <KeyBinding Gesture="CTRL+N" Command="{Binding NewPlaylistCommand}"/>            
             <KeyBinding Gesture="CTRL+S" Command="{Binding SavePlaylistCommand}"/>            
     </Window.InputBindings>            
 

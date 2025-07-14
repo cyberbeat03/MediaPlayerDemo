@@ -24,13 +24,10 @@ public class ClipBoardService
 
     public IReadOnlyList<string> Paste()
     {
-        if (!Clipboard.ContainsFileDropList())
-            throw new InvalidOperationException("The clipboard does not contain any files.");
-        else
-        {
-            StringCollection fileList = Clipboard.GetFileDropList();
-            return fileList.Cast<string>().ToList();
-        }    
+        if (!Clipboard.ContainsFileDropList()) throw new InvalidOperationException("The clipboard does not contain any files.");
+
+        StringCollection fileList = Clipboard.GetFileDropList();
+        return fileList.Cast<string>().ToList();
     }
 
 }

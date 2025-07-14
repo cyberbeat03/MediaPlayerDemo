@@ -51,18 +51,14 @@ public partial class PlayerViewModel : BaseViewModel
     }
 
     void UpdateStatus()
-    {
-        if (MPlayer.Source is null)
-        {
-            DisplayStatus = "No media is currently loaded.";
-            return;
-        }
-        DisplayStatus = _playlist.GetCurrentItem().DisplayName;
+    {        
+        DisplayStatus = (_playlist.GetCurrentItem() is null) ? "No media is currently loaded." : _playlist.GetCurrentItem().DisplayName;
     }
 
     void ResetPlayer()
     {
-        _playlist.CurrentIndex = -1;
+            _playlist.Items.Clear();
+            _playlist.CurrentIndex = -1;
         _timer.Stop();
         MPlayer.Stop();
         MPlayer.Source = null;
@@ -124,15 +120,11 @@ public partial class PlayerViewModel : BaseViewModel
     [RelayCommand]
     void Rewind() => MPlayer.Position -= TimeSpan.FromSeconds(10);
 
-
     [RelayCommand]
-    void SetSpeed(string speedRatio)
-    {
-        if (double.TryParse(speedRatio, out double ratio))
-            MPlayer.SpeedRatio = ratio;
-    }
+    void SetSpeed(string speedRatio) =>
+    MPlayer.SpeedRatio = double.Parse(speedRatio);
 
-    [RelayCommand]
+        [RelayCommand]
     void FastForward() => MPlayer.Position += TimeSpan.FromSeconds(10);
 
     [RelayCommand]
@@ -244,16 +236,16 @@ public partial class PlayerViewModel : BaseViewModel
     [RelayCommand]
     void PasteItems()
     {
-        try
-        {
-            var files = new ClipBoardService().Paste();
-            if (files.Count > 0)
-                _playlist.AddFiles(files);
-        }
-        catch (Exception e)
-        {
-            MessageBox.Show(e.Message);
-        }
+            try
+            {
+var pastedItems = new ClipBoardService().Paste();
+if (pastedItems.Count > 0)                            
+            _playlist.AddFiles(pastedItems);
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message);
+            }
     }
 
     [RelayCommand]
@@ -266,8 +258,7 @@ public partial class PlayerViewModel : BaseViewModel
             if (inputDialog.ShowDialog() == true)
             {
                 _playlist.Name = inputDialog.Response;
-                AppTitle = $"{_playlist.Name} - WinMix Desktop";
-                _playlist.Items.Clear();
+                AppTitle = $"{_playlist.Name} - WinMix Desktop";                
                 ResetPlayer();
             }
         }
@@ -307,8 +298,7 @@ public partial class PlayerViewModel : BaseViewModel
     {
         try
         {
-            if (await new PlaylistService().SaveAsync(_playlist.Name, _playlist.GetFiles()) == false)
-                MessageBox.Show($"Playlist '{_playlist.Name}' could not be saved.");
+            await new PlaylistService().SaveAsync(_playlist.Name, _playlist.GetFiles());                
         }
         catch (Exception e)
         {
