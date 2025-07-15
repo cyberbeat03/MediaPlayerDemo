@@ -24,14 +24,12 @@ var fullPath = Path.Combine(_playlistLocation, playlistFile);
         return outputList;
     }
 
-    public async Task<bool> SaveAsync(string playlistName, IEnumerable<string> fileList)
+    public async Task SaveAsync(string playlistName, IEnumerable<string> fileList)
     {
         if (Directory.Exists(_playlistLocation) == false)
             Directory.CreateDirectory(_playlistLocation);
         var fullPath = Path.Combine(_playlistLocation, $"{playlistName}.m3u8");
 
-if (fileList.Count() != 0)
-        {
             var builder = new StringBuilder();
             builder.AppendLine("#EXTM3U");
             builder.AppendLine();
@@ -40,13 +38,10 @@ if (fileList.Count() != 0)
 
         using var fileStream = File.Create(fullPath);        
             using var writer = new StreamWriter(fileStream);
-            await writer.WriteAsync(builder.ToString());
-
-            return true;
+            await writer.WriteAsync(builder.ToString());            
         }
 
-        return false;
-    }
+        
     
     public IEnumerable<string> ConvertWplToM3u(string wplPath)
     {

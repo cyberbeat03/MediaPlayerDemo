@@ -50,14 +50,11 @@ public partial class PlayerViewModel : BaseViewModel
             PlayNext();
     }
 
-    void UpdateStatus()
-    {        
+    void UpdateStatus() =>
         DisplayStatus = _playlist.GetCurrentItem()?.DisplayName ?? "No media is currently loaded.";
-    }
 
     void ResetPlayer()
-    {
-            _playlist.Items.Clear();
+    {            
             _playlist.CurrentIndex = -1;
         _timer.Stop();
         MPlayer.Stop();
@@ -257,6 +254,7 @@ if (pastedItems.Count() > 0)
 
             if (inputDialog.ShowDialog() == true)
             {
+                _playlist.Items.Clear();
                 _playlist.Name = inputDialog.Response;
                 AppTitle = $"{_playlist.Name} - WinMix Desktop";                
                 ResetPlayer();
