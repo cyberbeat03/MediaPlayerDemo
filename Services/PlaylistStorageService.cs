@@ -2,7 +2,7 @@
 
 namespace WinMix.Services;
 
-public class PlaylistService
+public class PlaylistStorageService
 {
     private readonly string _playlistLocation = Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.MyMusic),
@@ -24,7 +24,7 @@ var fullPath = Path.Combine(_playlistLocation, playlistFile);
         return outputList;
     }
 
-    public async Task SaveAsync(string playlistName, IEnumerable<string> fileList)
+    public async Task SaveAsync(string playlistName, IEnumerable<string> tracks)
     {
         if (Directory.Exists(_playlistLocation) == false)
             Directory.CreateDirectory(_playlistLocation);
@@ -33,13 +33,12 @@ var fullPath = Path.Combine(_playlistLocation, playlistFile);
             var builder = new StringBuilder();
             builder.AppendLine("#EXTM3U");
             builder.AppendLine();
-            foreach (var filePath in fileList)
-                builder.AppendLine(filePath);
 
-        using var fileStream = File.Create(fullPath);        
-            using var writer = new StreamWriter(fileStream);
-            await writer.WriteAsync(builder.ToString());            
-        }
+            foreach (var track in tracks)
+                builder.AppendLine(track);
+        
+            await File.WriteAllTextAsync(fullPath, builder.ToString());
+    }
 
         
     

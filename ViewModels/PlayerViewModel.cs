@@ -274,7 +274,7 @@ if (pastedItems.Count() > 0)
             string playlistFileName = new FileOpenService().PickPlaylistFile();
             if (string.IsNullOrEmpty(playlistFileName)) return;
 
-            var mediaFiles = await new PlaylistService().LoadAsync(playlistFileName);
+            var mediaFiles = await new PlaylistStorageService().LoadAsync(playlistFileName);
             _playlist.Items.Clear();
             ResetPlayer();
             _playlist.Name = Path.GetFileNameWithoutExtension(playlistFileName);
@@ -296,7 +296,7 @@ if (pastedItems.Count() > 0)
     {
         try
         {
-            await new PlaylistService().SaveAsync(_playlist.Name, _playlist.GetFiles());                
+            await new PlaylistStorageService().SaveAsync(_playlist.Name, _playlist.GetFiles());                
         }
         catch (Exception e)
         {
