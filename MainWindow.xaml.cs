@@ -6,6 +6,6 @@ public partial class MainWindow : Window
     {        
         InitializeComponent();
         DataContext = new PlayerViewModel(new PlaybackList());
-        MediaItemsList.Focus();
+        ItemStatus.Focus();
     }
 }

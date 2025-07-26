@@ -7,10 +7,8 @@ public class FileOpenService
     private readonly string _musicFolder = Environment.GetFolderPath(Environment.SpecialFolder.MyMusic);
     private readonly string _supportedFileTypes = "Audio Files (*.MP3;*.M4A;*.AAC;*.FLAC;*.WMA;*.WAV)|*.mp3;*.m4a;*.aac;*.flac;*.wma;*.wav|Video Files (*.MP4;*.WMV)|*.mp4;*.wmv";
 
-    public IReadOnlyList<string> PickMediaFiles()
-    {
-        List<string> outputList = new();
-
+    public IEnumerable<string> PickMediaFiles()
+    {        
         OpenFileDialog OFD = new()
         {
             InitialDirectory = _musicFolder,
@@ -23,10 +21,10 @@ public class FileOpenService
             DefaultExt = ".mp3"
         };
 
-        if (OFD.ShowDialog() == true)        
-            outputList = OFD.FileNames.ToList();        
+        if (OFD.ShowDialog() == true)
+            return OFD.FileNames.ToList();
 
-        return outputList;
+        return Enumerable.Empty<string>();
     }
 
     public string PickPlaylistFile()
@@ -44,7 +42,7 @@ public class FileOpenService
         
         if (OFD.ShowDialog() == true)
         {
-            return OFD.FileName;
+            return OFD.FileName ?? string.Empty;
         }
 
         return string.Empty;

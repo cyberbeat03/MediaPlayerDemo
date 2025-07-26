@@ -2,45 +2,51 @@
 
 namespace WinMix.Services;
 
-public class PlaylistStorageService
+public class ListStorageService
 {
     private readonly string _playlistLocation = Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.MyMusic),
         "playlists");
 
-    public async Task<IEnumerable<string>> LoadAsync(string playlistFile)
+    public async Task<IEnumerable<string>> LoadPlaylistAsync(string filePath)
     {
-        if (Path.GetExtension(playlistFile).ToLower() == ".wpl")
-            return ConvertWplToM3u(playlistFile);
+if (Path.GetExtension(filePath).ToLower() ==".wpl")
+            return ConvertWplToM3u(filePath);
 
         var outputList = new List<string>();
-
-var fullPath = Path.Combine(_playlistLocation, playlistFile);
-        var lines = await File.ReadAllLinesAsync(fullPath);
-        foreach (var line in lines)
+        try
+        {
+                var lines = await File.ReadAllLinesAsync(filePath);
+                foreach (var line in lines)
                     if (!string.IsNullOrWhiteSpace(line) && !line.StartsWith("#"))
-                        outputList.Add(line.Trim());                    
-            
+                        outputList.Add(line.Trim());            
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Could not load {filePath}: {ex.Message}");
+        }
+
         return outputList;
     }
 
-    public async Task SaveAsync(string playlistName, IEnumerable<string> tracks)
-    {
-        if (Directory.Exists(_playlistLocation) == false)
-            Directory.CreateDirectory(_playlistLocation);
-        var fullPath = Path.Combine(_playlistLocation, $"{playlistName}.m3u8");
-
+    public async Task SavePlaylistAsync(string fileName, IEnumerable<string> fileList)
+    {        
+        try
+        {
+        var fullPath = Path.Combine(_playlistLocation, fileName);
+        
             var builder = new StringBuilder();
             builder.AppendLine("#EXTM3U");
             builder.AppendLine();
-
-            foreach (var track in tracks)
-                builder.AppendLine(track);
-        
-            await File.WriteAllTextAsync(fullPath, builder.ToString());
-    }
-
-        
+            foreach (var filePath in fileList)
+                builder.AppendLine(filePath);
+            await File.WriteAllTextAsync(fullPath, builder.ToString());            
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Could not save playlist: {ex.Message}");            
+        }    
+}
     
     public IEnumerable<string> ConvertWplToM3u(string wplPath)
     {

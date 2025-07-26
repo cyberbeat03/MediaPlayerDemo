@@ -1,17 +1,20 @@
-﻿namespace WinMix.ViewModels;
+﻿using WinMix.Models;
+
+namespace WinMix.ViewModels;
 
 public partial class PlayerViewModel : BaseViewModel
 {
-    DispatcherTimer _timer;
-    PlaybackList _playlist;
-
-    public ObservableCollection<MediaItem> MediaItems => _playlist.Items;
+    [ObservableProperty] MediaElement _mPlayer = new();
+    [ObservableProperty] bool _canRepeat = false;
+    [ObservableProperty] string _displayStatus = string.Empty;
+    [ObservableProperty] TimeSpan _totalDuration;
+    [ObservableProperty] TimeSpan _elapsedTime;
+    DispatcherTimer _timer = new();
+    PlaybackList _playback;    
 
     public PlayerViewModel(PlaybackList playbackList)
     {
-        _playlist = playbackList;
-        AppTitle = $"{_playlist.Name} - WinMix Desktop";
-        _timer = new();
+        _playback = playbackList;                        
         _timer.Interval = TimeSpan.FromSeconds(1);
         _timer.Tick += Timer_Tick;
 
@@ -51,11 +54,11 @@ public partial class PlayerViewModel : BaseViewModel
     }
 
     void UpdateStatus() =>
-        DisplayStatus = _playlist.GetCurrentItem()?.DisplayName ?? "No media is currently loaded.";
+        DisplayStatus = _playback.GetCurrentItem()?.DisplayName ?? "No media is currently loaded.";
 
     void ResetPlayer()
     {            
-            _playlist.CurrentIndex = -1;
+            _playback.CurrentIndex = -1;
         _timer.Stop();
         MPlayer.Stop();
         MPlayer.Source = null;
@@ -81,18 +84,7 @@ public partial class PlayerViewModel : BaseViewModel
         _timer.IsEnabled = true;
         MPlayer.Play();
     }
-
-    [RelayCommand]
-    void PlaySelected()
-    {
-        if (SelectedItem is MediaItem item)
-        {
-            int currentPosition = MediaItems.IndexOf(item);
-            _playlist.CurrentIndex = currentPosition;
-            PlayItem(item);
-        }
-    }
-
+    
     [RelayCommand]
     void Pause()
     {
@@ -125,183 +117,78 @@ public partial class PlayerViewModel : BaseViewModel
     void FastForward() => MPlayer.Position += TimeSpan.FromSeconds(10);
 
     [RelayCommand]
-    void PlayNext() => PlayItem(_playlist.GetNextItem());
+    void PlayNext() => PlayItem(_playback.GetNextItem());
 
     [RelayCommand]
-    void PlayPrevious() => PlayItem(_playlist.GetPreviousItem());
+    void PlayPrevious() => PlayItem(_playback.GetPreviousItem());
+
+    [RelayCommand]
+    void OpenFiles()
+    {
+        var pickedFiles = new FileOpenService().PickMediaFiles();
+        if (pickedFiles.Count() > 0)
+            foreach (var file in pickedFiles)
+                _playback.AddItem(MediaItem.FromFile(file));
+            
+            PlayItem(_playback.GetCurrentItem());        
+    }
 
     [RelayCommand]
     void RemoveItem()
-    {
-        if (SelectedItem is MediaItem item)
-        {
-            _playlist.RemoveItem(item);
+    {        
+            _playback.RemoveItem(_playback.GetCurrentItem());
 
-            if (_playlist.Items.Count == 0)
+            if (_playback.Items.Count == 0)
             {
                 ResetPlayer();
                 return;
             }
-
-            if (_playlist.GetCurrentItem() is not null)
-                PlayItem(_playlist.GetCurrentItem());
-            else
-                PlayNext();
-        }
-    }
-
-    [RelayCommand]
-    void PickFiles()
-    {
-        try
-        {
-            var pickedFiles = new FileOpenService().PickMediaFiles();
-            if (pickedFiles.Count > 0)
-            {
-                _playlist.AddFiles(pickedFiles);
-                PlayItem(_playlist.GetCurrentItem());
-            }
-        }
-        catch (Exception e)
-        {
-            MessageBox.Show(e.Message);
-        }
-    }
-
-    [RelayCommand]
-    void MoveItemUp()
-    {
-        if (SelectedItem is MediaItem item)
-        {
-            int currentPosition = MediaItems.IndexOf(item);
-            if (currentPosition > 0)
-                MediaItems.Move(currentPosition, currentPosition - 1);
-        }
-    }
-
-    [RelayCommand]
-    void MoveItemDown()
-    {
-        if (SelectedItem is MediaItem item)
-        {
-            int currentPosition = MediaItems.IndexOf(item);
-
-            if (currentPosition < MediaItems.Count - 1)
-                MediaItems.Move(currentPosition, currentPosition + 1);
-        }
-    }
-
-    [RelayCommand]
-    void CopyItem()
-    {
-        try
-        {
-            if (SelectedItem is MediaItem item)
-            {
-                new ClipBoardService().Copy(item.FullPath);
-                MessageBox.Show($"File {item.DisplayName} was copied to the clipboard.");
-            }
-            else
-                MessageBox.Show("No item to copy.");
-        }
-        catch (Exception e)
-        {
-            MessageBox.Show(e.Message);
-        }
-    }
-
-    [RelayCommand]
-    void CopyAllItems()
-    {
-        if (MediaItems.Count == 0)
-        {
-            MessageBox.Show("There are no items to copy.");
-            return;
-        }
-
-        try
-        {
-            new ClipBoardService().CopyAll(_playlist.GetFiles());
-            MessageBox.Show("All files were copied to the clipboard.");
-        }
-        catch (Exception e)
-        {
-            MessageBox.Show(e.Message);
-        }
-    }
-
-    [RelayCommand]
-    void PasteItems()
-    {
-            try
-            {
-var pastedItems = new ClipBoardService().Paste();
-if (pastedItems.Count() > 0)                            
-            _playlist.AddFiles(pastedItems);
-            }
-            catch (Exception e)
-            {
-                MessageBox.Show(e.Message);
-            }
-    }
-
-    [RelayCommand]
-    void NewPlaylist()
-    {
-        try
-        {
-            var inputDialog = new InputTextDialog();
-
-            if (inputDialog.ShowDialog() == true)
-            {
-                _playlist.Items.Clear();
-                _playlist.Name = inputDialog.Response;
-                AppTitle = $"{_playlist.Name} - WinMix Desktop";                
-                ResetPlayer();
-            }
-        }
-        catch (Exception e)
-        {
-            MessageBox.Show(e.Message);
-        }
+            
+                PlayItem(_playback.GetCurrentItem());
     }
 
     [RelayCommand]
     async Task LoadPlaylist()
     {
-        try
-        {
-            string playlistFileName = new FileOpenService().PickPlaylistFile();
-            if (string.IsNullOrEmpty(playlistFileName)) return;
+        string playlistName = new FileOpenService().PickPlaylistFile();
+        if (string.IsNullOrEmpty(playlistName)) return;
 
-            var mediaFiles = await new PlaylistStorageService().LoadAsync(playlistFileName);
-            _playlist.Items.Clear();
-            ResetPlayer();
-            _playlist.Name = Path.GetFileNameWithoutExtension(playlistFileName);
-            AppTitle = $"{_playlist.Name} -WinMix Desktop";
-            if (mediaFiles.Count() > 0)
-            {
-                _playlist.AddFiles(mediaFiles);
-                PlayItem(_playlist.GetCurrentItem());
-            }
-        }
-        catch (Exception e)
-        {
-            MessageBox.Show(e.Message);
-        }
+        var items = await new ListStorageService().LoadPlaylistAsync(playlistName);
+        _playback.Items.Clear();
+        foreach (var item in items)
+            _playback.AddItem(MediaItem.FromFile(item));
+        _playback.Name = playlistName;
+        AppTitle = $"{playlistName} -WinMix Desktop";
     }
 
     [RelayCommand]
     async Task SavePlaylist()
     {
-        try
+        if (string.IsNullOrEmpty(_playback.Name))
         {
-            await new PlaylistStorageService().SaveAsync(_playlist.Name, _playlist.GetFiles());                
+            var inputDialog = new InputTextDialog();
+            if (inputDialog.ShowDialog() == true)
+                _playback.Name = inputDialog.Response;
+            else
+                return;
         }
-        catch (Exception e)
+
+                await new ListStorageService().SavePlaylistAsync(_playback.Name, _playback.GetFiles());
+            }
+
+            [RelayCommand]
+    void LoadMedia()
+    {
+        var listVM = new ListManagerViewModel(_playback);
+        var listManager = new ListManager(listVM);
+
+        if (listManager.ShowDialog() == true)
         {
-            MessageBox.Show(e.Message);
-        }
+            _playback.Items = listVM.MediaItems;
+            _playback.CurrentIndex = listVM.MediaItems.IndexOf(listVM.SelectedItem)!;
+            }
+
+            PlayItem(_playback.GetCurrentItem());        
     }
 
 }

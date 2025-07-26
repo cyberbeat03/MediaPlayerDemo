@@ -2,8 +2,29 @@
 
 public class PlaybackList
 {
-    public ObservableCollection<MediaItem> Items { get; }
-    public int CurrentIndex { get; set; }
+    private int _currentIndex;
+    private ObservableCollection<MediaItem> _items;
+
+    public ObservableCollection<MediaItem> Items
+    {
+        get => _items;
+        set
+        {
+            if (_items != value)
+                _items = value;
+        }
+    }
+
+    public int CurrentIndex
+    {
+        get => _currentIndex;
+        set
+        {
+            if (_currentIndex != value)
+                _currentIndex = value;
+        }
+    }
+    
     public string Name { get; set; }
 
     private bool IsIndexValid(int index) =>
@@ -51,13 +72,9 @@ return null;
         return pathList;
     }        
 
-    public void AddFiles(IEnumerable<string> filePaths)
-    {
-        foreach (var path in filePaths)
-        {
-            if (File.Exists(path))
-            Items.Add(new MediaItem(new FileInfo(path)));
-        }
+    public void AddItem(MediaItem item)
+    {                           
+            Items.Add(item);        
 
         if (CurrentIndex <= -1 && Items.Count > 0)
             CurrentIndex = 0;
