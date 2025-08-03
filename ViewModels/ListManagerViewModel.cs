@@ -1,25 +1,24 @@
 ﻿namespace WinMix.ViewModels;
 
-public partial class ListManagerViewModel : BaseViewModel
+public partial class ListManagerViewModel : ObservableObject
 {
-    [ObservableProperty] string _playlistName = string.Empty;
-    [ObservableProperty] MediaItem? _selectedItem = null;
-    public ObservableCollection<MediaItem> MediaItems { get; set; } = new();
-
+    [ObservableProperty] MediaItem? _selectedItem;
+    [ObservableProperty] string _playlistName;
+    [ObservableProperty] string _listTitle;
+    public ObservableCollection<MediaItem> MediaItems { get; set; }
     public ListManagerViewModel(PlaybackList playbackList)
     {
         MediaItems = playbackList.Items;
+        PlaylistName = playbackList.Name;
+        ListTitle = $"Playlist: {playbackList.Name} - List Manager";
     }
 
     [RelayCommand]
     void PickMedia()
     {
         var pickedFiles = new FileOpenService().PickMediaFiles();
-        if (pickedFiles.Count() > 0)
-        {
-            foreach (var file in pickedFiles)
-                MediaItems.Add(MediaItem.FromFile(file));
-        }
+        foreach (var file in pickedFiles)
+            MediaItems.Add(MediaItem.FromFile(file));
     }
 
     [RelayCommand]
@@ -67,17 +66,50 @@ public partial class ListManagerViewModel : BaseViewModel
             MediaItems.Add(MediaItem.FromFile(item));
     }
 
-    [RelayCommand]
-    void NewPlaylist()
+    public IEnumerable<string> GetFiles()
     {
-        var inputDialog = new InputTextDialog();
+        List<string> pathList = new();
 
-        if (inputDialog.ShowDialog() == true)
+        foreach (var item in MediaItems)
+            pathList.Add(item.FullPath);
+
+        return pathList;
+    }
+
+    [RelayCommand]
+    async Task SaveList()
+    {
+        await new ListStorageService().SavePlaylistAsync(PlaylistName, GetFiles());
+    }
+
+    [RelayCommand]
+    async Task LoadList()
+    {
+        string playlistFile = new FileOpenService().PickPlaylistFile();
+        if (!string.IsNullOrEmpty(playlistFile))
         {
             MediaItems.Clear();
-            PlaylistName = inputDialog.Response;            
+            PlaylistName = Path.GetFileNameWithoutExtension(playlistFile);
+            ListTitle = $"Playlist: {PlaylistName} - List Manager";
+            var files = await new ListStorageService().LoadPlaylistAsync(playlistFile);
+            foreach (var file in files)
+                MediaItems.Add(MediaItem.FromFile(file));
         }
     }
 
+
+    [RelayCommand]
+    void NewList()
+    {
+        var inputDialog = new InputTextDialog();
+if (inputDialog.ShowDialog() == true)
+        {
+            string input = inputDialog.Response;           
+            
+            MediaItems.Clear();
+                PlaylistName = input;
+            ListTitle = $"Playlist: {input} - List Manager";
+        }
+    }
 
 }

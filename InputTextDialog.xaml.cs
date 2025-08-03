@@ -13,7 +13,7 @@ public partial class InputTextDialog : Window
     }
 
     bool IsValidFileName =>
-(!string.IsNullOrWhiteSpace(InputText.Text.Trim()) && InputText.Text.IndexOfAny(Path.GetInvalidFileNameChars()) < 0);
+!string.IsNullOrWhiteSpace(InputText.Text.Trim()) && InputText.Text.IndexOfAny(Path.GetInvalidFileNameChars()) < 0;
 
 void OnSaveButtonClick(object s, RoutedEventArgs e)
     {

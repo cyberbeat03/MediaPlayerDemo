@@ -147,48 +147,4 @@ public partial class PlayerViewModel : BaseViewModel
                 PlayItem(_playback.GetCurrentItem());
     }
 
-    [RelayCommand]
-    async Task LoadPlaylist()
-    {
-        string playlistName = new FileOpenService().PickPlaylistFile();
-        if (string.IsNullOrEmpty(playlistName)) return;
-
-        var items = await new ListStorageService().LoadPlaylistAsync(playlistName);
-        _playback.Items.Clear();
-        foreach (var item in items)
-            _playback.AddItem(MediaItem.FromFile(item));
-        _playback.Name = playlistName;
-        AppTitle = $"{playlistName} -WinMix Desktop";
-    }
-
-    [RelayCommand]
-    async Task SavePlaylist()
-    {
-        if (string.IsNullOrEmpty(_playback.Name))
-        {
-            var inputDialog = new InputTextDialog();
-            if (inputDialog.ShowDialog() == true)
-                _playback.Name = inputDialog.Response;
-            else
-                return;
-        }
-
-                await new ListStorageService().SavePlaylistAsync(_playback.Name, _playback.GetFiles());
-            }
-
-            [RelayCommand]
-    void LoadMedia()
-    {
-        var listVM = new ListManagerViewModel(_playback);
-        var listManager = new ListManager(listVM);
-
-        if (listManager.ShowDialog() == true)
-        {
-            _playback.Items = listVM.MediaItems;
-            _playback.CurrentIndex = listVM.MediaItems.IndexOf(listVM.SelectedItem)!;
-            }
-
-            PlayItem(_playback.GetCurrentItem());        
-    }
-
 }
