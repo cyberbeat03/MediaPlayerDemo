@@ -1,20 +1,20 @@
-﻿using WinMix.Models;
+﻿namespace WinMix.ViewModels;
 
-namespace WinMix.ViewModels;
-
-public partial class PlayerViewModel : BaseViewModel
-{
-    [ObservableProperty] MediaElement _mPlayer = new();
+public partial class PlayerViewModel : ObservableObject
+{    
+    [ObservableProperty] MediaElement _mPlayer = new();    
     [ObservableProperty] bool _canRepeat = false;
     [ObservableProperty] string _displayStatus = string.Empty;
     [ObservableProperty] TimeSpan _totalDuration;
     [ObservableProperty] TimeSpan _elapsedTime;
     DispatcherTimer _timer = new();
-    PlaybackList _playback;    
+    PlaybackService _playback;
 
-    public PlayerViewModel(PlaybackList playbackList)
+    public ObservableCollection<MediaItem> MediaItems => _playback.Items;
+
+    public PlayerViewModel(PlaybackService playbackService)
     {
-        _playback = playbackList;                        
+        _playback = playbackService;                                
         _timer.Interval = TimeSpan.FromSeconds(1);
         _timer.Tick += Timer_Tick;
 
@@ -23,11 +23,12 @@ public partial class PlayerViewModel : BaseViewModel
         MPlayer.MediaEnded += OnMediaEnded;
         MPlayer.MediaFailed += (s, e) =>
         {
-            MessageBox.Show($"Media failed: {e.ErrorException?.Message}");
+DisplayStatus =             $"Media failed: {e.ErrorException?.Message}";
             ResetPlayer();
         };
 
-        UpdateStatus();
+        if (_playback.CurrentIndex != 0)
+        PlayItem(_playback.GetCurrentItem());        
     }
 
     void Timer_Tick(object? s, EventArgs e)
@@ -38,6 +39,7 @@ public partial class PlayerViewModel : BaseViewModel
 
     void OnMediaOpened(object? sender, RoutedEventArgs e)
     {
+        DisplayStatus = _playback.GetCurrentItem().DisplayName;
         TotalDuration = MPlayer.NaturalDuration.TimeSpan;
         _timer.Start();
     }
@@ -52,10 +54,8 @@ public partial class PlayerViewModel : BaseViewModel
         else
             PlayNext();
     }
-
-    void UpdateStatus() =>
-        DisplayStatus = _playback.GetCurrentItem()?.DisplayName ?? "No media is currently loaded.";
-
+    
+        
     void ResetPlayer()
     {            
             _playback.CurrentIndex = -1;
@@ -65,7 +65,7 @@ public partial class PlayerViewModel : BaseViewModel
         ElapsedTime = TimeSpan.Zero;
         TotalDuration = TimeSpan.Zero;
         MPlayer.SpeedRatio = 1.0;
-        UpdateStatus();
+        DisplayStatus = "No media is currently loaded.";
     }
 
     void PlayItem(MediaItem? currentItem)
@@ -73,8 +73,7 @@ public partial class PlayerViewModel : BaseViewModel
         if ((currentItem is not null) && (MPlayer.Source != currentItem.UriPath))
         {
             MPlayer.Source = currentItem.UriPath;
-            Play();
-            UpdateStatus();
+            Play();            
         }
     }
 

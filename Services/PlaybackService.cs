@@ -1,6 +1,6 @@
-﻿namespace WinMix.Models;
+﻿namespace WinMix.Services;
 
-public class PlaybackList
+public class PlaybackService
 {
     private int _currentIndex;
     private ObservableCollection<MediaItem> _items;
@@ -30,7 +30,7 @@ public class PlaybackList
     private bool IsIndexValid(int index) =>
         index >= 0 && index < Items.Count;
 
-    public PlaybackList()
+    public PlaybackService()
     {
         Items = new();
         CurrentIndex = -1;

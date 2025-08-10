@@ -21,7 +21,8 @@
             <Button Content="_Remove Selected" Command="{Binding RemoveSelectedItemCommand}" Margin="5"/>
             <Button Content="_New" Command="{Binding NewListCommand}" Margin="5"/>
             <Button Content="_Save" Command="{Binding SaveListCommand}" Margin="5"/>
-            <Button Content="_Load" Command="{Binding LoadListCommand}" Margin="5"/>            
+            <Button Content="_Load" Command="{Binding LoadListCommand}" Margin="5"/>
+            <Button Content="_Play" Command="{Binding PlayCommand}" Margin="5"/>
         </StackPanel>
 
         <StackPanel x:Name="MediaList" VerticalAlignment="Center" Margin="24">
@@ -39,15 +40,16 @@
                                     </ListView.InputBindings>
                 
                 <ListView.ContextMenu>
-                    <ContextMenu>                        
+                    <ContextMenu>
+                        <MenuItem Header="_Play" Command="{Binding PlayCommand}"/>
                         <MenuItem Header="_Add" Command="{Binding PickMediaCommand}"/>
-                        <MenuItem Header="_Remove" Command="{Binding RemoveItemCommand}"/>
+                        <MenuItem Header="_Remove" Command="{Binding RemoveSelectedCommand}"/>
                         <MenuItem Header="Move _Up" Command="{Binding MoveItemUpCommand}"/>
                         <MenuItem Header="Move _Down" Command="{Binding MoveItemDownCommand}"/>
                         <MenuItem Header="_Copy" Command="{Binding CopyItemCommand}"/>
                                                 <MenuItem Header="_Paste" Command="{Binding PasteItemsCommand}"/>
                         <MenuItem Header="_Load List" Command="{Binding LoadListCommand}"/>
-                        <MenuItem Header="_Save List" Command="{Binding SaveListCommand}"/>
+                        <MenuItem Header="_Save List" Command="{Binding SaveListCommand}"/>                        
                     </ContextMenu>
                 </ListView.ContextMenu>
             </ListView>

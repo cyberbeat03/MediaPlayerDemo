@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WinMix"
         mc:Ignorable="d"
-        Title="{Binding AppTitle}" WindowStartupLocation="CenterScreen" Height="500" Width="600">
+        Title="WinMix Media Player" WindowStartupLocation="CenterScreen" Height="500" Width="600">
 
     <Window.Resources>
         <Style TargetType="Button" x:Key="TransportButton">
@@ -13,21 +13,26 @@
             <Setter Property="Width" Value="50"/>
             <Setter Property="Margin" Value="10"/>
         </Style>
-        
+
+        <DataTemplate x:Key="MediaItemLayout">
+            <StackPanel Margin="10">
+                <TextBlock Text="{Binding DisplayName}"/>
+            </StackPanel>
+        </DataTemplate>
+
         <local:TimeSpanToStringConverter x:Key="TimeSpanToString"/>
    </Window.Resources>
+    
     <Window.InputBindings>
         <KeyBinding Gesture="Escape" Command="{Binding StopCommand}"/>
-        <KeyBinding Gesture="F6" Command="{Binding LoadMediaCommand}"/>
+        <KeyBinding Gesture="Delete" Command="{Binding RemoveItemCommand}" />        
         <KeyBinding Gesture="Ctrl+O" Command="{Binding OpenFilesCommand}"/>
     </Window.InputBindings>
-
     <Window.ContextMenu>
         <ContextMenu>
-            <MenuItem Header="_Load List" Command="{Binding LoadPlaylistCommand}"/>
-                        <MenuItem Header="_Save List" Command="{Binding SavePlaylistCommand}"/>
-            <MenuItem Header="_Manage Media" Command="{Binding LoadMediaCommand}"/>
+            <MenuItem Header="_Add..." Command="{Binding OpenFilesCommand}"/>
             <MenuItem Header="_Remove" Command="{Binding RemoveItemCommand}"/>
+            
             <MenuItem Header="Adjust Playback _Speed">
                 <MenuItem Header="Speed Up" Command="{Binding SetSpeedCommand}" CommandParameter="1.5"/>
                 <MenuItem Header="Slow Down" Command="{Binding SetSpeedCommand}" CommandParameter="0.5"/>
@@ -41,7 +46,9 @@
             <ColumnDefinition MaxWidth="300"/>
             <ColumnDefinition Width="*"/>            
         </Grid.ColumnDefinitions>
-            <StackPanel x:Name="ItemStatus" Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Top" Margin="24">
+        <ListView x:Name="MediaItemsList" Grid.Row="0" SelectionMode="Single" ItemsSource="{Binding MediaItems}" MinHeight="500" IsTabStop="True" ItemTemplate="{StaticResource MediaItemLayout}"/>
+
+        <StackPanel x:Name="ItemStatus" Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Top" Margin="24">
                 <TextBlock Text="Player Status:" FontSize="16"/>
                                 <TextBox x:Name="StatusText" IsReadOnly="True" IsReadOnlyCaretVisible="True" Text="{Binding DisplayStatus}" Height="35" Width="250"/>            
         </StackPanel>

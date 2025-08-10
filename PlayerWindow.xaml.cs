@@ -1,11 +1,14 @@
 ﻿namespace WinMix;
 
 public partial class PlayerWindow : Window
-{    
-    public PlayerWindow(PlayerViewModel viewModel)
+{
+    PlayerViewModel viewModel = new(new PlaybackService());
+    
+    public PlayerWindow()
     {        
         InitializeComponent();
         DataContext = viewModel;
-        ItemStatus.Focus();
+        MediaItemsList.Focus();
     }
-}
+
+    }

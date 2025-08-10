@@ -6,7 +6,7 @@ public partial class ListManagerViewModel : ObservableObject
     [ObservableProperty] string _playlistName;
     [ObservableProperty] string _listTitle;
     public ObservableCollection<MediaItem> MediaItems { get; set; }
-    public ListManagerViewModel(PlaybackList playbackList)
+    public ListManagerViewModel(PlaybackService playbackList)
     {
         MediaItems = playbackList.Items;
         PlaylistName = playbackList.Name;
@@ -110,6 +110,12 @@ if (inputDialog.ShowDialog() == true)
                 PlaylistName = input;
             ListTitle = $"Playlist: {input} - List Manager";
         }
+    }
+
+[RelayCommand]
+    void Play()
+    {
+        
     }
 
 }
