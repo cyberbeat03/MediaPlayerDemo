@@ -225,4 +225,11 @@ if (SelectedItem is MediaItem item)
         }
     }
 
-}
+    [RelayCommand]
+    void ShowAbout()
+    {
+        var about = new AboutWindow();
+        about.ShowDialog();
+    }
+
+    }

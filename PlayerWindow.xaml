@@ -21,19 +21,28 @@
         </DataTemplate>
 
         <local:TimeSpanToStringConverter x:Key="TimeSpanToString"/>
-   </Window.Resources>
-    
+    </Window.Resources>
+
     <Window.InputBindings>
-        <KeyBinding Gesture="Escape" Command="{Binding StopCommand}"/>        
+        <KeyBinding Gesture="Escape" Command="{Binding StopCommand}"/>
         <KeyBinding Gesture="Ctrl+O" Command="{Binding OpenFilesCommand}"/>
-    </Window.InputBindings>                        
-    
-                <Grid>
+        <KeyBinding Gesture="Ctrl+Shift+O" Command="{Binding LoadListCommand}"/>
+    </Window.InputBindings>
+
+    <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition MaxWidth="300"/>
-            <ColumnDefinition Width="*"/>            
+            <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <ListView x:Name="MediaItemsList" Grid.Column="0" SelectedItem="{Binding SelectedItem}" SelectionMode="Single" ItemsSource="{Binding MediaItems}" IsTabStop="True" ItemTemplate="{StaticResource MediaItemLayout}">
+            <ListView.InputBindings>
+                <KeyBinding Gesture="Enter" Command="{Binding PlaySelectedCommand}"/>
+                <KeyBinding Gesture="Delete" Command="{Binding RemoveItemCommand}"/>
+                <KeyBinding Gesture="Ctrl+C" Command="{Binding CopyItemCommand}"/>
+                <KeyBinding Gesture="Ctrl+V" Command="{Binding PasteItemsCommand}"/>
+
+            </ListView.InputBindings>
+
             <ListView.ContextMenu>
                 <ContextMenu>
                     <MenuItem Header="_Add Media..." Command="{Binding OpenFilesCommand}"/>
@@ -50,23 +59,24 @@
                         <MenuItem Header="Slow Down" Command="{Binding SetSpeedCommand}" CommandParameter="0.5"/>
                         <MenuItem Header="Reset To Normal" Command="{Binding SetSpeedCommand}" CommandParameter="1.0"/>
                     </MenuItem>
+                    <MenuItem Header="_About WinMix" Command="{Binding ShowAboutCommand}"/>
                 </ContextMenu>
             </ListView.ContextMenu>
         </ListView>
 
         <StackPanel x:Name="ItemStatus" Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Top" Margin="24">
-                <TextBlock Text="Player Status:" FontSize="16"/>
-                                <TextBox x:Name="StatusText" IsReadOnly="True" IsReadOnlyCaretVisible="True" Text="{Binding DisplayStatus}" Height="35" Width="250"/>            
+            <TextBlock Text="Player Status:" FontSize="16"/>
+            <TextBox x:Name="StatusText" IsReadOnly="True" IsReadOnlyCaretVisible="True" Text="{Binding DisplayStatus}" Height="35" Width="250"/>
         </StackPanel>
-                
-                <StackPanel x:Name="MainPlayer" Grid.Column="1" Margin="4">
-                    <TextBlock Text="{Binding ElapsedTime, Converter={StaticResource TimeSpanToString}}" Focusable="True" Width="50" Height="25"/>
+
+        <StackPanel x:Name="MainPlayer" Grid.Column="1" Margin="4">
+            <TextBlock Text="{Binding ElapsedTime, Converter={StaticResource TimeSpanToString}}" Focusable="True" Width="50" Height="25"/>
             <TextBlock Text="{Binding TotalDuration, Converter={StaticResource TimeSpanToString}}" Focusable="True" Width="50" Height="25"/>
-                <ContentControl Content="{Binding MPlayer}" Focusable="False" MinHeight="300" MinWidth="450"/>
-                <CheckBox Content="Repeat" IsChecked="{Binding CanRepeat}" Margin="24"/>            
-                    
+            <ContentControl Content="{Binding MPlayer}" Focusable="False" MinHeight="300" MinWidth="450"/>
+            <CheckBox Content="Repeat" IsChecked="{Binding CanRepeat}" Margin="24"/>
+
             <StackPanel x:Name="TransportControls" Orientation="Horizontal" HorizontalAlignment="Center" Margin="24">
-                <Button Content="_Play" Style="{StaticResource TransportButton}" Command="{Binding PlayCommand}" />                
+                <Button Content="_Play" Style="{StaticResource TransportButton}" Command="{Binding PlayCommand}" />
                 <Button Content="Pa_use" Style="{StaticResource TransportButton}" Command="{Binding PauseCommand}" />
                 <Button Content="_Stop" Style="{StaticResource TransportButton}" Command="{Binding StopCommand}" />
                 <Button Content="_Rewind" Style="{StaticResource TransportButton}" Command="{Binding RewindCommand}" />
@@ -74,6 +84,6 @@
                 <Button Content="Pre_vious" Style="{StaticResource TransportButton}" Command="{Binding PlayPreviousCommand}"/>
                 <Button Content="_Next" Style="{StaticResource TransportButton}" Command="{Binding PlayNextCommand}"/>
             </StackPanel>
-                </StackPanel>
+        </StackPanel>
     </Grid>
 </Window>
