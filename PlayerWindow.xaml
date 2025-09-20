@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WinMix"
         mc:Ignorable="d"
-        Title="WinMix Media Player" WindowStartupLocation="CenterScreen" Height="500" Width="600">
+        Title="{Binding AppTitle}" WindowStartupLocation="CenterScreen" Height="500" Width="600">
 
     <Window.Resources>
         <Style TargetType="Button" x:Key="TransportButton">
@@ -24,29 +24,35 @@
    </Window.Resources>
     
     <Window.InputBindings>
-        <KeyBinding Gesture="Escape" Command="{Binding StopCommand}"/>
-        <KeyBinding Gesture="Delete" Command="{Binding RemoveItemCommand}" />        
+        <KeyBinding Gesture="Escape" Command="{Binding StopCommand}"/>        
         <KeyBinding Gesture="Ctrl+O" Command="{Binding OpenFilesCommand}"/>
-    </Window.InputBindings>
-    <Window.ContextMenu>
-        <ContextMenu>
-            <MenuItem Header="_Add..." Command="{Binding OpenFilesCommand}"/>
-            <MenuItem Header="_Remove" Command="{Binding RemoveItemCommand}"/>
-            
-            <MenuItem Header="Adjust Playback _Speed">
-                <MenuItem Header="Speed Up" Command="{Binding SetSpeedCommand}" CommandParameter="1.5"/>
-                <MenuItem Header="Slow Down" Command="{Binding SetSpeedCommand}" CommandParameter="0.5"/>
-                <MenuItem Header="Reset To Normal" Command="{Binding SetSpeedCommand}" CommandParameter="1.0"/>
-            </MenuItem>
-        </ContextMenu>
-            </Window.ContextMenu>
+    </Window.InputBindings>                        
     
                 <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition MaxWidth="300"/>
             <ColumnDefinition Width="*"/>            
         </Grid.ColumnDefinitions>
-        <ListView x:Name="MediaItemsList" Grid.Row="0" SelectionMode="Single" ItemsSource="{Binding MediaItems}" MinHeight="500" IsTabStop="True" ItemTemplate="{StaticResource MediaItemLayout}"/>
+        <ListView x:Name="MediaItemsList" Grid.Column="0" SelectedItem="{Binding SelectedItem}" SelectionMode="Single" ItemsSource="{Binding MediaItems}" IsTabStop="True" ItemTemplate="{StaticResource MediaItemLayout}">
+            <ListView.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="_Add Media..." Command="{Binding OpenFilesCommand}"/>
+                    <MenuItem Header="_Play Selected Item" Command="{Binding PlaySelectedCommand}"/>
+                    <MenuItem Header="_Remove Selected Item" Command="{Binding RemoveItemCommand}"/>
+                    <MenuItem Header="Move Selected Item _Up" Command="{Binding MoveItemUpCommand}"/>
+                    <MenuItem Header="Move Selected Item _Down" Command="{Binding MoveItemDownCommand}"/>
+                    <MenuItem Header="_Copy To Clipboard" Command="{Binding CopyItemCommand}"/>
+                    <MenuItem Header="_Paste From Clipboard" Command="{Binding PasteItemsCommand}"/>
+                    <MenuItem Header="_Load Playlist" Command="{Binding LoadListCommand}"/>
+                    <MenuItem Header="_Save Playlist" Command="{Binding SaveListCommand}"/>
+                    <MenuItem Header="Adjust Playback Speed">
+                        <MenuItem Header="Speed Up" Command="{Binding SetSpeedCommand}" CommandParameter="1.5"/>
+                        <MenuItem Header="Slow Down" Command="{Binding SetSpeedCommand}" CommandParameter="0.5"/>
+                        <MenuItem Header="Reset To Normal" Command="{Binding SetSpeedCommand}" CommandParameter="1.0"/>
+                    </MenuItem>
+                </ContextMenu>
+            </ListView.ContextMenu>
+        </ListView>
 
         <StackPanel x:Name="ItemStatus" Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Top" Margin="24">
                 <TextBlock Text="Player Status:" FontSize="16"/>

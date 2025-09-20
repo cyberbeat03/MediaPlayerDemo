@@ -36,8 +36,8 @@ public class FileOpenService
             Multiselect = false,
             RestoreDirectory = true,
             CheckFileExists = true,            
-            DefaultExt = ".m3u8",
-            Filter = "Playlist Files (*.WPL;*.M3U;*.M3U8)|*.wpl;*.m3u;*.m3u8"
+            DefaultExt = ".wmx",
+            Filter = "Playlist Files (*.WMX;*.WPL)|*.wmx;*.wpl"
         };   
         
         if (OFD.ShowDialog() == true)

@@ -5,14 +5,16 @@ public partial class PlayerViewModel : ObservableObject
     [ObservableProperty] MediaElement _mPlayer = new();    
     [ObservableProperty] bool _canRepeat = false;
     [ObservableProperty] string _displayStatus = string.Empty;
-    [ObservableProperty] TimeSpan _totalDuration;
-    [ObservableProperty] TimeSpan _elapsedTime;
+    [ObservableProperty] string _appTitle = "WinMix Desktop";
+    [ObservableProperty] TimeSpan _totalDuration = TimeSpan.Zero;
+    [ObservableProperty] TimeSpan _elapsedTime = TimeSpan.Zero;    
+    [ObservableProperty] MediaItem? _selectedItem = null;
     DispatcherTimer _timer = new();
-    PlaybackService _playback;
+    IPlaybackService _playback;
 
     public ObservableCollection<MediaItem> MediaItems => _playback.Items;
 
-    public PlayerViewModel(PlaybackService playbackService)
+    public PlayerViewModel(IPlaybackService playbackService)
     {
         _playback = playbackService;                                
         _timer.Interval = TimeSpan.FromSeconds(1);
@@ -28,7 +30,8 @@ DisplayStatus =             $"Media failed: {e.ErrorException?.Message}";
         };
 
         if (_playback.CurrentIndex != 0)
-        PlayItem(_playback.GetCurrentItem());        
+        PlayItem(_playback.GetCurrentItem());
+        AppTitle = $"Playlist: {_playback.Name} - WinMix Desktop";
     }
 
     void Timer_Tick(object? s, EventArgs e)
@@ -122,28 +125,104 @@ DisplayStatus =             $"Media failed: {e.ErrorException?.Message}";
     void PlayPrevious() => PlayItem(_playback.GetPreviousItem());
 
     [RelayCommand]
+void PlaySelected()
+    {
+        if (SelectedItem is MediaItem item)
+        {
+            _playback.CurrentIndex = _playback.Items.IndexOf(item);
+            PlayItem(item);
+        }
+    }
+
+    [RelayCommand]
     void OpenFiles()
     {
         var pickedFiles = new FileOpenService().PickMediaFiles();
         if (pickedFiles.Count() > 0)
             foreach (var file in pickedFiles)
-                _playback.AddItem(MediaItem.FromFile(file));
-            
+                _playback.AddItem(MediaItem.FromFile(file));            
             PlayItem(_playback.GetCurrentItem());        
     }
 
-    [RelayCommand]
+        [RelayCommand]
     void RemoveItem()
     {        
-            _playback.RemoveItem(_playback.GetCurrentItem());
+if (SelectedItem is MediaItem item)
+            _playback.RemoveItem(item);                                               
+    }
 
-            if (_playback.Items.Count == 0)
-            {
-                ResetPlayer();
-                return;
-            }
-            
-                PlayItem(_playback.GetCurrentItem());
+    [RelayCommand]
+    void MoveItemUp()
+    {
+        if (SelectedItem is MediaItem item)
+        {
+            int currentPosition = _playback.Items.IndexOf(item);
+            if (currentPosition > 0)
+                _playback.Items.Move(currentPosition, currentPosition - 1);
+        }
+    }
+
+    [RelayCommand]
+    void MoveItemDown()
+    {
+        if (SelectedItem is MediaItem item)
+        {
+            int currentPosition = _playback.Items.IndexOf(item);
+
+            if (currentPosition < _playback.Items.Count - 1)
+                _playback.Items.Move(currentPosition, currentPosition + 1);
+        }
+    }
+
+    [RelayCommand]
+    void CopyItem()
+    {
+        if (SelectedItem is MediaItem item)
+            new ClipBoardService().Copy(item.FullPath);
+    }
+
+    [RelayCommand]
+    void PasteItems()
+    {
+        var pastedItems = new ClipBoardService().Paste();
+        foreach (var item in pastedItems)
+            _playback.AddItem(MediaItem.FromFile(item));
+    }
+
+    [RelayCommand]
+    async Task SaveList()
+    {
+        await new ListStorageService().SavePlaylistAsync(_playback.Name, _playback.GetFilePaths());
+    }
+
+    [RelayCommand]
+    async Task LoadList()
+    {
+        string playlistFile = new FileOpenService().PickPlaylistFile();
+        if (!string.IsNullOrEmpty(playlistFile))
+        {
+            _playback.Items.Clear();
+            _playback.Name = Path.GetFileNameWithoutExtension(playlistFile);
+            AppTitle = $"Playlist: {_playback.Name} - WinMix Desktop";
+            var items = await new ListStorageService().LoadPlaylistAsync(playlistFile);            
+            foreach (var item in items)
+                _playback.AddItem(MediaItem.FromFile(item));
+        }
+    }
+
+    [RelayCommand]
+    async Task NewList()
+    {
+        var inputDialog = new InputTextDialog();
+        if (inputDialog.ShowDialog() == true)
+        {
+            string input = inputDialog.Response;
+
+            _playback.Items.Clear();
+            _playback.Name = "input";
+            AppTitle = $"Playlist: {_playback.Name} - WinMix Desktop";
+            await new ListStorageService().SavePlaylistAsync(_playback.Name, _playback.GetFilePaths());
+        }
     }
 
 }

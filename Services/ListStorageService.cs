@@ -1,4 +1,5 @@
-﻿using System.Xml.Linq;
+﻿using System.Text.Json;
+using System.Xml.Linq;
 
 namespace WinMix.Services;
 
@@ -10,16 +11,13 @@ public class ListStorageService
 
     public async Task<IEnumerable<string>> LoadPlaylistAsync(string filePath)
     {
-if (Path.GetExtension(filePath).ToLower() ==".wpl")
-            return ConvertWplToM3u(filePath);
-
         var outputList = new List<string>();
         try
         {
-                var lines = await File.ReadAllLinesAsync(filePath);
-                foreach (var line in lines)
-                    if (!string.IsNullOrWhiteSpace(line) && !line.StartsWith("#"))
-                        outputList.Add(line.Trim());            
+            var lines = await File.ReadAllLinesAsync(filePath);
+            foreach (var line in lines)
+                if (!string.IsNullOrWhiteSpace(line) && !line.StartsWith("#"))
+                    outputList.Add(line.Trim());                    
         }
         catch (Exception ex)
         {
@@ -29,12 +27,11 @@ if (Path.GetExtension(filePath).ToLower() ==".wpl")
         return outputList;
     }
 
-    public async Task SavePlaylistAsync(string fileName, IEnumerable<string> fileList)
+    public async Task SavePlaylistAsync(string playlistFile, IEnumerable<string> fileList)
     {        
         try
         {
-        var fullPath = Path.Combine(_playlistLocation, fileName);
-        
+string fullPath          =Path.Combine(_playlistLocation, $"{playlistFile}.wmx");
             var builder = new StringBuilder();
             builder.AppendLine("#EXTM3U");
             builder.AppendLine();
@@ -44,7 +41,7 @@ if (Path.GetExtension(filePath).ToLower() ==".wpl")
         }
         catch (Exception ex)
         {
-            MessageBox.Show($"Could not save playlist: {ex.Message}");            
+            MessageBox.Show($"Could not save playlist {playlistFile}: {ex.Message}");            
         }    
 }
     
