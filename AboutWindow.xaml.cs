@@ -12,7 +12,8 @@ namespace WinMix
         {
             InitializeComponent();
             AppVersion = Assembly.GetExecutingAssembly().GetName().Version?.ToString() ?? "Unknown";
-            BuildDate = DateTime.Now.ToLongDateString();
+            BuildDate = File.GetLastWriteTime(Assembly.GetExecutingAssembly().Location).ToLongDateString();
+
             DataContext = this;
         }
 

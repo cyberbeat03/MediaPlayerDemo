@@ -62,6 +62,7 @@ DisplayStatus =             $"Media failed: {e.ErrorException?.Message}";
     void ResetPlayer()
     {            
             _playback.CurrentIndex = -1;
+        _playback.Items.Clear();
         _timer.Stop();
         MPlayer.Stop();
         MPlayer.Source = null;
@@ -201,7 +202,7 @@ if (SelectedItem is MediaItem item)
         string playlistFile = new FileOpenService().PickPlaylistFile();
         if (!string.IsNullOrEmpty(playlistFile))
         {
-            _playback.Items.Clear();
+ResetPlayer();
             _playback.Name = Path.GetFileNameWithoutExtension(playlistFile);
             AppTitle = $"Playlist: {_playback.Name} - WinMix Desktop";
             var items = await new ListStorageService().LoadPlaylistAsync(playlistFile);            
@@ -218,8 +219,8 @@ if (SelectedItem is MediaItem item)
         {
             string input = inputDialog.Response;
 
-            _playback.Items.Clear();
-            _playback.Name = "input";
+            ResetPlayer();
+            _playback.Name = input;
             AppTitle = $"Playlist: {_playback.Name} - WinMix Desktop";
             await new ListStorageService().SavePlaylistAsync(_playback.Name, _playback.GetFilePaths());
         }

@@ -8,11 +8,14 @@ public class MediaItem
     public DateTime LastAccessed { get; set; }
 
     public static MediaItem FromFile(string filePath)
+        {                               
+        if (!File.Exists( filePath))
         {
-        if (string.IsNullOrWhiteSpace(filePath)) throw new ArgumentException("File path cannot be null or empty.", nameof(filePath));
+            MessageBox.Show($"The file '{Path.GetFileName(filePath)}' does not exist. It may have been moved, deleted or had it's name changed.", filePath);
+            return null;
+        }
         
         var fileInfo = new FileInfo(filePath);
-        if (!fileInfo.Exists) throw new FileNotFoundException("The specified file does not exist.", filePath);        
 
         return new MediaItem
         {
