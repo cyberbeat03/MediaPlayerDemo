@@ -27,12 +27,7 @@ public partial class PlayerViewModel : ObservableObject
         {
 DisplayStatus =             $"Media failed: {e.ErrorException?.Message}";
             ResetPlayer();
-        };
-
-        if (_playback.CurrentIndex >= 0)
-        PlayItem(_playback.GetCurrentItem());
-
-        AppTitle = $"Playlist: {_playback.Name} - WinMix Desktop";
+        };                
     }
 
     void Timer_Tick(object? s, EventArgs e)
@@ -75,7 +70,7 @@ DisplayStatus =             $"Media failed: {e.ErrorException?.Message}";
 
     void PlayItem(MediaItem? currentItem)
     {
-        if ((currentItem is not null) && (MPlayer.Source != currentItem.UriPath))
+        if (currentItem is not null)
         {
             MPlayer.Source = currentItem.UriPath;
             Play();            
@@ -147,16 +142,18 @@ if (MPlayer.Source is null)
         PlayItem(_playback.GetCurrentItem());        
     }
 
-        [RelayCommand]
+    [RelayCommand]
     void RemoveItem()
-    {        
-if (SelectedItem is MediaItem item)
-            _playback.RemoveItem(item);                                               
+    {
+        if (SelectedItem is MediaItem item)
+        {
+            _playback.RemoveItem(item);
 
-if (_playback.Items.Count == 0)
-            ResetPlayer();
-else        
-            PlayItem(_playback.GetCurrentItem());
+            if (_playback.Items.Count == 0)
+                ResetPlayer();
+            else
+                PlayItem(_playback.GetCurrentItem());
+        }                   
     }
 
     [RelayCommand]
