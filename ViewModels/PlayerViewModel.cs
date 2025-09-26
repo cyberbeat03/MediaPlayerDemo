@@ -4,7 +4,7 @@ public partial class PlayerViewModel : ObservableObject
 {    
     [ObservableProperty] MediaElement _mPlayer = new();    
     [ObservableProperty] bool _canRepeat = false;
-    [ObservableProperty] string _displayStatus = string.Empty;
+    [ObservableProperty] string _displayStatus = "No media loaded. Press the 'Add' button to get started.";
     [ObservableProperty] string _appTitle = "WinMix Desktop";
     [ObservableProperty] TimeSpan _totalDuration = TimeSpan.Zero;
     [ObservableProperty] TimeSpan _elapsedTime = TimeSpan.Zero;    
@@ -29,8 +29,9 @@ DisplayStatus =             $"Media failed: {e.ErrorException?.Message}";
             ResetPlayer();
         };
 
-        if (_playback.CurrentIndex != 0)
+        if (_playback.CurrentIndex >= 0)
         PlayItem(_playback.GetCurrentItem());
+
         AppTitle = $"Playlist: {_playback.Name} - WinMix Desktop";
     }
 
@@ -42,7 +43,7 @@ DisplayStatus =             $"Media failed: {e.ErrorException?.Message}";
 
     void OnMediaOpened(object? sender, RoutedEventArgs e)
     {
-        DisplayStatus = _playback.GetCurrentItem().DisplayName;
+        DisplayStatus = _playback.GetCurrentItem()?.DisplayName ?? "Media could not be opened.";
         TotalDuration = MPlayer.NaturalDuration.TimeSpan;
         _timer.Start();
     }
@@ -132,7 +133,7 @@ void PlaySelected()
         {
             _playback.CurrentIndex = _playback.Items.IndexOf(item);
             PlayItem(item);
-        }
+        }        
     }
 
     [RelayCommand]
@@ -141,8 +142,9 @@ void PlaySelected()
         var pickedFiles = new FileOpenService().PickMediaFiles();
         if (pickedFiles.Count() > 0)
             foreach (var file in pickedFiles)
-                _playback.AddItem(MediaItem.FromFile(file));            
-            PlayItem(_playback.GetCurrentItem());        
+                _playback.AddItem(MediaItem.FromFile(file));
+if (MPlayer.Source is null)
+        PlayItem(_playback.GetCurrentItem());        
     }
 
         [RelayCommand]
@@ -150,6 +152,11 @@ void PlaySelected()
     {        
 if (SelectedItem is MediaItem item)
             _playback.RemoveItem(item);                                               
+
+if (_playback.Items.Count == 0)
+            ResetPlayer();
+else        
+            PlayItem(_playback.GetCurrentItem());
     }
 
     [RelayCommand]

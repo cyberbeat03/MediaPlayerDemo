@@ -2,7 +2,7 @@
 
 ## Overview
 
-Play and stream audio files from your desktop with this simple lightweight music player. The main goal of WinMix Desktop is to be accessible and easy-to-use by the blind and visually impaired. It has been in development for over 10 years and continues to be maintained.
+Stream and play audio files from your desktop with this simple lightweight music player. The main goal of WinMix Desktop is to be accessible and easy-to-use by the blind and visually impaired. It has been in development for over 10 years and continues to be improved.
 
 ## Building and Configuration
 

@@ -8,7 +8,6 @@ public partial class PlayerWindow : Window
     {        
         InitializeComponent();
         DataContext = viewModel;
-        MediaItemsList.Focus();
     }
 
     }

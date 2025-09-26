@@ -1,8 +1,8 @@
 using System.Globalization;
 using System.Windows.Data;
 
-namespace WinMix
-{
+namespace WinMix;
+
     public class TimeSpanToStringConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -18,5 +18,5 @@ namespace WinMix
                 return ts;
             return TimeSpan.Zero;
         }
-    }
+    
 }
