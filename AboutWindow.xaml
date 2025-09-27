@@ -5,15 +5,15 @@
     
     <Grid Margin="20" HorizontalAlignment="Center" VerticalAlignment="Center">
         <StackPanel>
-            <Label Content="Name:"/>
+            <TextBlock Text="Name:"/>
             <TextBox Text="{Binding AppName}" Focusable="True"/>
             
-            <Label Content="Version:"/>
+            <TextBlock Text="Version:"/>
             <TextBox Text="{Binding AppVersion}" Focusable="True"/>
             
-            <Label Content="Date:"/>
+            <TextBlock Text="Date:"/>
             <TextBox Text="{Binding BuildDate}" Focusable="True"/>
-            <Button Content="Close" HorizontalAlignment="Center" Click="Ok_Click"/>
+            <Button Content="Close" IsDefault="True" HorizontalAlignment="Center" Click="Ok_Click"/>
         </StackPanel>
     </Grid>
 </Window>

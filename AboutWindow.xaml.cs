@@ -11,6 +11,7 @@ namespace WinMix
         public AboutWindow()
         {
             InitializeComponent();
+            AppName = "WinMix Desktop Player";
             AppVersion = Assembly.GetExecutingAssembly().GetName().Version?.ToString() ?? "Unknown";
             BuildDate = File.GetLastWriteTime(Assembly.GetExecutingAssembly().Location).ToLongDateString();
 

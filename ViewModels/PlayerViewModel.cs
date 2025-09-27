@@ -1,13 +1,13 @@
 ﻿namespace WinMix.ViewModels;
 
 public partial class PlayerViewModel : ObservableObject
-{    
-    [ObservableProperty] MediaElement _mPlayer = new();    
+{
+    [ObservableProperty] MediaElement _mPlayer = new();
     [ObservableProperty] bool _canRepeat = false;
     [ObservableProperty] string _displayStatus = "No media loaded. Press the 'Add' button to get started.";
-    [ObservableProperty] string _appTitle = "WinMix Desktop";
+    [ObservableProperty] string _appTitle = "WinMix Desktop Player";
     [ObservableProperty] TimeSpan _totalDuration = TimeSpan.Zero;
-    [ObservableProperty] TimeSpan _elapsedTime = TimeSpan.Zero;    
+    [ObservableProperty] TimeSpan _elapsedTime = TimeSpan.Zero;
     [ObservableProperty] MediaItem? _selectedItem = null;
     DispatcherTimer _timer = new();
     IPlaybackService _playback;
@@ -16,18 +16,14 @@ public partial class PlayerViewModel : ObservableObject
 
     public PlayerViewModel(IPlaybackService playbackService)
     {
-        _playback = playbackService;                                
+        _playback = playbackService;
         _timer.Interval = TimeSpan.FromSeconds(1);
         _timer.Tick += Timer_Tick;
 
         MPlayer.LoadedBehavior = MediaState.Manual;
         MPlayer.MediaOpened += OnMediaOpened;
         MPlayer.MediaEnded += OnMediaEnded;
-        MPlayer.MediaFailed += (s, e) =>
-        {
-DisplayStatus =             $"Media failed: {e.ErrorException?.Message}";
-            ResetPlayer();
-        };                
+        MPlayer.MediaFailed += (s, e) => DisplayStatus = $"Media failed: {e.ErrorException?.Message}";
     }
 
     void Timer_Tick(object? s, EventArgs e)
@@ -49,15 +45,14 @@ DisplayStatus =             $"Media failed: {e.ErrorException?.Message}";
         MPlayer.Stop();
         ElapsedTime = TimeSpan.Zero;
         if (CanRepeat)
-            Play();
+            MPlayer.Play();
         else
             PlayNext();
     }
-    
-        
+
     void ResetPlayer()
-    {            
-            _playback.CurrentIndex = -1;
+    {
+        _playback.CurrentIndex = -1;
         _playback.Items.Clear();
         _timer.Stop();
         MPlayer.Stop();
@@ -65,7 +60,7 @@ DisplayStatus =             $"Media failed: {e.ErrorException?.Message}";
         ElapsedTime = TimeSpan.Zero;
         TotalDuration = TimeSpan.Zero;
         MPlayer.SpeedRatio = 1.0;
-        DisplayStatus = "No media is currently loaded.";
+        DisplayStatus = "No media currently loaded.";
     }
 
     void PlayItem(MediaItem? currentItem)
@@ -73,46 +68,39 @@ DisplayStatus =             $"Media failed: {e.ErrorException?.Message}";
         if (currentItem is not null)
         {
             MPlayer.Source = currentItem.UriPath;
-            Play();            
+            MPlayer.Play();
         }
     }
 
     [RelayCommand]
-    void Play()
-    {
-        _timer.IsEnabled = true;
-        MPlayer.Play();
-    }
-    
-    [RelayCommand]
-    void Pause()
-    {
-        if (MPlayer.Source is not null)
-        {
-            _timer.IsEnabled = false;
-            MPlayer.Pause();
-        }
-    }
+    void Play() => MPlayer.Play();
 
     [RelayCommand]
-    void Stop()
-    {
-        if (MPlayer.Source is not null)
-        {
-            _timer.IsEnabled = false;
-            MPlayer.Stop();
-            ElapsedTime = TimeSpan.Zero;
-        }
-    }
+    void Pause() => MPlayer.Pause();
+
+    [RelayCommand]
+    void Stop() => MPlayer.Stop();
 
     [RelayCommand]
     void Rewind() => MPlayer.Position -= TimeSpan.FromSeconds(10);
 
     [RelayCommand]
-    void SetSpeed(string speedRatio) =>
-    MPlayer.SpeedRatio = double.Parse(speedRatio);
+    void SpeedUp()
+    {
+        double fastest = 1.3;
 
-        [RelayCommand]
+        if (MPlayer.SpeedRatio <= fastest) MPlayer.SpeedRatio += 0.1;
+    }
+
+    [RelayCommand]
+    void SlowDown()
+    {
+        double slowest = 0.7;
+
+        if (MPlayer.SpeedRatio >= slowest) MPlayer.SpeedRatio -= 0.1;
+    }
+
+    [RelayCommand]
     void FastForward() => MPlayer.Position += TimeSpan.FromSeconds(10);
 
     [RelayCommand]
@@ -122,13 +110,13 @@ DisplayStatus =             $"Media failed: {e.ErrorException?.Message}";
     void PlayPrevious() => PlayItem(_playback.GetPreviousItem());
 
     [RelayCommand]
-void PlaySelected()
+    void PlaySelected()
     {
         if (SelectedItem is MediaItem item)
         {
             _playback.CurrentIndex = _playback.Items.IndexOf(item);
             PlayItem(item);
-        }        
+        }
     }
 
     [RelayCommand]
@@ -138,8 +126,8 @@ void PlaySelected()
         if (pickedFiles.Count() > 0)
             foreach (var file in pickedFiles)
                 _playback.AddItem(MediaItem.FromFile(file));
-if (MPlayer.Source is null)
-        PlayItem(_playback.GetCurrentItem());        
+        if (MPlayer.Source is null)
+            PlayItem(_playback.GetCurrentItem());
     }
 
     [RelayCommand]
@@ -153,7 +141,7 @@ if (MPlayer.Source is null)
                 ResetPlayer();
             else
                 PlayItem(_playback.GetCurrentItem());
-        }                   
+        }
     }
 
     [RelayCommand]
@@ -206,10 +194,10 @@ if (MPlayer.Source is null)
         string playlistFile = new FileOpenService().PickPlaylistFile();
         if (!string.IsNullOrEmpty(playlistFile))
         {
-ResetPlayer();
+            ResetPlayer();
             _playback.Name = Path.GetFileNameWithoutExtension(playlistFile);
             AppTitle = $"Playlist: {_playback.Name} - WinMix Desktop";
-            var items = await new ListStorageService().LoadPlaylistAsync(playlistFile);            
+            var items = await new ListStorageService().LoadPlaylistAsync(playlistFile);
             foreach (var item in items)
                 _playback.AddItem(MediaItem.FromFile(item));
         }
@@ -237,4 +225,4 @@ ResetPlayer();
         about.ShowDialog();
     }
 
-    }
+}
