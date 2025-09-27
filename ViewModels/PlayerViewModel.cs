@@ -34,13 +34,14 @@ public partial class PlayerViewModel : ObservableObject
 
     void OnMediaOpened(object? sender, RoutedEventArgs e)
     {
-        DisplayStatus = _playback.GetCurrentItem()?.DisplayName ?? "Media could not be opened.";
+        DisplayStatus = $"Playing: {_playback.GetCurrentItem()?.DisplayName}" ?? "Media could not be opened.";
         TotalDuration = MPlayer.NaturalDuration.TimeSpan;
         _timer.Start();
     }
 
     void OnMediaEnded(object? sender, RoutedEventArgs e)
     {
+        DisplayStatus = $"Playback ended: {_playback.GetCurrentItem().DisplayName}";
         _timer.Stop();
         MPlayer.Stop();
         ElapsedTime = TimeSpan.Zero;
@@ -143,82 +144,8 @@ public partial class PlayerViewModel : ObservableObject
                 PlayItem(_playback.GetCurrentItem());
         }
     }
-
-    [RelayCommand]
-    void MoveItemUp()
-    {
-        if (SelectedItem is MediaItem item)
-        {
-            int currentPosition = _playback.Items.IndexOf(item);
-            if (currentPosition > 0)
-                _playback.Items.Move(currentPosition, currentPosition - 1);
-        }
-    }
-
-    [RelayCommand]
-    void MoveItemDown()
-    {
-        if (SelectedItem is MediaItem item)
-        {
-            int currentPosition = _playback.Items.IndexOf(item);
-
-            if (currentPosition < _playback.Items.Count - 1)
-                _playback.Items.Move(currentPosition, currentPosition + 1);
-        }
-    }
-
-    [RelayCommand]
-    void CopyItem()
-    {
-        if (SelectedItem is MediaItem item)
-            new ClipBoardService().Copy(item.FullPath);
-    }
-
-    [RelayCommand]
-    void PasteItems()
-    {
-        var pastedItems = new ClipBoardService().Paste();
-        foreach (var item in pastedItems)
-            _playback.AddItem(MediaItem.FromFile(item));
-    }
-
-    [RelayCommand]
-    async Task SaveList()
-    {
-        await new ListStorageService().SavePlaylistAsync(_playback.Name, _playback.GetFilePaths());
-    }
-
-    [RelayCommand]
-    async Task LoadList()
-    {
-        string playlistFile = new FileOpenService().PickPlaylistFile();
-        if (!string.IsNullOrEmpty(playlistFile))
-        {
-            ResetPlayer();
-            _playback.Name = Path.GetFileNameWithoutExtension(playlistFile);
-            AppTitle = $"Playlist: {_playback.Name} - WinMix Desktop";
-            var items = await new ListStorageService().LoadPlaylistAsync(playlistFile);
-            foreach (var item in items)
-                _playback.AddItem(MediaItem.FromFile(item));
-        }
-    }
-
-    [RelayCommand]
-    async Task NewList()
-    {
-        var inputDialog = new InputTextDialog();
-        if (inputDialog.ShowDialog() == true)
-        {
-            string input = inputDialog.Response;
-
-            ResetPlayer();
-            _playback.Name = input;
-            AppTitle = $"Playlist: {_playback.Name} - WinMix Desktop";
-            await new ListStorageService().SavePlaylistAsync(_playback.Name, _playback.GetFilePaths());
-        }
-    }
-
-    [RelayCommand]
+    
+[RelayCommand]
     void ShowAbout()
     {
         var about = new AboutWindow();

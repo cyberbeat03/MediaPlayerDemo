@@ -7,13 +7,7 @@
         mc:Ignorable="d"
         Title="{Binding AppTitle}" WindowStartupLocation="CenterScreen" Height="500" Width="600">
 
-    <Window.Resources>
-        <Style TargetType="Button" x:Key="TransportButton">
-            <Setter Property="Height" Value="25"/>
-            <Setter Property="Width" Value="50"/>
-            <Setter Property="Margin" Value="10"/>
-        </Style>
-
+    <Window.Resources>       
         <DataTemplate x:Key="SingleItemLayout">
             <StackPanel Margin="10">
                 <TextBlock Text="{Binding DisplayName}"/>
@@ -27,8 +21,8 @@
         <KeyBinding Gesture="Ctrl+O" Command="{Binding OpenFilesCommand}"/>
         <KeyBinding Gesture="Ctrl+F" Command="{Binding SpeedUpCommand}"/>
         <KeyBinding Gesture="Ctrl+D" Command="{Binding SlowDownCommand}"/>
-        <KeyBinding Gesture="Ctrl+N" Command="{Binding PlayNextCommand}"/>
-        <KeyBinding Gesture="Ctrl+B" Command="{Binding PlayPreviousCommand}"/>
+        <KeyBinding Gesture="Ctrl+Right"       Command="{Binding PlayNextCommand}"/>
+        <KeyBinding Gesture="Ctrl+Left" Command="{Binding PlayPreviousCommand}"/>
     </Window.InputBindings>
 
     <Grid Margin="10">
@@ -41,19 +35,16 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-
-        <!-- Media List -->
+        
         <GroupBox Header="Media List" Grid.Row="0" Grid.Column="0" Grid.RowSpan="3" Margin="5">
             <ListView ItemsSource="{Binding MediaItems}" SelectedItem="{Binding SelectedItem}" ItemTemplate="{StaticResource SingleItemLayout}" >
                 <ListView.InputBindings>
                     <KeyBinding Gesture="Enter" Command="{Binding PlaySelectedCommand}"/>
                     <KeyBinding Gesture="Delete" Command="{Binding RemoveItemCommand}"/>
                 </ListView.InputBindings>
-
             </ListView>
         </GroupBox>
-
-        <!-- Player Status -->
+        
         <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal" Margin="5">
             <TextBlock Text="Status:" FontWeight="Bold" Margin="0,0,5,0"/>
             <TextBlock Text="{Binding DisplayStatus}" Focusable="True" />
@@ -62,8 +53,7 @@
             <TextBlock Text="Total:" FontWeight="Bold" Margin="0,0,5,0"/>
             <TextBlock Text="{Binding TotalDuration, Converter={StaticResource TimeSpanToString}}" Focusable="True"/>
         </StackPanel>
-
-        <!-- Player Controls -->
+        
         <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="5">
             <Button Content="_Add..." Command="{Binding OpenFilesCommand}" Margin="2"/>
             <Button Content="_Play" Command="{Binding PlayCommand}" Margin="2"/>
@@ -72,8 +62,7 @@
             <Button Content="_Rewind" Command="{Binding RewindCommand}" Margin="2"/>
             <Button Content="_Fast Forward" Command="{Binding FastForwardCommand}" Margin="2"/>
         </StackPanel>
-
-        <!-- Main Player Content (e.g., video, album art) -->
+        
         <ContentControl Grid.Row="1" Grid.Column="1" Content="{Binding MPlayer}" Margin="5"/>
     </Grid>
 </Window>
