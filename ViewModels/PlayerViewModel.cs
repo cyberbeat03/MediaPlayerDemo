@@ -34,14 +34,14 @@ public partial class PlayerViewModel : ObservableObject
 
     void OnMediaOpened(object? sender, RoutedEventArgs e)
     {
-        DisplayStatus = $"Playing: {_playback.GetCurrentItem()?.DisplayName}" ?? "Media could not be opened.";
+        DisplayStatus = $"Loaded: {_playback.GetCurrentItem()?.DisplayName}" ?? "Media could not be opened.";
         TotalDuration = MPlayer.NaturalDuration.TimeSpan;
         _timer.Start();
     }
 
     void OnMediaEnded(object? sender, RoutedEventArgs e)
     {
-        DisplayStatus = $"Playback ended: {_playback.GetCurrentItem().DisplayName}";
+        DisplayStatus = $"End of {_playback.GetCurrentItem()?.DisplayName}" ?? "Media has ended.";
         _timer.Stop();
         MPlayer.Stop();
         ElapsedTime = TimeSpan.Zero;
