@@ -17,10 +17,7 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <TextBlock Text="{Binding DisplayName}" Grid.Column="0" Margin="4,0"/>
-                <TextBlock Text="{Binding DisplayArtist}" Grid.Column="1" Margin="4,0"/>
-                <TextBlock Text="{Binding Duration, Converter={StaticResource TimeSpanToString}}" Grid.Column="1" Margin="4,0"/>
-                <TextBlock Text="{Binding MediaType}" Grid.Column="2" Margin="4,0"/>
+                <TextBlock Text="{Binding DisplayName}" Grid.Column="0" Margin="4,0"/>                               
             </Grid>
         </DataTemplate>
         

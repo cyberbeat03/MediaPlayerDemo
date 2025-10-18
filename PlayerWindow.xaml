@@ -16,9 +16,7 @@
 
         <local:TimeSpanToStringConverter x:Key="TimeSpanToString"/>
     </Window.Resources>
-
-    <Window.InputBindings>
-        <KeyBinding Gesture="Ctrl+O" Command="{Binding OpenFilesCommand}"/>
+    <Window.InputBindings>        <KeyBinding Gesture="Ctrl+O" Command="{Binding OpenFilesCommand}"/>        
         <KeyBinding Gesture="Ctrl+F" Command="{Binding SpeedUpCommand}"/>
         <KeyBinding Gesture="Ctrl+D" Command="{Binding SlowDownCommand}"/>
         <KeyBinding Gesture="Ctrl+Right"       Command="{Binding PlayNextCommand}"/>
