@@ -19,8 +19,9 @@
     <Window.InputBindings>        <KeyBinding Gesture="Ctrl+O" Command="{Binding OpenFilesCommand}"/>        
         <KeyBinding Gesture="Ctrl+F" Command="{Binding SpeedUpCommand}"/>
         <KeyBinding Gesture="Ctrl+D" Command="{Binding SlowDownCommand}"/>
-        <KeyBinding Gesture="Ctrl+Right"       Command="{Binding PlayNextCommand}"/>
-        <KeyBinding Gesture="Ctrl+Left" Command="{Binding PlayPreviousCommand}"/>
+        <KeyBinding Gesture="Alt+N"       Command="{Binding PlayNextCommand}"/>
+        <KeyBinding Gesture="Alt+V" Command="{Binding PlayPreviousCommand}"/>
+        <KeyBinding Gesture="F4" Command="{Binding ShowAboutCommand}"/>
     </Window.InputBindings>
 
     <Grid Margin="10">
