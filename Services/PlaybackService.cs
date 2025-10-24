@@ -49,7 +49,9 @@ public class PlaybackService : IPlaybackService
         if (item is null)
             return;
 
+        if (!Items.Contains(item))
         Items.Add(item);
+
         if (CurrentIndex <= -1 && Items.Count > 0)
             CurrentIndex = 0;
     }

@@ -45,9 +45,7 @@ string fullPath          =Path.Combine(_playlistLocation, $"{playlistFile}.wmx")
 }
     
     public IEnumerable<string> ConvertWplToM3u(string wplPath)
-    {
-        var outputList = new List<string>();                
-
+    {        
         XDocument doc = XDocument.Load(wplPath);
 
             string basePath = Path.GetDirectoryName(wplPath)!;
@@ -60,11 +58,9 @@ string fullPath          =Path.Combine(_playlistLocation, $"{playlistFile}.wmx")
             if (!string.IsNullOrWhiteSpace(src))
             {                
                 string fullPath = Path.GetFullPath(Path.Combine(basePath, src));
-                outputList.Add(fullPath);
+                yield return fullPath;
             }
-        }
-
-        return outputList;
+        }        
     }
 
 }
