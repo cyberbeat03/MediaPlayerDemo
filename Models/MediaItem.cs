@@ -27,4 +27,9 @@ public class MediaItem
         return obj is MediaItem item &&
                EqualityComparer<Uri>.Default.Equals(UriPath, item.UriPath);
     }
+
+    public override int GetHashCode()
+    {
+        return UriPath.GetHashCode();
+    }
 }

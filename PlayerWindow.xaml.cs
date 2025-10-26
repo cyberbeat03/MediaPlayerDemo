@@ -2,10 +2,10 @@
 
 public partial class PlayerWindow : Window
 {    
-    public PlayerWindow()
+    public PlayerWindow(PlayerViewModel viewModel)
     {
         InitializeComponent();
-        DataContext = new PlayerViewModel(new PlaybackService());
+        DataContext = viewModel;
     }
 
 }
