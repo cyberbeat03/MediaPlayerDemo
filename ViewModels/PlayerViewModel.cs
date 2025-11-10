@@ -136,12 +136,12 @@ public partial class PlayerViewModel : ObservableObject
     {
         if (SelectedItem is MediaItem item)
         {
-            _playback.RemoveItem(item);
+            _playback.RemoveItem(item);            
 
             if (_playback.Items.Count == 0)
                 ResetPlayer();
-            else
-                PlayItem(_playback.GetCurrentItem());
+            else            
+                PlayItem(_playback.GetCurrentItem());            
         }
     }
     
