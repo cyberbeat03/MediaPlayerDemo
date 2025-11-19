@@ -1,14 +1,20 @@
 ﻿namespace WinMix.ViewModels;
 
-public partial class PlayerViewModel : ObservableObject
-{        
-    [ObservableProperty] string _displayStatus = "No media loaded. Press the 'Add' button to get started.";    
-    [ObservableProperty] TimeSpan _totalDuration = TimeSpan.Zero;
-    [ObservableProperty] TimeSpan _elapsedTime = TimeSpan.Zero;
-    [ObservableProperty] MediaItem? _selectedItem = null;    
-    [ObservableProperty] System.Windows.Controls.MediaElement _mPlayer = new();
+public partial class PlayerViewModel : ObservableObject, IDisposable
+{            
+    [ObservableProperty]
+    private string _displayStatus = "No media loaded. Press the 'Add' button to get started.";
+    [ObservableProperty]
+    private TimeSpan _totalDuration = TimeSpan.Zero;
+    [ObservableProperty]
+    private TimeSpan _elapsedTime = TimeSpan.Zero;
+    [ObservableProperty]
+    private MediaItem? _selectedItem = null;
+    [ObservableProperty]
+    private System.Windows.Controls.MediaElement _mPlayer = new();
+    bool _disposed;
     DispatcherTimer _timer = new();
-    IPlaybackService _playback;
+    IPlaybackService _playback;    
 
     public ObservableCollection<MediaItem> MediaItems => _playback.Items;
 
@@ -21,7 +27,7 @@ public partial class PlayerViewModel : ObservableObject
         MPlayer.LoadedBehavior = MediaState.Manual;
         MPlayer.MediaOpened += OnMediaOpened;
         MPlayer.MediaEnded += OnMediaEnded;
-        MPlayer.MediaFailed += (s, e) => DisplayStatus = $"Media failed: {e.ErrorException?.Message}";
+        MPlayer.MediaFailed += OnMediaFailed;
     }
 
     void Timer_Tick(object? s, EventArgs e)
@@ -37,14 +43,18 @@ public partial class PlayerViewModel : ObservableObject
         _timer.Start();
     }
 
+    void OnMediaFailed(object? sender, ExceptionRoutedEventArgs e)
+    {
+        DisplayStatus = $"Media failed: {e.ErrorException?.Message}";
+    }
+
     void OnMediaEnded(object? sender, RoutedEventArgs e)
     {
         DisplayStatus = $"End of {_playback.GetCurrentItem()?.DisplayName}" ?? "Media has ended.";
         _timer.Stop();
         MPlayer.Stop();
         ElapsedTime = TimeSpan.Zero;
-        
-            PlayNext();
+        PlayNext();
     }
 
     void ResetPlayer()
@@ -61,12 +71,11 @@ public partial class PlayerViewModel : ObservableObject
     }
 
     void PlayItem(MediaItem? currentItem)
-    {
-        if (currentItem is not null)
-        {
+    {        
+        if (currentItem is null) return;
+
             MPlayer.Source = currentItem.UriPath;
-            MPlayer.Play();
-        }
+            MPlayer.Play();        
     }
 
     [RelayCommand]
@@ -146,6 +155,39 @@ public partial class PlayerViewModel : ObservableObject
     {
         var about = new AboutWindow();
         about.ShowDialog();
+    }
+
+    // IDisposable implementation to clean up timers and event handlers.
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (_disposed) return;
+        if (disposing)
+        {
+            try
+            {
+                _timer.Stop();
+                _timer.Tick -= Timer_Tick;
+            }
+            catch { }
+
+            try
+            {
+                MPlayer.MediaOpened -= OnMediaOpened;
+                MPlayer.MediaEnded -= OnMediaEnded;
+                MPlayer.MediaFailed -= OnMediaFailed;
+                MPlayer.Stop();
+                MPlayer.Source = null;
+            }
+            catch { }
+        }
+
+        _disposed = true;
     }
 
 }
