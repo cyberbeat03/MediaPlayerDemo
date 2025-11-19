@@ -6,6 +6,7 @@ public partial class PlayerWindow : Window
     {
         InitializeComponent();
         DataContext = viewModel;
+        StatusText.Focus();
     }
 
 }

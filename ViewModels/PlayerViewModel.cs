@@ -1,14 +1,12 @@
 ﻿namespace WinMix.ViewModels;
 
 public partial class PlayerViewModel : ObservableObject
-{
-    [ObservableProperty] MediaElement _mPlayer = new();
-    [ObservableProperty] bool _canRepeat = false;
-    [ObservableProperty] string _displayStatus = "No media loaded. Press the 'Add' button to get started.";
-    [ObservableProperty] string _appTitle = "WinMix Desktop Player";
+{        
+    [ObservableProperty] string _displayStatus = "No media loaded. Press the 'Add' button to get started.";    
     [ObservableProperty] TimeSpan _totalDuration = TimeSpan.Zero;
     [ObservableProperty] TimeSpan _elapsedTime = TimeSpan.Zero;
-    [ObservableProperty] MediaItem? _selectedItem = null;
+    [ObservableProperty] MediaItem? _selectedItem = null;    
+    [ObservableProperty] System.Windows.Controls.MediaElement _mPlayer = new();
     DispatcherTimer _timer = new();
     IPlaybackService _playback;
 
@@ -45,9 +43,7 @@ public partial class PlayerViewModel : ObservableObject
         _timer.Stop();
         MPlayer.Stop();
         ElapsedTime = TimeSpan.Zero;
-        if (CanRepeat)
-            MPlayer.Play();
-        else
+        
             PlayNext();
     }
 

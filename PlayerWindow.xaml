@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WinMix"
         mc:Ignorable="d"
-        Title="{Binding AppTitle}" WindowStartupLocation="CenterScreen" Height="500" Width="600">
+        Title="WinMix Desktop Music Player" WindowStartupLocation="CenterScreen" Height="500" Width="600">
 
     <Window.Resources>       
         <DataTemplate x:Key="SingleItemLayout">
@@ -46,7 +46,7 @@
         
         <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal" Margin="5">
             <TextBlock Text="Status:" FontWeight="Bold" Margin="0,0,5,0"/>
-            <TextBlock Text="{Binding DisplayStatus}" Focusable="True" />
+            <TextBlock x:Name="StatusText" Text="{Binding DisplayStatus}" Focusable="True" />
             <TextBlock Text="Elapsed:" FontWeight="Bold" Margin="0,0,5,0"/>
             <TextBlock Text="{Binding ElapsedTime, Converter={StaticResource TimeSpanToString}}" Focusable="True" Margin="0,0,10,0"/>
             <TextBlock Text="Total:" FontWeight="Bold" Margin="0,0,5,0"/>

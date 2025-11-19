@@ -2,7 +2,7 @@
 
 public class PlaybackService : IPlaybackService
 {
-    public ObservableCollection<MediaItem> Items { get; } = new ObservableCollection<MediaItem>();
+    public ObservableCollection<MediaItem> Items { get; } = new();
     public int CurrentIndex { get; set; } = -1;
     public string Name { get; set; } = "Untitled Playlist";
 
