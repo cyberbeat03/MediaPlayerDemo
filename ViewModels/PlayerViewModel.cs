@@ -1,20 +1,15 @@
 ﻿namespace WinMix.ViewModels;
 
 public partial class PlayerViewModel : ObservableObject, IDisposable
-{            
-    [ObservableProperty]
-    private string _displayStatus = "No media loaded. Press the 'Add' button to get started.";
-    [ObservableProperty]
-    private TimeSpan _totalDuration = TimeSpan.Zero;
-    [ObservableProperty]
-    private TimeSpan _elapsedTime = TimeSpan.Zero;
-    [ObservableProperty]
-    private MediaItem? _selectedItem = null;
-    [ObservableProperty]
-    private System.Windows.Controls.MediaElement _mPlayer = new();
+{
+    [ObservableProperty] private string _displayStatus = "No media loaded. Press the 'Add' button to get started.";
+    [ObservableProperty] private TimeSpan _totalDuration = TimeSpan.Zero;
+    [ObservableProperty] private TimeSpan _elapsedTime = TimeSpan.Zero;
+    [ObservableProperty] private MediaItem? _selectedItem = null;
+    [ObservableProperty] private System.Windows.Controls.MediaElement _mPlayer = new();
     bool _disposed;
     DispatcherTimer _timer = new();
-    IPlaybackService _playback;    
+    IPlaybackService _playback;
 
     public ObservableCollection<MediaItem> MediaItems => _playback.Items;
 
@@ -71,11 +66,12 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
     }
 
     void PlayItem(MediaItem? currentItem)
-    {        
-        if (currentItem is null) return;
-
+    {
+        if (currentItem is not null)
+        {
             MPlayer.Source = currentItem.UriPath;
-            MPlayer.Play();        
+            MPlayer.Play();
+        }
     }
 
     [RelayCommand]
@@ -110,10 +106,18 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
     void FastForward() => MPlayer.Position += TimeSpan.FromSeconds(10);
 
     [RelayCommand]
-    void PlayNext() => PlayItem(_playback.GetNextItem());
+    void PlayNext()
+    {
+        var nextItem = _playback.GetNextItem();
+        PlayItem(nextItem);
+    }
 
     [RelayCommand]
-    void PlayPrevious() => PlayItem(_playback.GetPreviousItem());
+    void PlayPrevious()
+    {
+        var previousItem = _playback.GetPreviousItem();
+        PlayItem(previousItem);
+    }
 
     [RelayCommand]
     void PlaySelected()
@@ -141,23 +145,22 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
     {
         if (SelectedItem is MediaItem item)
         {
-            _playback.RemoveItem(item);            
+            _playback.RemoveItem(item);
 
             if (_playback.Items.Count == 0)
                 ResetPlayer();
-            else            
-                PlayItem(_playback.GetCurrentItem());            
+            else
+                PlayItem(_playback.GetCurrentItem());
         }
     }
-    
-[RelayCommand]
+
+    [RelayCommand]
     void ShowAbout()
     {
         var about = new AboutWindow();
         about.ShowDialog();
     }
 
-    // IDisposable implementation to clean up timers and event handlers.
     public void Dispose()
     {
         Dispose(true);
