@@ -1,4 +1,6 @@
-﻿namespace WinMix.ViewModels;
+﻿using System.Threading.Tasks;
+
+namespace WinMix.ViewModels;
 
 public partial class ListManagerViewModel : ObservableObject
 {
@@ -70,11 +72,11 @@ public partial class ListManagerViewModel : ObservableObject
     [RelayCommand]
     async Task SaveList()
     {
-        await new ListStorageService().SavePlaylistAsync(_playlist.Name, _playlist.GetFilePaths());
+await         new StorageService().SavePlaylistAsync(_playlist.Items);
     }
 
     [RelayCommand]
-    async Task LoadList()
+async     Task LoadList()
     {
         string playlistFile = new FileOpenService().PickPlaylistFile();
         if (!string.IsNullOrEmpty(playlistFile))
@@ -83,14 +85,14 @@ public partial class ListManagerViewModel : ObservableObject
 
             _playlist.Name = Path.GetFileNameWithoutExtension(playlistFile);
             ListTitle = $"Playlist: {_playlist.Name} - List Manager";
-            var items = await new ListStorageService().LoadPlaylistAsync(playlistFile);
+            var items = await new StorageService().LoadPlaylistAsync();
             foreach (var item in items)
-                _playlist.AddItem(MediaItem.FromFile(item));
+                _playlist.AddItem(item);
         }
     }
 
     [RelayCommand]
-     async Task NewList()
+    async Task CreateNewList()
     {
         var inputDialog = new InputTextDialog();
 if (inputDialog.ShowDialog() == true)
@@ -100,7 +102,7 @@ if (inputDialog.ShowDialog() == true)
             _playlist.Items.Clear();
             _playlist.Name = "input";
             ListTitle = $"Playlist: {_playlist.Name} - List Manager";
-            await new ListStorageService().SavePlaylistAsync(_playlist.Name, _playlist.GetFilePaths());
+await             new StorageService().SavePlaylistAsync(_playlist.Items);
         }
     }
 

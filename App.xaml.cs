@@ -6,9 +6,8 @@ public partial class App : Application
     {        
         base.OnStartup(e);
 
-        IPlaybackService playbackService = new PlaybackService();
-        PlayerViewModel viewModel = new(playbackService);
-
+        var playbackService = new PlaybackService();
+        var viewModel = new PlayerViewModel(playbackService);
         PlayerWindow window = new(viewModel);
             window.Show();
         }

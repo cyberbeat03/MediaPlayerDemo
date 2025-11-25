@@ -4,7 +4,7 @@ namespace WinMix
 {
     public partial class AboutWindow : Window
     {
-        public string AppName { get; set; } = "WinMix Desktop";
+        public string AppName { get; set; }
         public string AppVersion { get; set; }
         public string BuildDate { get; set; }
 
