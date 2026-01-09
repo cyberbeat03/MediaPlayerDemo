@@ -9,7 +9,7 @@ public class StorageService
         Environment.GetFolderPath(Environment.SpecialFolder.MyMusic),
         "playlists");        
 
-    public async Task<IEnumerable<MediaItem>> LoadPlaylistAsync()
+            public async Task<IEnumerable<MediaItem>> LoadPlaylistAsync()
     {
         var fullPath = Path.Combine(_playlistLocation, "WinMix.json");
         if (!File.Exists(fullPath)) return Enumerable.Empty<MediaItem>();
@@ -17,8 +17,9 @@ public class StorageService
         try
         {
 await using         FileStream fs = File.OpenRead(fullPath);
-        return await JsonSerializer.DeserializeAsync<IEnumerable<MediaItem>>(fs);
-    }
+        var items =  await JsonSerializer.DeserializeAsync<List<MediaItem>>(fs);
+            return items ?? Enumerable.Empty<MediaItem>();
+        }
         catch (Exception e)
         {
             MessageBox.Show($"Could not restore the last playlist: {e.Message}");
@@ -29,7 +30,7 @@ await using         FileStream fs = File.OpenRead(fullPath);
     public async Task SavePlaylistAsync(IEnumerable<MediaItem> fileList)
     {
         var fullPath = Path.Combine(_playlistLocation, "WinMix.json");
-
+        Directory.CreateDirectory(_playlistLocation);
         try
         {
             await using FileStream fs = File.Create(fullPath);
