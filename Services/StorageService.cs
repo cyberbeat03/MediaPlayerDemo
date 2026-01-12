@@ -1,5 +1,4 @@
 ﻿using System.Text.Json;
-using System.Xml.Linq;
 
 namespace WinMix.Services;
 
@@ -21,18 +20,19 @@ await using         FileStream fs = File.OpenRead(fullPath);
             return items ?? Enumerable.Empty<MediaItem>();
         }
         catch (Exception e)
-        {
-            MessageBox.Show($"Could not restore the last playlist: {e.Message}");
+        {            
             return Enumerable.Empty<MediaItem>();
         }
     }
 
     public async Task SavePlaylistAsync(IEnumerable<MediaItem> fileList)
-    {
+    {        
         var fullPath = Path.Combine(_playlistLocation, "WinMix.json");
-        Directory.CreateDirectory(_playlistLocation);
+
         try
         {
+            if (!Directory.Exists(_playlistLocation)) Directory.CreateDirectory(_playlistLocation);
+
             await using FileStream fs = File.Create(fullPath);
             await JsonSerializer.SerializeAsync(fs, fileList);
         }
@@ -40,25 +40,6 @@ await using         FileStream fs = File.OpenRead(fullPath);
         {
             MessageBox.Show($"Could not save the playlist: {e.Message}");
         }
-        }
-
-    public IEnumerable<string> ConvertWplToM3u(string wplPath)
-    {
-        XDocument doc = XDocument.Load(wplPath);
-
-        string basePath = Path.GetDirectoryName(wplPath)!;
-
-        var mediaElements = doc.Descendants("media");
-
-        foreach (var media in mediaElements)
-        {
-            string? src = media.Attribute("src")?.Value;
-            if (!string.IsNullOrWhiteSpace(src))
-            {
-                string fullPath = Path.GetFullPath(Path.Combine(basePath, src));
-                yield return fullPath;
-            }
-        }
-    }
+        }    
 
 }
