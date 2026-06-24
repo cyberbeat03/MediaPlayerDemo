@@ -2,11 +2,11 @@
 
 namespace WinMix.Services;
 
-public class ClipBoardService
+public class ClipBoardService : IClipBoardService
 {
     public bool Copy(string mediaItem)
     {
-        if (String.IsNullOrEmpty(mediaItem)) return false;        
+        if (String.IsNullOrEmpty(mediaItem)) return false;
 
         StringCollection dropFiles = new();
         dropFiles.Add(mediaItem);
@@ -58,7 +58,7 @@ public class ClipBoardService
         catch (Exception e)
         {
             MessageBox.Show(e.Message);
-                return Enumerable.Empty<string>();
+            return Enumerable.Empty<string>();
         }
-}
+    }
 }

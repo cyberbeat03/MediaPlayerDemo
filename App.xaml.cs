@@ -8,7 +8,11 @@ public partial class App : Application
 
         var playbackService = new PlaybackService();
         var viewModel = new PlayerViewModel(playbackService);
-        PlayerWindow window = new(viewModel);
-            window.Show();
+
+        var window = new PlayerWindow
+        {
+            DataContext = viewModel
+        };
+        window.Show();
         }
     }

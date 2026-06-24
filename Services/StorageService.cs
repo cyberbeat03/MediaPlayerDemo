@@ -2,31 +2,31 @@
 
 namespace WinMix.Services;
 
-public class StorageService
+public class StorageService : IStorageService
 {
     readonly string _playlistLocation = Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.MyMusic),
-        "playlists");        
+        "playlists");
 
-            public async Task<IEnumerable<MediaItem>> LoadPlaylistAsync()
+    public async Task<IEnumerable<MediaItem>> LoadPlaylistAsync()
     {
         var fullPath = Path.Combine(_playlistLocation, "WinMix.json");
         if (!File.Exists(fullPath)) return Enumerable.Empty<MediaItem>();
 
         try
         {
-await using         FileStream fs = File.OpenRead(fullPath);
-        var items =  await JsonSerializer.DeserializeAsync<List<MediaItem>>(fs);
+            await using FileStream fs = File.OpenRead(fullPath);
+            var items = await JsonSerializer.DeserializeAsync<List<MediaItem>>(fs);
             return items ?? Enumerable.Empty<MediaItem>();
         }
-        catch (Exception e)
-        {            
+        catch (Exception)
+        {
             return Enumerable.Empty<MediaItem>();
         }
     }
 
     public async Task SavePlaylistAsync(IEnumerable<MediaItem> fileList)
-    {        
+    {
         var fullPath = Path.Combine(_playlistLocation, "WinMix.json");
 
         try
@@ -40,6 +40,6 @@ await using         FileStream fs = File.OpenRead(fullPath);
         {
             MessageBox.Show($"Could not save the playlist: {e.Message}");
         }
-        }    
+    }
 
 }

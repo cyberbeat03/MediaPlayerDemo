@@ -7,6 +7,8 @@ public partial class ListManagerViewModel : ObservableObject
     [ObservableProperty] MediaItem? _selectedItem;    
     [ObservableProperty] string _listTitle;    
     IPlaybackService _playlist;
+IStorageService _storage = new StorageService();
+    IClipBoardService _clipboard = new ClipBoardService();
 
     public ObservableCollection<MediaItem> MediaItems => _playlist.Items;
 
@@ -58,13 +60,13 @@ public partial class ListManagerViewModel : ObservableObject
     void CopyItem()
     {
         if (SelectedItem is MediaItem item)
-            new ClipBoardService().Copy(item.FullPath);
+            _clipboard.Copy(item.FullPath);
     }
 
     [RelayCommand]
     void PasteItems()
     {
-        var pastedItems = new ClipBoardService().Paste();
+        var pastedItems = _clipboard.Paste();
         foreach (var item in pastedItems)
             _playlist.AddItem(MediaItem.FromFile(item));
     }
@@ -72,7 +74,7 @@ public partial class ListManagerViewModel : ObservableObject
     [RelayCommand]
     async Task SaveList()
     {
-await         new StorageService().SavePlaylistAsync(_playlist.Items);
+await         _storage.SavePlaylistAsync(_playlist.Items);
     }
 
     [RelayCommand]
@@ -85,7 +87,7 @@ async     Task LoadList()
 
             _playlist.Name = Path.GetFileNameWithoutExtension(playlistFile);
             ListTitle = $"Playlist: {_playlist.Name} - List Manager";
-            var items = await new StorageService().LoadPlaylistAsync();
+            var items = await _storage.LoadPlaylistAsync();
             foreach (var item in items)
                 _playlist.AddItem(item);
         }
@@ -102,14 +104,22 @@ if (inputDialog.ShowDialog() == true)
             _playlist.Items.Clear();
             _playlist.Name = "input";
             ListTitle = $"Playlist: {_playlist.Name} - List Manager";
-await             new StorageService().SavePlaylistAsync(_playlist.Items);
+await             _storage.SavePlaylistAsync(_playlist.Items);
         }
     }
 
-[RelayCommand]
-    void StartPlayback()
+    [RelayCommand]
+    async Task StartPlayback()
     {
+await         SaveList();
 
+        var viewmodel = new PlayerViewModel(_playlist);
+        var window = new PlayerWindow
+        {
+    DataContext = viewmodel
+        };
+        window.Show();
+        
     }
 
 }

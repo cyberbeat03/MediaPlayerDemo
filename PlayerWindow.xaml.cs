@@ -2,10 +2,9 @@
 
 public partial class PlayerWindow : Window
 {
-    public PlayerWindow(PlayerViewModel viewModel)
+    public PlayerWindow()
     {
-        InitializeComponent();
-        DataContext = viewModel;
+        InitializeComponent();        
         StatusText.Focus();
             }
     
