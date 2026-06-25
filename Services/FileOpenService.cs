@@ -2,13 +2,13 @@
 
 namespace WinMix.Services;
 
-public class FileOpenService
-{
-    private readonly string _musicFolder = Environment.GetFolderPath(Environment.SpecialFolder.MyMusic);
+public class FileOpenService : IFileOpenService
+{   
+        private readonly string _musicFolder = Environment.GetFolderPath(Environment.SpecialFolder.MyMusic);
     private readonly string _supportedFileTypes = "Audio Files (*.MP3;*.M4A;*.AAC;*.FLAC;*.WMA;*.WAV)|*.mp3;*.m4a;*.aac;*.flac;*.wma;*.wav|Video Files (*.MP4;*.WMV)|*.mp4;*.wmv";
 
     public IEnumerable<string> PickMediaFiles()
-    {        
+    {
         OpenFileDialog OFD = new()
         {
             InitialDirectory = _musicFolder,
@@ -17,7 +17,7 @@ public class FileOpenService
             RestoreDirectory = true,
             Multiselect = true,
             CheckFileExists = true,
-             ValidateNames= true,
+            ValidateNames = true,
             DefaultExt = ".mp3"
         };
 
@@ -35,11 +35,11 @@ public class FileOpenService
             InitialDirectory = Path.Combine(_musicFolder, "Playlists"),
             Multiselect = false,
             RestoreDirectory = true,
-            CheckFileExists = true,            
+            CheckFileExists = true,
             DefaultExt = ".wmx",
             Filter = "Playlist Files (*.WMX;*.WPL)|*.wmx;*.wpl"
-        };   
-        
+        };
+
         if (OFD.ShowDialog() == true)
         {
             return OFD.FileName ?? string.Empty;

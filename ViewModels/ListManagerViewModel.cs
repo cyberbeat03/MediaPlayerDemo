@@ -9,7 +9,8 @@ public partial class ListManagerViewModel : ObservableObject
     IPlaybackService _playlist;
 IStorageService _storage = new StorageService();
     IClipBoardService _clipboard = new ClipBoardService();
-
+IFileOpenService _fileOpen = new FileOpenService();
+    
     public ObservableCollection<MediaItem> MediaItems => _playlist.Items;
 
     public ListManagerViewModel(IPlaybackService playbackService)
@@ -21,7 +22,7 @@ IStorageService _storage = new StorageService();
     [RelayCommand]
     void PickMedia()
     {
-        var pickedFiles = new FileOpenService().PickMediaFiles();
+        var pickedFiles = _fileOpen.PickMediaFiles();
         foreach (var file in pickedFiles)
             _playlist.AddItem(MediaItem.FromFile(file));
     }
@@ -80,7 +81,7 @@ await         _storage.SavePlaylistAsync(_playlist.Items);
     [RelayCommand]
 async     Task LoadList()
     {
-        string playlistFile = new FileOpenService().PickPlaylistFile();
+        string playlistFile = _fileOpen.PickPlaylistFile();
         if (!string.IsNullOrEmpty(playlistFile))
         {
             _playlist.Items.Clear();
