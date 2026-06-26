@@ -1,18 +1,26 @@
-﻿namespace WinMix;
+﻿using WinMix.Services;
+using WinMix.ViewModels;
+
+namespace WinMix;
 
 public partial class App : Application
 {
     protected override void OnStartup(StartupEventArgs e)
     {        
         base.OnStartup(e);
-
+        
         var playbackService = new PlaybackService();
-        var viewModel = new PlayerViewModel(playbackService);
+        var fileOpenService = new FileOpenService();
+        var storageService = new StorageService();
+        var clipboardService = new ClipBoardService();
+        
+        var playerViewModel = new PlayerViewModel(playbackService, fileOpenService);
+        var listManagerViewModel = new ListManagerViewModel(playbackService, fileOpenService, storageService, clipboardService);
 
         var window = new PlayerWindow
         {
-            DataContext = viewModel
+            DataContext = playerViewModel
         };
         window.Show();
-        }
     }
+}

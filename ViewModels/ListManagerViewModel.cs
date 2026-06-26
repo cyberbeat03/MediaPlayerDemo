@@ -1,4 +1,12 @@
-﻿using System.Threading.Tasks;
+﻿            using System;
+using System.IO;
+using System.Linq;
+using System.Collections.ObjectModel;
+using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using WinMix.Models;
+using WinMix.Services;
 
 namespace WinMix.ViewModels;
 
@@ -6,23 +14,30 @@ public partial class ListManagerViewModel : ObservableObject
 {
     [ObservableProperty] MediaItem? _selectedItem;    
     [ObservableProperty] string _listTitle;    
-    IPlaybackService _playlist;
-IStorageService _storage = new StorageService();
-    IClipBoardService _clipboard = new ClipBoardService();
-IFileOpenService _fileOpen = new FileOpenService();
-    
+    readonly IPlaybackService _playlist;
+    readonly IFileOpenService _fileOpenService;
+    readonly IStorageService _storageService;
+    readonly IClipBoardService _clipBoardService;
+
     public ObservableCollection<MediaItem> MediaItems => _playlist.Items;
 
-    public ListManagerViewModel(IPlaybackService playbackService)
+    public ListManagerViewModel(
+        IPlaybackService playbackService,
+        IFileOpenService fileOpenService,
+        IStorageService storageService,
+        IClipBoardService clipBoardService)
     {
-        _playlist = playbackService;                
+        _playlist = playbackService;
+        _fileOpenService = fileOpenService;
+        _storageService = storageService;
+        _clipBoardService = clipBoardService;
         ListTitle = $"Playlist: {_playlist.Name} - List Manager";
     }
 
     [RelayCommand]
     void PickMedia()
     {
-        var pickedFiles = _fileOpen.PickMediaFiles();
+        var pickedFiles = _fileOpenService.PickMediaFiles();
         foreach (var file in pickedFiles)
             _playlist.AddItem(MediaItem.FromFile(file));
     }
@@ -61,13 +76,13 @@ IFileOpenService _fileOpen = new FileOpenService();
     void CopyItem()
     {
         if (SelectedItem is MediaItem item)
-            _clipboard.Copy(item.FullPath);
+            _clipBoardService.Copy(item.FullPath);
     }
 
     [RelayCommand]
     void PasteItems()
     {
-        var pastedItems = _clipboard.Paste();
+        var pastedItems = _clipBoardService.Paste();
         foreach (var item in pastedItems)
             _playlist.AddItem(MediaItem.FromFile(item));
     }
@@ -75,20 +90,20 @@ IFileOpenService _fileOpen = new FileOpenService();
     [RelayCommand]
     async Task SaveList()
     {
-await         _storage.SavePlaylistAsync(_playlist.Items);
+        await _storageService.SavePlaylistAsync(_playlist.Items);
     }
 
     [RelayCommand]
-async     Task LoadList()
+    async Task LoadList()
     {
-        string playlistFile = _fileOpen.PickPlaylistFile();
+        string playlistFile = _fileOpenService.PickPlaylistFile();
         if (!string.IsNullOrEmpty(playlistFile))
         {
             _playlist.Items.Clear();
 
             _playlist.Name = Path.GetFileNameWithoutExtension(playlistFile);
             ListTitle = $"Playlist: {_playlist.Name} - List Manager";
-            var items = await _storage.LoadPlaylistAsync();
+            var items = await _storageService.LoadPlaylistAsync();
             foreach (var item in items)
                 _playlist.AddItem(item);
         }
@@ -98,29 +113,27 @@ async     Task LoadList()
     async Task CreateNewList()
     {
         var inputDialog = new InputTextDialog();
-if (inputDialog.ShowDialog() == true)
+        if (inputDialog.ShowDialog() == true)
         {
             string input = inputDialog.Response;           
-            
+
             _playlist.Items.Clear();
-            _playlist.Name = "input";
+            _playlist.Name = input;
             ListTitle = $"Playlist: {_playlist.Name} - List Manager";
-await             _storage.SavePlaylistAsync(_playlist.Items);
+            await _storageService.SavePlaylistAsync(_playlist.Items);
         }
     }
 
     [RelayCommand]
     async Task StartPlayback()
     {
-await         SaveList();
+        await SaveList();
 
-        var viewmodel = new PlayerViewModel(_playlist);
+        var viewmodel = new PlayerViewModel(_playlist, _fileOpenService);
         var window = new PlayerWindow
         {
-    DataContext = viewmodel
+            DataContext = viewmodel
         };
         window.Show();
-        
     }
-
 }

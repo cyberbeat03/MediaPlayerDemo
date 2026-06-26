@@ -1,4 +1,16 @@
-﻿namespace WinMix.ViewModels;
+﻿using System;
+using System.IO;
+using System.Linq;
+using System.Collections.ObjectModel;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Threading;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using WinMix.Models;
+using WinMix.Services;
+
+namespace WinMix.ViewModels;
 
 public partial class PlayerViewModel : ObservableObject, IDisposable
 {
@@ -9,13 +21,15 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
     [ObservableProperty] private System.Windows.Controls.MediaElement _mPlayer = new();
     bool _disposed;
     DispatcherTimer _timer = new();
-    IPlaybackService _playback;
+    readonly IPlaybackService _playback;
+    readonly IFileOpenService _fileOpenService;
 
     public ObservableCollection<MediaItem> MediaItems => _playback.Items;
 
-    public PlayerViewModel(IPlaybackService playbackService)
+    public PlayerViewModel(IPlaybackService playbackService, IFileOpenService fileOpenService)
     {
         _playback = playbackService;
+        _fileOpenService = fileOpenService;
         _timer.Interval = TimeSpan.FromSeconds(1);
         _timer.Tick += Timer_Tick;
 
@@ -132,7 +146,7 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
     [RelayCommand]
     void OpenFiles()
     {
-        var pickedFiles = new FileOpenService().PickMediaFiles();
+        var pickedFiles = _fileOpenService.PickMediaFiles();
         if (pickedFiles.Count() > 0)
             foreach (var file in pickedFiles)
                 _playback.AddItem(MediaItem.FromFile(file));

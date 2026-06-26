@@ -6,6 +6,6 @@ public partial class PlayerWindow : Window
     {
         InitializeComponent();        
         StatusText.Focus();
-            }
-    
+    }
+
 }
