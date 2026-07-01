@@ -1,7 +1,4 @@
-﻿using WinMix.Services;
-using WinMix.ViewModels;
-
-namespace WinMix;
+﻿namespace WinMix;
 
 public partial class App : Application
 {
@@ -14,13 +11,16 @@ public partial class App : Application
         var storageService = new StorageService();
         var clipboardService = new ClipBoardService();
         
-        var playerViewModel = new PlayerViewModel(playbackService, fileOpenService);
-        var listManagerViewModel = new ListManagerViewModel(playbackService, fileOpenService, storageService, clipboardService);
+        // create the player window first (no DataContext yet)
+        var window = new PlayerWindow();
 
-        var window = new PlayerWindow
-        {
-            DataContext = playerViewModel
-        };
+        // create the window display service which needs the PlayerWindow
+        var windowDisplayService = new WindowDisplayService(window, playbackService, fileOpenService, storageService, clipboardService);
+
+        // create the player viewmodel with the window display service injected
+        var playerViewModel = new PlayerViewModel(playbackService, fileOpenService, windowDisplayService);
+        window.DataContext = playerViewModel;
+
         window.Show();
     }
 }

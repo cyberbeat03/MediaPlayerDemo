@@ -1,4 +1,4 @@
-﻿<Window x:Class="WinMix.PlayerWindow"
+﻿            <Window x:Class="WinMix.PlayerWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"       
@@ -16,12 +16,14 @@
 
         <local:TimeSpanToStringConverter x:Key="TimeSpanToString"/>
     </Window.Resources>
-    <Window.InputBindings>        <KeyBinding Gesture="Ctrl+O" Command="{Binding OpenFilesCommand}"/>        
+    <Window.InputBindings>
+        <KeyBinding Gesture="Ctrl+O" Command="{Binding OpenFilesCommand}"/>
         <KeyBinding Gesture="Ctrl+F" Command="{Binding SpeedUpCommand}"/>
         <KeyBinding Gesture="Ctrl+D" Command="{Binding SlowDownCommand}"/>
         <KeyBinding Gesture="Alt+N"       Command="{Binding PlayNextCommand}"/>
         <KeyBinding Gesture="Alt+V" Command="{Binding PlayPreviousCommand}"/>
         <KeyBinding Gesture="F4" Command="{Binding ShowAboutCommand}"/>
+        <KeyBinding Gesture="F6" Command="{Binding OpenListManagerCommand}"/>
     </Window.InputBindings>
 
     <Grid Margin="10">

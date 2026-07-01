@@ -1,14 +1,4 @@
-﻿            using System;
-using System.IO;
-using System.Linq;
-using System.Collections.ObjectModel;
-using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
-using WinMix.Models;
-using WinMix.Services;
-
-namespace WinMix.ViewModels;
+﻿namespace WinMix.ViewModels;
 
 public partial class ListManagerViewModel : ObservableObject
 {
@@ -18,6 +8,7 @@ public partial class ListManagerViewModel : ObservableObject
     readonly IFileOpenService _fileOpenService;
     readonly IStorageService _storageService;
     readonly IClipBoardService _clipBoardService;
+    readonly IWindowDisplayService _windowDisplayService;
 
     public ObservableCollection<MediaItem> MediaItems => _playlist.Items;
 
@@ -25,12 +16,14 @@ public partial class ListManagerViewModel : ObservableObject
         IPlaybackService playbackService,
         IFileOpenService fileOpenService,
         IStorageService storageService,
-        IClipBoardService clipBoardService)
+        IClipBoardService clipBoardService,
+        IWindowDisplayService? windowDisplayService = null)
     {
         _playlist = playbackService;
         _fileOpenService = fileOpenService;
         _storageService = storageService;
         _clipBoardService = clipBoardService;
+        _windowDisplayService = windowDisplayService;
         ListTitle = $"Playlist: {_playlist.Name} - List Manager";
     }
 
@@ -128,12 +121,6 @@ public partial class ListManagerViewModel : ObservableObject
     async Task StartPlayback()
     {
         await SaveList();
-
-        var viewmodel = new PlayerViewModel(_playlist, _fileOpenService);
-        var window = new PlayerWindow
-        {
-            DataContext = viewmodel
-        };
-        window.Show();
+        _windowDisplayService.ShowPlayer();
     }
 }

@@ -1,16 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Linq;
-using System.Collections.ObjectModel;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Threading;
-using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
-using WinMix.Models;
-using WinMix.Services;
-
-namespace WinMix.ViewModels;
+﻿namespace WinMix.ViewModels;
 
 public partial class PlayerViewModel : ObservableObject, IDisposable
 {
@@ -23,13 +11,16 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
     DispatcherTimer _timer = new();
     readonly IPlaybackService _playback;
     readonly IFileOpenService _fileOpenService;
+    readonly IWindowDisplayService _windowDisplayService;
 
     public ObservableCollection<MediaItem> MediaItems => _playback.Items;
 
-    public PlayerViewModel(IPlaybackService playbackService, IFileOpenService fileOpenService)
+    public PlayerViewModel(IPlaybackService playbackService, IFileOpenService fileOpenService, IWindowDisplayService windowDisplayService)
     {
-        _playback = playbackService;
-        _fileOpenService = fileOpenService;
+        _playback = playbackService ?? throw new ArgumentNullException(nameof(playbackService));
+        _fileOpenService = fileOpenService ?? throw new ArgumentNullException(nameof(fileOpenService));
+        _windowDisplayService = windowDisplayService ?? throw new ArgumentNullException(nameof(windowDisplayService));
+
         _timer.Interval = TimeSpan.FromSeconds(1);
         _timer.Tick += Timer_Tick;
 
@@ -37,7 +28,7 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
         MPlayer.MediaOpened += OnMediaOpened;
         MPlayer.MediaEnded += OnMediaEnded;
         MPlayer.MediaFailed += OnMediaFailed;
-    }
+    }    
 
     void Timer_Tick(object? s, EventArgs e)
     {
@@ -153,6 +144,9 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
         if (MPlayer.Source is null)
             PlayItem(_playback.GetCurrentItem());
     }
+
+    [RelayCommand]
+    void OpenListManager() => _windowDisplayService.ShowListManager();
 
     [RelayCommand]
     void RemoveItem()

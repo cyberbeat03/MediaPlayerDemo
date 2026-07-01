@@ -1,7 +1,6 @@
 ﻿namespace WinMix.Services;
-
-interface IWindowDisplayService
+public interface IWindowDisplayService
 {
-
-
+    void ShowListManager();
+    void ShowPlayer();
 }
