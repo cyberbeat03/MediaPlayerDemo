@@ -2,6 +2,6 @@
 
 public interface IStorageService
 {
-    Task<IEnumerable<MediaItem>> LoadPlaylistAsync();
-    Task SavePlaylistAsync(IEnumerable<MediaItem> fileList);
+    Task<IEnumerable<MediaItem>> LoadPlaylistAsync(string wmxFileName);
+    Task SavePlaylistAsync(string wmxFileName, IEnumerable<MediaItem> fileList);
 }

@@ -8,9 +8,9 @@ public class StorageService : IStorageService
         Environment.GetFolderPath(Environment.SpecialFolder.MyMusic),
         "playlists");
 
-    public async Task<IEnumerable<MediaItem>> LoadPlaylistAsync()
+    public async Task<IEnumerable<MediaItem>> LoadPlaylistAsync(string wmxFileName)
     {
-        var fullPath = Path.Combine(_playlistLocation, "WinMix.json");
+        var fullPath = Path.Combine(_playlistLocation, wmxFileName);
         if (!File.Exists(fullPath)) return Enumerable.Empty<MediaItem>();
 
         try
@@ -25,9 +25,9 @@ public class StorageService : IStorageService
         }
     }
 
-    public async Task SavePlaylistAsync(IEnumerable<MediaItem> fileList)
+    public async Task SavePlaylistAsync(string wmxFileName, IEnumerable<MediaItem> fileList)
     {
-        var fullPath = Path.Combine(_playlistLocation, "WinMix.json");
+        var fullPath = Path.Combine(_playlistLocation, wmxFileName);
 
         try
         {

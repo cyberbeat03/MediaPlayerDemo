@@ -83,7 +83,7 @@ public partial class ListManagerViewModel : ObservableObject
     [RelayCommand]
     async Task SaveList()
     {
-        await _storageService.SavePlaylistAsync(_playlist.Items);
+        await _storageService.SavePlaylistAsync(_playlist.Name + ".wmx", _playlist.Items);
     }
 
     [RelayCommand]
@@ -96,7 +96,7 @@ public partial class ListManagerViewModel : ObservableObject
 
             _playlist.Name = Path.GetFileNameWithoutExtension(playlistFile);
             ListTitle = $"Playlist: {_playlist.Name} - List Manager";
-            var items = await _storageService.LoadPlaylistAsync();
+            var items = await _storageService.LoadPlaylistAsync(playlistFile);
             foreach (var item in items)
                 _playlist.AddItem(item);
         }
@@ -108,12 +108,12 @@ public partial class ListManagerViewModel : ObservableObject
         var inputDialog = new InputTextDialog();
         if (inputDialog.ShowDialog() == true)
         {
-            string input = inputDialog.Response;           
+            string input = inputDialog.Response;
 
             _playlist.Items.Clear();
             _playlist.Name = input;
             ListTitle = $"Playlist: {_playlist.Name} - List Manager";
-            await _storageService.SavePlaylistAsync(_playlist.Items);
+            await _storageService.SavePlaylistAsync(input, _playlist.Items);
         }
     }
 
