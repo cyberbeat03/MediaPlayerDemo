@@ -1,26 +1,50 @@
-﻿namespace WinMix;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+
+namespace WinMix;
 
 public partial class App : Application
 {
-    protected override void OnStartup(StartupEventArgs e)
-    {        
+    private IHost? _host;
+
+    protected override async void OnStartup(StartupEventArgs e)
+    {
         base.OnStartup(e);
-        
-        var playbackService = new PlaybackService();
-        var fileOpenService = new FileOpenService();
-        var storageService = new StorageService();
-        var clipboardService = new ClipBoardService();
-        
-        // create the player window first (no DataContext yet)
-        var window = new PlayerWindow();
 
-        // create the window display service which needs the PlayerWindow
-        var windowDisplayService = new WindowDisplayService(window, playbackService, fileOpenService, storageService, clipboardService);
+        _host = Host.CreateDefaultBuilder()
+            .ConfigureServices((context, services) =>
+            {
+                
+                services.AddSingleton<IPlaybackService, PlaybackService>();
+                services.AddSingleton<IFileOpenService, FileOpenService>();
+                services.AddSingleton<IStorageService, StorageService>();
+                services.AddSingleton<IClipBoardService, ClipBoardService>();
 
-        // create the player viewmodel with the window display service injected
-        var playerViewModel = new PlayerViewModel(playbackService, fileOpenService, windowDisplayService);
+                services.AddSingleton<PlayerWindow>();
+                services.AddTransient<ListManagerWindow>(); // created per-use
+                services.AddSingleton<IWindowDisplayService, WindowDisplayService>();
+
+                services.AddSingleton<PlayerViewModel>();
+            })
+            .Build();
+
+        await _host.StartAsync();
+
+                var window = _host.Services.GetRequiredService<PlayerWindow>();
+        var playerViewModel = _host.Services.GetRequiredService<PlayerViewModel>();
         window.DataContext = playerViewModel;
-
         window.Show();
     }
+
+    protected override async void OnExit(ExitEventArgs e)
+    {
+        if (_host != null)
+        {
+            await _host.StopAsync(TimeSpan.FromSeconds(5));
+            _host.Dispose();
+        }
+
+        base.OnExit(e);
+    }
 }
+   
