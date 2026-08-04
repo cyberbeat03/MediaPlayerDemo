@@ -16,8 +16,19 @@ public class StorageService : IStorageService
         try
         {
             await using FileStream fs = File.OpenRead(fullPath);
-            var items = await JsonSerializer.DeserializeAsync<List<MediaItem>>(fs);
-            return items ?? Enumerable.Empty<MediaItem>();
+            var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+            var playlist = await JsonSerializer.DeserializeAsync<PlaylistDto>(fs, options);
+            if (playlist?.Items == null) return Enumerable.Empty<MediaItem>();
+            
+            var result = playlist.Items.Select(dto => new MediaItem
+            {
+                DisplayName = dto.DisplayName,
+                FullPath = dto.FullPath,
+                UriPath = new Uri(dto.FullPath, UriKind.Absolute),
+                LastAccessed = DateTime.FromFileTimeUtc(dto.LastAccessedFileTimeUtc)
+            }).ToList();
+
+            return result;
         }
         catch (Exception)
         {
@@ -33,8 +44,21 @@ public class StorageService : IStorageService
         {
             if (!Directory.Exists(_playlistLocation)) Directory.CreateDirectory(_playlistLocation);
 
+            var dto = new PlaylistDto
+            {
+                Version = 1,
+                Name = Path.GetFileNameWithoutExtension(wmxFileName),
+                Items = fileList.Select(fi => new MediaItemDto
+                {
+                    DisplayName = fi.DisplayName,
+                    FullPath = fi.FullPath,
+                    LastAccessedFileTimeUtc = fi.LastAccessed.ToFileTimeUtc()
+                }).ToList()
+            };
+
+            var options = new JsonSerializerOptions { WriteIndented = true };
             await using FileStream fs = File.Create(fullPath);
-            await JsonSerializer.SerializeAsync(fs, fileList);
+            await JsonSerializer.SerializeAsync(fs, dto, options);
         }
         catch (Exception e)
         {
