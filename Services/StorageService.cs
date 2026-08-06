@@ -17,10 +17,10 @@ public class StorageService : IStorageService
         {
             await using FileStream fs = File.OpenRead(fullPath);
             var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-            var playlist = await JsonSerializer.DeserializeAsync<PlaylistDto>(fs, options);
-            if (playlist?.Items == null) return Enumerable.Empty<MediaItem>();
+            var dto = await JsonSerializer.DeserializeAsync<PlaylistDTO>(fs, options);
+            if (dto?.Items == null) return Enumerable.Empty<MediaItem>();
             
-            var result = playlist.Items.Select(dto => new MediaItem
+            var result = dto.Items.Select(dto => new MediaItem
             {
                 DisplayName = dto.DisplayName,
                 FullPath = dto.FullPath,
@@ -44,7 +44,7 @@ public class StorageService : IStorageService
         {
             if (!Directory.Exists(_playlistLocation)) Directory.CreateDirectory(_playlistLocation);
 
-            var dto = new PlaylistDto
+            var dto = new PlaylistDTO
             {
                 Version = 1,
                 Name = Path.GetFileNameWithoutExtension(wmxFileName),
