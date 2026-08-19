@@ -44,6 +44,18 @@ public class WindowDisplayService : IWindowDisplayService
                 };
             }
 
+            // Match the list manager window location to the player window's current position
+            try
+            {
+                _listWindow.WindowStartupLocation = System.Windows.WindowStartupLocation.Manual;
+                _listWindow.Left = _playerWindow.Left;
+                _listWindow.Top = _playerWindow.Top;
+            }
+            catch
+            {
+                // ignore any issue setting placement
+            }
+
             _listWindow.Show();
             _listWindow.Activate();
         });

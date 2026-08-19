@@ -37,7 +37,7 @@ public class FileOpenService : IFileOpenService
             RestoreDirectory = true,
             CheckFileExists = true,
             DefaultExt = ".wmx",
-            Filter = "Playlist Files (*.WMX;*.WPL)|*.wmx;*.wpl"
+            Filter = "Playlist Files (*.WMX)|*.wmx"
         };
 
         if (OFD.ShowDialog() == true)
