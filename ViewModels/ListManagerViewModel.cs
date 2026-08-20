@@ -24,7 +24,7 @@ public partial class ListManagerViewModel : ObservableObject
         _storageService = storageService;
         _clipBoardService = clipBoardService;
         _windowDisplayService = windowDisplayService;
-        ListTitle = $"Playlist: {_playlist.Name} - List Manager";
+        ListTitle = $"{_playlist.Name} - List Manager";
     }
 
     [RelayCommand]
@@ -95,7 +95,7 @@ public partial class ListManagerViewModel : ObservableObject
             _playlist.Items.Clear();
 
             _playlist.Name = Path.GetFileNameWithoutExtension(playlistFile);
-            ListTitle = $"Playlist: {_playlist.Name} - List Manager";
+            ListTitle = $"{_playlist.Name} - List Manager";
             var items = await _storageService.LoadPlaylistAsync(playlistFile);
             foreach (var item in items)
                 _playlist.AddItem(item);
@@ -112,7 +112,7 @@ public partial class ListManagerViewModel : ObservableObject
 
             _playlist.Items.Clear();
             _playlist.Name = input;
-            ListTitle = $"Playlist: {_playlist.Name} - List Manager";
+            ListTitle = $"{_playlist.Name} - List Manager";
             await _storageService.SavePlaylistAsync(input, _playlist.Items);
         }
     }

@@ -23,7 +23,7 @@
         <KeyBinding Gesture="Alt+N"       Command="{Binding PlayNextCommand}"/>
         <KeyBinding Gesture="Alt+V" Command="{Binding PlayPreviousCommand}"/>
         <KeyBinding Gesture="F4" Command="{Binding ShowAboutCommand}"/>
-        <KeyBinding Gesture="Ctrl+Shift+O" Command="{Binding OpenListManagerCommand}"/>
+        <KeyBinding Gesture="F6" Command="{Binding OpenListManagerCommand}"/>
     </Window.InputBindings>
 
     <Grid Margin="10">

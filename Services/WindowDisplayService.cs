@@ -1,4 +1,6 @@
-﻿namespace WinMix.Services;
+﻿using System.Diagnostics;
+
+namespace WinMix.Services;
 
 public class WindowDisplayService : IWindowDisplayService
 {
@@ -70,7 +72,7 @@ public class WindowDisplayService : IWindowDisplayService
                 try { _listWindow.Close(); } catch { }
                 _listWindow = null;
             }
-
+            
             _playerWindow.Show();
             _playerWindow.Activate();
         });
