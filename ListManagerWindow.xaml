@@ -35,7 +35,7 @@
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                 <Button Content="_Add Media" Command="{Binding PickMediaCommand}" Margin="5"/>
                 <Button Content="_Remove Selected" Command="{Binding RemoveSelectedItemCommand}" Margin="5"/>
-                <Button Content="_New Playlist" Command="{Binding NewListCommand}" Margin="5"/>
+                <Button Content="_New Playlist" Command="{Binding CreateNewListCommand}" Margin="5"/>
                 <Button Content="_Save" Command="{Binding SaveListCommand}" Margin="5"/>
                 <Button Content="_Load Playlist" Command="{Binding LoadListCommand}" Margin="5"/>
                 <Button Content="_Play" Command="{Binding StartPlaybackCommand}" Margin="5"/>
