@@ -2,25 +2,29 @@
 
 public partial class PlayerViewModel : ObservableObject, IDisposable
 {
-    [ObservableProperty] private string _displayStatus = "No media loaded. Press the 'Add' button to get started.";
-    [ObservableProperty] private TimeSpan _totalDuration = TimeSpan.Zero;
-    [ObservableProperty] private TimeSpan _elapsedTime = TimeSpan.Zero;
-    [ObservableProperty] private MediaItem? _selectedItem = null;
-    [ObservableProperty] private System.Windows.Controls.MediaElement _mPlayer = new();
+    [ObservableProperty] string _displayStatus = "No media loaded. Press the 'Add' button to get started.";
+    [ObservableProperty] TimeSpan _totalDuration = TimeSpan.Zero;
+    [ObservableProperty] TimeSpan _elapsedTime = TimeSpan.Zero;
+    [ObservableProperty] MediaItem? _selectedItem = null;
+    [ObservableProperty] System.Windows.Controls.MediaElement _mPlayer = new();
+    [ObservableProperty] string _titleBar = "WinMix Desktop Music Player";
     bool _disposed;
     DispatcherTimer _timer = new();
-    readonly IPlaybackService _playback;
+
+    readonly IPlaybackService _playbackService;
     readonly IFileOpenService _fileOpenService;
     readonly IClipBoardService _clipBoardService;
+    readonly IStorageService _storageService;    
     readonly IWindowDisplayService _windowDisplayService;
 
-    public ObservableCollection<MediaItem> MediaItems => _playback.Items;
+    public ObservableCollection<MediaItem> MediaItems => _playbackService.Items;
 
-    public PlayerViewModel(IPlaybackService playbackService, IFileOpenService fileOpenService, IClipBoardService clipBoardService, IWindowDisplayService windowDisplayService)
+    public PlayerViewModel(IPlaybackService playbackService, IFileOpenService fileOpenService, IClipBoardService clipBoardService, IStorageService storageService, IWindowDisplayService windowDisplayService)
     {
-        _playback = playbackService ?? throw new ArgumentNullException(nameof(playbackService));
+        _playbackService = playbackService ?? throw new ArgumentNullException(nameof(playbackService));
         _fileOpenService = fileOpenService ?? throw new ArgumentNullException(nameof(fileOpenService));
         _clipBoardService = clipBoardService ?? throw new ArgumentNullException(nameof(clipBoardService));
+        _storageService = storageService ?? throw new ArgumentNullException(nameof(storageService));
         _windowDisplayService = windowDisplayService ?? throw new ArgumentNullException(nameof(windowDisplayService));
 
         _timer.Interval = TimeSpan.FromSeconds(1);
@@ -40,7 +44,7 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
 
     void OnMediaOpened(object? sender, RoutedEventArgs e)
     {
-        DisplayStatus = $"Loaded: {_playback.GetCurrentItem()?.DisplayName}" ?? "Media could not be opened.";
+        DisplayStatus = $"Loaded: {_playbackService.GetCurrentItem()?.DisplayName}" ?? "Media could not be opened.";
         TotalDuration = MPlayer.NaturalDuration.TimeSpan;
         _timer.Start();
     }
@@ -52,7 +56,7 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
 
     void OnMediaEnded(object? sender, RoutedEventArgs e)
     {
-        DisplayStatus = $"End of {_playback.GetCurrentItem()?.DisplayName}" ?? "Media has ended.";
+        DisplayStatus = $"End of {_playbackService.GetCurrentItem()?.DisplayName}" ?? "Media has ended.";
         _timer.Stop();
         MPlayer.Stop();
         ElapsedTime = TimeSpan.Zero;
@@ -61,8 +65,8 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
 
     void ResetPlayer()
     {
-        _playback.CurrentIndex = -1;
-        _playback.Items.Clear();
+        _playbackService.CurrentIndex = -1;
+        _playbackService.Items.Clear();
         _timer.Stop();
         MPlayer.Stop();
         MPlayer.Source = null;
@@ -115,33 +119,33 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
     [RelayCommand]
     void PlayNext()
     {
-        var nextItem = _playback.GetNextItem();
+        var nextItem = _playbackService.GetNextItem();
         PlayItem(nextItem);
     }
 
     [RelayCommand]
     void PlayPrevious()
     {
-        var previousItem = _playback.GetPreviousItem();
+        var previousItem = _playbackService.GetPreviousItem();
         PlayItem(previousItem);
     }
 
     [RelayCommand]
-    void MoveItemUp() => _playback.MoveUp(SelectedItem);
+    void MoveItemUp() => _playbackService.MoveUp(SelectedItem);
     [RelayCommand]
-    void MoveItemDown() => _playback.MoveDown(SelectedItem);
+    void MoveItemDown() => _playbackService.MoveDown(SelectedItem);
 
     [RelayCommand]
     void RemoveItem()
     {
         if (SelectedItem is MediaItem item)
         {
-            _playback.RemoveItem(item);
+            _playbackService.RemoveItem(item);
 
-            if (_playback.Items.Count == 0)
+            if (_playbackService.Items.Count == 0)
                 ResetPlayer();
             else
-                PlayItem(_playback.GetCurrentItem());
+                PlayItem(_playbackService.GetCurrentItem());
         }
     }
 
@@ -150,7 +154,7 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
     {
         var pastedItems = _clipBoardService.Paste();
         foreach (var item in pastedItems)
-            _playback.Items.Add(MediaItem.FromFile(item));
+            _playbackService.Items.Add(MediaItem.FromFile(item));
     }
 
     [RelayCommand]
@@ -158,7 +162,7 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
     {
         if (SelectedItem is MediaItem item)
         {
-            _playback.CurrentIndex = _playback.Items.IndexOf(item);
+            _playbackService.CurrentIndex = _playbackService.Items.IndexOf(item);
             PlayItem(item);
         }
     }
@@ -169,9 +173,9 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
         var pickedFiles = _fileOpenService.PickMediaFiles();
         if (pickedFiles.Count() > 0)
             foreach (var file in pickedFiles)
-                _playback.AddItem(MediaItem.FromFile(file));
+                _playbackService.AddItem(MediaItem.FromFile(file));
         if (MPlayer.Source is null)
-            PlayItem(_playback.GetCurrentItem());
+            PlayItem(_playbackService.GetCurrentItem());
     }
 
     [RelayCommand]
@@ -182,6 +186,43 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
     {
         var about = new AboutWindow();
         about.ShowDialog();
+    }
+
+    [RelayCommand]
+    async void LoadListAsync()
+    {
+        string playlistFile = _fileOpenService.PickPlaylistFile();
+        if (!string.IsNullOrEmpty(playlistFile))
+        {
+            _playbackService.Items.Clear();
+
+            _playbackService.Name = Path.GetFileNameWithoutExtension(playlistFile);
+            TitleBar = $"{_playbackService.Name} - WinMix Desktop";
+            var items = await _storageService.LoadPlaylistAsync(playlistFile);
+            foreach (var item in items)
+                _playbackService.AddItem(item);
+        }
+    }
+
+    [RelayCommand]
+    async void SaveListAsync()
+    {        
+        if (_playbackService.Items.Count == 0)
+        {
+            MessageBox.Show("No media items to save.", "Save Playlist");
+            return;
+        }
+
+        var inputDialog = new InputTextDialog();
+        
+        if (inputDialog.ShowDialog() == true)
+        {
+            string input = inputDialog.Response;
+            
+            _playbackService.Name = input;
+            TitleBar = $"{_playbackService.Name} - WinMix Desktop";
+            await _storageService.SavePlaylistAsync($"{input}.wmx", _playbackService.Items);
+        }
     }
 
     public void Dispose()
