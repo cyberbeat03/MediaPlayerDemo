@@ -1,6 +1,4 @@
-﻿using System.Diagnostics;
-
-namespace WinMix.Services;
+﻿namespace WinMix.Services;
 
 public class WindowDisplayService : IWindowDisplayService
 {

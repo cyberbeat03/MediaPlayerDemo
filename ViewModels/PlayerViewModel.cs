@@ -11,14 +11,16 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
     DispatcherTimer _timer = new();
     readonly IPlaybackService _playback;
     readonly IFileOpenService _fileOpenService;
+    readonly IClipBoardService _clipBoardService;
     readonly IWindowDisplayService _windowDisplayService;
 
     public ObservableCollection<MediaItem> MediaItems => _playback.Items;
 
-    public PlayerViewModel(IPlaybackService playbackService, IFileOpenService fileOpenService, IWindowDisplayService windowDisplayService)
+    public PlayerViewModel(IPlaybackService playbackService, IFileOpenService fileOpenService, IClipBoardService clipBoardService, IWindowDisplayService windowDisplayService)
     {
         _playback = playbackService ?? throw new ArgumentNullException(nameof(playbackService));
         _fileOpenService = fileOpenService ?? throw new ArgumentNullException(nameof(fileOpenService));
+        _clipBoardService = clipBoardService ?? throw new ArgumentNullException(nameof(clipBoardService));
         _windowDisplayService = windowDisplayService ?? throw new ArgumentNullException(nameof(windowDisplayService));
 
         _timer.Interval = TimeSpan.FromSeconds(1);
@@ -28,7 +30,7 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
         MPlayer.MediaOpened += OnMediaOpened;
         MPlayer.MediaEnded += OnMediaEnded;
         MPlayer.MediaFailed += OnMediaFailed;
-    }    
+    }
 
     void Timer_Tick(object? s, EventArgs e)
     {
@@ -125,6 +127,33 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
     }
 
     [RelayCommand]
+    void MoveItemUp() => _playback.MoveUp(SelectedItem);
+    [RelayCommand]
+    void MoveItemDown() => _playback.MoveDown(SelectedItem);
+
+    [RelayCommand]
+    void RemoveItem()
+    {
+        if (SelectedItem is MediaItem item)
+        {
+            _playback.RemoveItem(item);
+
+            if (_playback.Items.Count == 0)
+                ResetPlayer();
+            else
+                PlayItem(_playback.GetCurrentItem());
+        }
+    }
+
+    [RelayCommand]
+    void PasteItems()
+    {
+        var pastedItems = _clipBoardService.Paste();
+        foreach (var item in pastedItems)
+            _playback.Items.Add(MediaItem.FromFile(item));
+    }
+
+    [RelayCommand]
     void PlaySelected()
     {
         if (SelectedItem is MediaItem item)
@@ -147,20 +176,6 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
 
     [RelayCommand]
     void OpenListManager() => _windowDisplayService.ShowListManager();
-
-    [RelayCommand]
-    void RemoveItem()
-    {
-        if (SelectedItem is MediaItem item)
-        {
-            _playback.RemoveItem(item);
-
-            if (_playback.Items.Count == 0)
-                ResetPlayer();
-            else
-                PlayItem(_playback.GetCurrentItem());
-        }
-    }
 
     [RelayCommand]
     void ShowAbout()
@@ -201,4 +216,4 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
         _disposed = true;
     }
 
-}
+}    

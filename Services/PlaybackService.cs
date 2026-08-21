@@ -34,7 +34,26 @@ public class PlaybackService : IPlaybackService
         return null;
     }
 
-    public IEnumerable<string> GetFilePaths()
+public void MoveUp(MediaItem? mediaItem)
+    {
+        if (mediaItem is null || !Items.Contains(mediaItem)) return;
+        
+        int currentPosition = Items.IndexOf(mediaItem);
+            if (currentPosition > 0)
+                Items.Move(currentPosition, currentPosition - 1);        
+    }
+
+    public void MoveDown(MediaItem? mediaItem)
+{
+    if (mediaItem is null || !Items.Contains(mediaItem)) return;
+
+                int currentPosition = Items.IndexOf(mediaItem);
+
+        if (currentPosition < Items.Count - 1)
+            Items.Move(currentPosition, currentPosition + 1);    
+}
+
+public IEnumerable<string> GetFilePaths()
     {        
         var paths = Items.Select(i => i.FullPath).ToList();
         foreach (var path in paths)

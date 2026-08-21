@@ -10,6 +10,8 @@ public interface IPlaybackService
     MediaItem? GetCurrentItem();
     MediaItem? GetNextItem();
     MediaItem? GetPreviousItem();
+    void MoveUp(MediaItem? mediaItem);
+    void MoveDown(MediaItem? mediaItem);
     void RemoveItem(MediaItem? itemToRemove);
     IEnumerable<string> GetFilePaths();
 }

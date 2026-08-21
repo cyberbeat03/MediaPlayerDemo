@@ -32,7 +32,7 @@ public partial class App : Application
 
                 var window = _host.Services.GetRequiredService<PlayerWindow>();
         var playerViewModel = _host.Services.GetRequiredService<PlayerViewModel>();
-        window.DataContext = playerViewModel;
+        window.DataContext = playerViewModel;        
         window.Show();
     }
 

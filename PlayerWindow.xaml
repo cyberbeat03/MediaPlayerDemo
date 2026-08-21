@@ -36,16 +36,18 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        
-        <GroupBox Header="Media List" Grid.Row="0" Grid.Column="0" Grid.RowSpan="3" Margin="5">
-            <ListView ItemsSource="{Binding MediaItems}" SelectedItem="{Binding SelectedItem}" ItemTemplate="{StaticResource SingleItemLayout}" >
-                <ListView.InputBindings>
-                    <KeyBinding Gesture="Enter" Command="{Binding PlaySelectedCommand}"/>
-                    <KeyBinding Gesture="Delete" Command="{Binding RemoveItemCommand}"/>
-                </ListView.InputBindings>
-            </ListView>
-        </GroupBox>
-        
+
+        <Label Content="Play Queue" Grid.Row="0" Grid.Column="0" Grid.RowSpan="3" Margin="5"/>
+        <ListView x:Name="ItemList" ItemsSource="{Binding MediaItems}" SelectedItem="{Binding SelectedItem}" ItemTemplate="{StaticResource SingleItemLayout}" IsTabStop="True" Focusable="True">
+            <ListView.InputBindings>
+                <KeyBinding Gesture="Enter" Command="{Binding PlaySelectedCommand}"/>
+                <KeyBinding Gesture="Delete" Command="{Binding RemoveItemCommand}"/>
+                <KeyBinding Gesture="Ctrl+U" Command="{Binding MoveItemUpCommand}"/>
+                <KeyBinding Gesture="Ctrl+J" Command="{Binding MoveItemDownCommand}"/>
+                <KeyBinding Gesture="Ctrl+V" Command="{Binding PasteItemsCommand}"/>
+            </ListView.InputBindings>
+        </ListView>
+
         <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal" Margin="5">
             <TextBlock Text="Status:" FontWeight="Bold" Margin="0,0,5,0"/>
             <TextBlock x:Name="StatusText" Text="{Binding DisplayStatus}" Focusable="True" />
