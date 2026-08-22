@@ -5,7 +5,7 @@ public partial class PlayerWindow : Window
     public PlayerWindow()
     {
         InitializeComponent();
-        ItemList.Focus();
+        StatusText.Focus();
     }
 
 }

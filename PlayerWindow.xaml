@@ -1,4 +1,4 @@
-﻿            <Window x:Class="WinMix.PlayerWindow"
+﻿<Window x:Class="WinMix.PlayerWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"       
@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="{Binding TitleBar}" WindowStartupLocation="CenterScreen" Height="500" Width="600">
 
-    <Window.Resources>       
+    <Window.Resources>
         <DataTemplate x:Key="SingleItemLayout">
             <StackPanel Margin="10">
                 <TextBlock Text="{Binding DisplayName}"/>
@@ -40,12 +40,13 @@
         </Grid.RowDefinitions>
 
         <Label Content="Play Queue" Grid.Row="0" Grid.Column="0" Grid.RowSpan="3" Margin="5"/>
-        <ListView x:Name="ItemList" ItemsSource="{Binding MediaItems}" SelectedItem="{Binding SelectedItem}" ItemTemplate="{StaticResource SingleItemLayout}" IsTabStop="True" Focusable="True">
+        <ListView x:Name="ItemList" ItemsSource="{Binding MediaItems}" SelectedItem="{Binding SelectedItem}" ItemTemplate="{StaticResource SingleItemLayout}" KeyboardNavigation.DirectionalNavigation="Contained">
             <ListView.InputBindings>
                 <KeyBinding Gesture="Enter" Command="{Binding PlaySelectedCommand}"/>
                 <KeyBinding Gesture="Delete" Command="{Binding RemoveItemCommand}"/>
                 <KeyBinding Gesture="Ctrl+U" Command="{Binding MoveItemUpCommand}"/>
-                <KeyBinding Gesture="Ctrl+J" Command="{Binding MoveItemDownCommand}"/>                
+                <KeyBinding Gesture="Ctrl+J" Command="{Binding MoveItemDownCommand}"/>
+                <KeyBinding Gesture="Ctrl+C" Command="{Binding CopyItemCommand}"/>
             </ListView.InputBindings>
         </ListView>
 
@@ -57,7 +58,7 @@
             <TextBlock Text="Total:" FontWeight="Bold" Margin="0,0,5,0"/>
             <TextBlock Text="{Binding TotalDuration, Converter={StaticResource TimeSpanToString}}" Focusable="True"/>
         </StackPanel>
-        
+
         <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="5">
             <Button Content="_Add..." Command="{Binding OpenFilesCommand}" Margin="2"/>
             <Button Content="_Play" Command="{Binding PlayCommand}" Margin="2"/>
@@ -66,7 +67,7 @@
             <Button Content="_Rewind" Command="{Binding RewindCommand}" Margin="2"/>
             <Button Content="_Fast Forward" Command="{Binding FastForwardCommand}" Margin="2"/>
         </StackPanel>
-        
+
         <ContentControl Grid.Row="1" Grid.Column="1" Content="{Binding MPlayer}" Margin="5"/>
     </Grid>
 </Window>

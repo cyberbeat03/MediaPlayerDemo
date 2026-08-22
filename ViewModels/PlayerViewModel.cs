@@ -150,11 +150,18 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
     }
 
     [RelayCommand]
+    void CopyItem()
+    {        
+        if (SelectedItem is MediaItem item)            
+            _clipBoardService.Copy(item.FullPath);  
+    }
+
+    [RelayCommand]
     void PasteItems()
     {
         var pastedItems = _clipBoardService.Paste();
         foreach (var item in pastedItems)
-            _playbackService.Items.Add(MediaItem.FromFile(item));
+            _playbackService.AddItem(MediaItem.FromFile(item));
     }
 
     [RelayCommand]
