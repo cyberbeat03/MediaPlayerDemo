@@ -4,7 +4,7 @@ public class PlaybackService : IPlaybackService
 {
     public ObservableCollection<MediaItem> Items { get; } = new();
     public int CurrentIndex { get; set; } = -1;
-    public string Name { get; set; } = "Untitled Playlist";
+    public string Name { get; set; } = string.Empty;
 
     private bool IsIndexValid(int index) =>
         index >= 0 && index < Items.Count;

@@ -25,6 +25,7 @@
         <KeyBinding Gesture="F4" Command="{Binding ShowAboutCommand}"/>
         <KeyBinding Gesture="Ctrl+Shift+O" Command="{Binding LoadListAsyncCommand}"/>
         <KeyBinding Gesture="Ctrl+V" Command="{Binding PasteItemsCommand}"/>
+        <KeyBinding Gesture="Ctrl+N" Command="{Binding CreateNewListAsyncCommand}"/>
         <KeyBinding Gesture="Ctrl+S" Command="{Binding SaveListAsyncCommand}"/>
     </Window.InputBindings>
 

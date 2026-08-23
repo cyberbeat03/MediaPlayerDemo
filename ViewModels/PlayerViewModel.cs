@@ -199,37 +199,53 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
     async void LoadListAsync()
     {
         string playlistFile = _fileOpenService.PickPlaylistFile();
-        if (!string.IsNullOrEmpty(playlistFile))
-        {
-            _playbackService.Items.Clear();
-
+        if (string.IsNullOrEmpty(playlistFile)) return;       
+        
+            _playbackService.Items.Clear();     
             _playbackService.Name = Path.GetFileNameWithoutExtension(playlistFile);
             TitleBar = $"{_playbackService.Name} - WinMix Desktop";
             var items = await _storageService.LoadPlaylistAsync(playlistFile);
             foreach (var item in items)
                 _playbackService.AddItem(item);
-        }
+
+            if (_playbackService.Items.Count > 0)
+                    {                
+            _playbackService.CurrentIndex = 0;
+            PlayItem(_playbackService.GetCurrentItem());
+        }            
+        else            
+                ResetPlayer();            
     }
 
     [RelayCommand]
     async void SaveListAsync()
-    {        
-        if (_playbackService.Items.Count == 0)
-        {
-            MessageBox.Show("No media items to save.", "Save Playlist");
-            return;
-        }
+    {
+        if (_playbackService.Items.Count == 0) return;
 
-        var inputDialog = new InputTextDialog();
-        
-        if (inputDialog.ShowDialog() == true)
+        if (_playbackService.Name == string.Empty)
         {
-            string input = inputDialog.Response;
-            
-            _playbackService.Name = input;
-            TitleBar = $"{_playbackService.Name} - WinMix Desktop";
-            await _storageService.SavePlaylistAsync($"{input}.wmx", _playbackService.Items);
+            var inputDialog = new InputTextDialog();
+            if (inputDialog.ShowDialog() == true)
+            {
+                string input = inputDialog.Response;
+                _playbackService.Name = input;
+                TitleBar = $"{_playbackService.Name} - WinMix Desktop";
+            }
         }
+        await _storageService.SavePlaylistAsync($"{_playbackService.Name}.wmx", _playbackService.Items);
+    }
+
+        [RelayCommand]
+        async void CreateNewListAsync()
+        {
+            var inputDialog = new InputTextDialog();
+
+            if (inputDialog.ShowDialog() == true)
+            {
+                string input = inputDialog.Response; _playbackService.Name = input;
+                TitleBar = $"{_playbackService.Name} - List Manager";
+                ResetPlayer();                
+            }        
     }
 
     public void Dispose()
