@@ -23,10 +23,10 @@
         <KeyBinding Gesture="Alt+N"       Command="{Binding PlayNextCommand}"/>
         <KeyBinding Gesture="Alt+V" Command="{Binding PlayPreviousCommand}"/>
         <KeyBinding Gesture="F4" Command="{Binding ShowAboutCommand}"/>
-        <KeyBinding Gesture="Ctrl+Shift+O" Command="{Binding LoadListAsyncCommand}"/>
+        <KeyBinding Gesture="Ctrl+Shift+O" Command="{Binding LoadListCommand}"/>
         <KeyBinding Gesture="Ctrl+V" Command="{Binding PasteItemsCommand}"/>
-        <KeyBinding Gesture="Ctrl+N" Command="{Binding CreateNewListAsyncCommand}"/>
-        <KeyBinding Gesture="Ctrl+S" Command="{Binding SaveListAsyncCommand}"/>
+        <KeyBinding Gesture="Ctrl+N" Command="{Binding CreateNewListCommand}"/>
+        <KeyBinding Gesture="Ctrl+S" Command="{Binding SaveListCommand}"/>
     </Window.InputBindings>
 
     <Grid Margin="10">

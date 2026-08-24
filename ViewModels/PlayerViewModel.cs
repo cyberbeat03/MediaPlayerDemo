@@ -196,7 +196,7 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
     }
 
     [RelayCommand]
-    async void LoadListAsync()
+    async Task LoadList()
     {
         string playlistFile = _fileOpenService.PickPlaylistFile();
         if (string.IsNullOrEmpty(playlistFile)) return;       
@@ -218,7 +218,7 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
     }
 
     [RelayCommand]
-    async void SaveListAsync()
+    async Task SaveList()
     {
         if (_playbackService.Items.Count == 0) return;
 
@@ -236,7 +236,7 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
     }
 
         [RelayCommand]
-        async void CreateNewListAsync()
+        async Task CreateNewList()
         {
             var inputDialog = new InputTextDialog();
 
