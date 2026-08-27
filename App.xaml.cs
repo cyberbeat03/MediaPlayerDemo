@@ -13,26 +13,23 @@ public partial class App : Application
 
         _host = Host.CreateDefaultBuilder()
             .ConfigureServices((context, services) =>
-            {
-                
+            {                
                 services.AddSingleton<IPlaybackService, PlaybackService>();
                 services.AddSingleton<IFileOpenService, FileOpenService>();
                 services.AddSingleton<IStorageService, StorageService>();
                 services.AddSingleton<IClipBoardService, ClipBoardService>();
-
-                services.AddSingleton<PlayerWindow>();
-                services.AddTransient<ListManagerWindow>(); // created per-use
+                
+                services.AddTransient<ListManagerWindow>();
+                
                 services.AddSingleton<IWindowDisplayService, WindowDisplayService>();
-
+                services.AddSingleton<PlayerWindow>();
                 services.AddSingleton<PlayerViewModel>();
             })
             .Build();
 
         await _host.StartAsync();
 
-                var window = _host.Services.GetRequiredService<PlayerWindow>();
-        var playerViewModel = _host.Services.GetRequiredService<PlayerViewModel>();
-        window.DataContext = playerViewModel;        
+                var window = _host.Services.GetRequiredService<PlayerWindow>();                
         window.Show();
     }
 

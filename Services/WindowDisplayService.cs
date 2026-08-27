@@ -1,8 +1,10 @@
-﻿namespace WinMix.Services;
+﻿using Microsoft.Extensions.DependencyInjection;
+
+namespace WinMix.Services;
 
 public class WindowDisplayService : IWindowDisplayService
 {
-    readonly PlayerWindow _playerWindow;
+    readonly IServiceProvider _provider;
     readonly IPlaybackService _playback;
     readonly IFileOpenService _fileOpen;
     readonly IStorageService _storage;
@@ -10,24 +12,27 @@ public class WindowDisplayService : IWindowDisplayService
 
     ListManagerWindow? _listWindow;
 
-    public WindowDisplayService(PlayerWindow playerWindow,
+    public WindowDisplayService(IServiceProvider provider,
         IPlaybackService playback,
         IFileOpenService fileOpen,
         IStorageService storage,
         IClipBoardService clipboard)
     {
-        _playerWindow = playerWindow ?? throw new ArgumentNullException(nameof(playerWindow));
+        _provider = provider ?? throw new ArgumentNullException(nameof(provider));
         _playback = playback ?? throw new ArgumentNullException(nameof(playback));
         _fileOpen = fileOpen ?? throw new ArgumentNullException(nameof(fileOpen));
         _storage = storage ?? throw new ArgumentNullException(nameof(storage));
         _clipboard = clipboard ?? throw new ArgumentNullException(nameof(clipboard));
     }
 
+    // Lazily resolve the PlayerWindow to avoid a constructor cycle
+    PlayerWindow PlayerWindowInstance => _provider.GetRequiredService<PlayerWindow>();
+
     public void ShowListManager()
     {
         Application.Current.Dispatcher.Invoke(() =>
         {
-            _playerWindow.Hide();
+            PlayerWindowInstance.Hide();
 
             if (_listWindow == null)
             {
@@ -48,8 +53,8 @@ public class WindowDisplayService : IWindowDisplayService
             try
             {
                 _listWindow.WindowStartupLocation = System.Windows.WindowStartupLocation.Manual;
-                _listWindow.Left = _playerWindow.Left;
-                _listWindow.Top = _playerWindow.Top;
+                _listWindow.Left = PlayerWindowInstance.Left;
+                _listWindow.Top = PlayerWindowInstance.Top;
             }
             catch
             {
@@ -71,8 +76,8 @@ public class WindowDisplayService : IWindowDisplayService
                 _listWindow = null;
             }
             
-            _playerWindow.Show();
-            _playerWindow.Activate();
+            PlayerWindowInstance.Show();
+            PlayerWindowInstance.Activate();
         });
     }
 }
