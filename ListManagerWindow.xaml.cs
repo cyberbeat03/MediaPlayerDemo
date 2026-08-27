@@ -2,10 +2,10 @@
 
 public partial class ListManagerWindow : Window
 {
-    public ListManagerWindow()
+    public ListManagerWindow(ListManagerViewModel viewModel)
     {
-        InitializeComponent();        
-        MediaItemsList.Focus();
+        InitializeComponent();
+        DataContext = viewModel;
     }
 
 }

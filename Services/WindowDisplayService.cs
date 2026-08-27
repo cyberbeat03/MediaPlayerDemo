@@ -10,6 +10,7 @@ public class WindowDisplayService : IWindowDisplayService
     readonly IStorageService _storage;
     readonly IClipBoardService _clipboard;
 
+ PlayerWindow PlayerWindow => _provider.GetRequiredService<PlayerWindow>();
     ListManagerWindow? _listWindow;
 
     public WindowDisplayService(IServiceProvider provider,
@@ -23,24 +24,17 @@ public class WindowDisplayService : IWindowDisplayService
         _fileOpen = fileOpen ?? throw new ArgumentNullException(nameof(fileOpen));
         _storage = storage ?? throw new ArgumentNullException(nameof(storage));
         _clipboard = clipboard ?? throw new ArgumentNullException(nameof(clipboard));
-    }
-
-    // Lazily resolve the PlayerWindow to avoid a constructor cycle
-    PlayerWindow PlayerWindowInstance => _provider.GetRequiredService<PlayerWindow>();
+    }    
 
     public void ShowListManager()
     {
         Application.Current.Dispatcher.Invoke(() =>
         {
-            PlayerWindowInstance.Hide();
+            PlayerWindow.Hide();
 
             if (_listWindow == null)
-            {
-                var listVm = new ListManagerViewModel(_playback, _fileOpen, _storage, _clipboard, this);
-                _listWindow = new ListManagerWindow
-                {
-                    DataContext = listVm
-                };
+            {                
+                _listWindow = _provider.GetRequiredService<ListManagerWindow>();
 
                 _listWindow.Closed += (s, e) =>
                 {
@@ -53,8 +47,8 @@ public class WindowDisplayService : IWindowDisplayService
             try
             {
                 _listWindow.WindowStartupLocation = System.Windows.WindowStartupLocation.Manual;
-                _listWindow.Left = PlayerWindowInstance.Left;
-                _listWindow.Top = PlayerWindowInstance.Top;
+                _listWindow.Left = PlayerWindow.Left;
+                _listWindow.Top = PlayerWindow.Top;
             }
             catch
             {
@@ -76,8 +70,8 @@ public class WindowDisplayService : IWindowDisplayService
                 _listWindow = null;
             }
             
-            PlayerWindowInstance.Show();
-            PlayerWindowInstance.Activate();
+            PlayerWindow.Show();
+            PlayerWindow.Activate();
         });
     }
 }

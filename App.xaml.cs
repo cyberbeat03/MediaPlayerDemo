@@ -18,12 +18,13 @@ public partial class App : Application
                 services.AddSingleton<IFileOpenService, FileOpenService>();
                 services.AddSingleton<IStorageService, StorageService>();
                 services.AddSingleton<IClipBoardService, ClipBoardService>();
-                
-                services.AddTransient<ListManagerWindow>();
-                
                 services.AddSingleton<IWindowDisplayService, WindowDisplayService>();
-                services.AddSingleton<PlayerWindow>();
-                services.AddSingleton<PlayerViewModel>();
+
+                services.AddTransient<ListManagerWindow>();
+                services.AddTransient<ListManagerViewModel>();
+
+                services.AddTransient<PlayerWindow>();
+                services.AddTransient<PlayerViewModel>();
             })
             .Build();
 
