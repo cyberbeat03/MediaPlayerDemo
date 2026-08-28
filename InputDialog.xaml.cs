@@ -2,11 +2,11 @@ using System.Windows.Input;
 
 namespace WinMix;
 
-public partial class InputTextDialog : Window
+            public partial class InputDialog : Window
 {
-    public string Response { get; set; }
+    public string Response { get; set; } = string.Empty;
 
-    public InputTextDialog()
+    public InputDialog()
     {
         InitializeComponent();
         InputText.Focus();
@@ -19,7 +19,7 @@ void OnSaveButtonClick(object s, RoutedEventArgs e)
     {
         try
         {
-            Response = IsValidFileName ? Path.GetFileNameWithoutExtension(InputText.Text.Trim()) : throw new InvalidOperationException("Please enter a valid name. Do not include a file extension.");
+            Response = IsValidFileName ? Path.GetFileNameWithoutExtension(InputText.Text) : throw new InvalidOperationException("Please enter a valid name.");
             
             DialogResult = true;
         }

@@ -74,4 +74,14 @@ public class WindowDisplayService : IWindowDisplayService
             PlayerWindow.Activate();
         });
     }
+
+public string ShowInputWindow()
+    {
+        var inputDialog = _provider.GetRequiredService<InputDialog>();
+        inputDialog.Owner = Application.Current.MainWindow;
+inputDialog.ShowDialog();
+string result = inputDialog.Response;
+        return String.IsNullOrWhiteSpace(result) ? string.Empty : result;
+    }
+
 }

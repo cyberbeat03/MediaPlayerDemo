@@ -13,13 +13,14 @@ public partial class App : Application
 
         _host = Host.CreateDefaultBuilder()
             .ConfigureServices((context, services) =>
-            {                
+            {
                 services.AddSingleton<IPlaybackService, PlaybackService>();
                 services.AddSingleton<IFileOpenService, FileOpenService>();
                 services.AddSingleton<IStorageService, StorageService>();
                 services.AddSingleton<IClipBoardService, ClipBoardService>();
                 services.AddSingleton<IWindowDisplayService, WindowDisplayService>();
 
+                services.AddTransient<InputDialog>();
                 services.AddTransient<ListManagerWindow>();
                 services.AddTransient<ListManagerViewModel>();
 
@@ -30,7 +31,7 @@ public partial class App : Application
 
         await _host.StartAsync();
 
-                var window = _host.Services.GetRequiredService<PlayerWindow>();                
+        var window = _host.Services.GetRequiredService<PlayerWindow>();
         window.Show();
     }
 
@@ -45,4 +46,3 @@ public partial class App : Application
         base.OnExit(e);
     }
 }
-   

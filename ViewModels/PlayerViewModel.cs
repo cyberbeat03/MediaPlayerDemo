@@ -224,30 +224,25 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
 
         if (_playbackService.Name == string.Empty)
         {
-            var inputDialog = new InputTextDialog();
-            if (inputDialog.ShowDialog() == true)
-            {
-                string input = inputDialog.Response;
-                _playbackService.Name = input;
+           string input = _windowDisplayService.ShowInputWindow();
+            if (string.IsNullOrEmpty(input)) return;            
+                
+            _playbackService.Name = input;
                 TitleBar = $"{_playbackService.Name} - WinMix Desktop";
-            }
         }
         await _storageService.SavePlaylistAsync($"{_playbackService.Name}.wmx", _playbackService.Items);
     }
 
-        [RelayCommand]
-        async Task CreateNewList()
-        {
-            var inputDialog = new InputTextDialog();
+    [RelayCommand]
+    async Task CreateNewList()
+    {
+        string input = _windowDisplayService.ShowInputWindow();        if (string.IsNullOrWhiteSpace(input)) return;                    
 
-            if (inputDialog.ShowDialog() == true)
-            {
-                string input = inputDialog.Response; _playbackService.Name = input;
-                TitleBar = $"{_playbackService.Name} - List Manager";
-                ResetPlayer();                
-            }        
+            _playbackService.Name = input;
+            TitleBar = $"{_playbackService.Name} - List Manager";
+            ResetPlayer();       
     }
-
+    
     public void Dispose()
     {
         Dispose(true);

@@ -103,21 +103,6 @@ public partial class ListManagerViewModel : ObservableObject
     }
 
     [RelayCommand]
-    async Task CreateNewList()
-    {
-        var inputDialog = new InputTextDialog();
-        if (inputDialog.ShowDialog() == true)
-        {
-            string input = inputDialog.Response;
-
-            _playlist.Items.Clear();
-            _playlist.Name = input;
-            ListTitle = $"{_playlist.Name} - List Manager";
-            await _storageService.SavePlaylistAsync(input, _playlist.Items);
-        }
-    }
-
-    [RelayCommand]
     async Task StartPlayback()
     {
         await SaveList();

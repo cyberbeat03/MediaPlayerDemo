@@ -3,4 +3,5 @@ public interface IWindowDisplayService
 {
     void ShowListManager();
     void ShowPlayer();
+    string ShowInputWindow();
 }
