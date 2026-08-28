@@ -84,4 +84,10 @@ string result = inputDialog.Response;
         return String.IsNullOrWhiteSpace(result) ? string.Empty : result;
     }
 
+      public void ShowAboutWindow()
+    {
+        var aboutWindow = _provider.GetRequiredService<AboutWindow>();
+        aboutWindow.Owner = Application.Current.MainWindow;
+        aboutWindow.Show();
+    }
 }
