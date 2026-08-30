@@ -75,19 +75,24 @@ public class WindowDisplayService : IWindowDisplayService
         });
     }
 
-public string ShowInputWindow()
+    public string ShowInputDialog()
     {
         var inputDialog = _provider.GetRequiredService<InputDialog>();
         inputDialog.Owner = Application.Current.MainWindow;
-inputDialog.ShowDialog();
-string result = inputDialog.Response;
-        return String.IsNullOrWhiteSpace(result) ? string.Empty : result;
-    }
 
-      public void ShowAboutWindow()
+        if (inputDialog.ShowDialog() == true)
+        {
+            string result = inputDialog.Response;
+            return String.IsNullOrWhiteSpace(result) ? string.Empty : result;
+        }
+
+        return string.Empty;
+    }
+      
+    public void ShowAboutDialog()
     {
-        var aboutWindow = _provider.GetRequiredService<AboutWindow>();
-        aboutWindow.Owner = Application.Current.MainWindow;
-        aboutWindow.Show();
+        var aboutDialog = _provider.GetRequiredService<AboutDialog>();
+        aboutDialog.Owner = Application.Current.MainWindow;
+        aboutDialog.ShowDialog();
     }
 }

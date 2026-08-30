@@ -191,8 +191,7 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
     [RelayCommand]
     void ShowAbout()
     {
-        var about = new AboutWindow();
-        about.ShowDialog();
+        _windowDisplayService.ShowAboutDialog();
     }
 
     [RelayCommand]
@@ -224,7 +223,7 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
 
         if (_playbackService.Name == string.Empty)
         {
-           string input = _windowDisplayService.ShowInputWindow();
+           string input = _windowDisplayService.ShowInputDialog();
             if (string.IsNullOrEmpty(input)) return;            
                 
             _playbackService.Name = input;
@@ -236,7 +235,7 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
     [RelayCommand]
     async Task CreateNewList()
     {
-        string input = _windowDisplayService.ShowInputWindow();        if (string.IsNullOrWhiteSpace(input)) return;                    
+        string input = _windowDisplayService.ShowInputDialog();        if (string.IsNullOrWhiteSpace(input)) return;                    
 
             _playbackService.Name = input;
             TitleBar = $"{_playbackService.Name} - List Manager";

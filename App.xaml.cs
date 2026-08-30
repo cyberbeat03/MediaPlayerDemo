@@ -21,7 +21,7 @@ public partial class App : Application
                 services.AddSingleton<IWindowDisplayService, WindowDisplayService>();
 
                 services.AddTransient<InputDialog>();
-                services.AddTransient<AboutWindow>();
+                services.AddTransient<AboutDialog>();
                 services.AddTransient<ListManagerWindow>();
                 services.AddTransient<ListManagerViewModel>();
 

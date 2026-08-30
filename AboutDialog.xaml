@@ -1,4 +1,4 @@
-<Window x:Class="WinMix.AboutWindow"
+<Window x:Class="WinMix.AboutDialog"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="About WinMix Desktop" Height="250" Width="400" WindowStartupLocation="CenterOwner">    
