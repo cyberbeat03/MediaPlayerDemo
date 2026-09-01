@@ -3,5 +3,4 @@
 public interface IFileOpenService
 {
     IEnumerable<string> PickMediaFiles();
-    string PickPlaylistFile();
 }

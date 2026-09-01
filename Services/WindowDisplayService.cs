@@ -1,4 +1,7 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
+using System;
+using System.Threading.Tasks;
+using System.Windows;
 
 namespace WinMix.Services;
 
@@ -9,9 +12,6 @@ public class WindowDisplayService : IWindowDisplayService
     readonly IFileOpenService _fileOpen;
     readonly IStorageService _storage;
     readonly IClipBoardService _clipboard;
-
- PlayerWindow PlayerWindow => _provider.GetRequiredService<PlayerWindow>();
-    ListManagerWindow? _listWindow;
 
     public WindowDisplayService(IServiceProvider provider,
         IPlaybackService playback,
@@ -24,75 +24,34 @@ public class WindowDisplayService : IWindowDisplayService
         _fileOpen = fileOpen ?? throw new ArgumentNullException(nameof(fileOpen));
         _storage = storage ?? throw new ArgumentNullException(nameof(storage));
         _clipboard = clipboard ?? throw new ArgumentNullException(nameof(clipboard));
-    }    
-
-    public void ShowListManager()
-    {
-        Application.Current.Dispatcher.Invoke(() =>
-        {
-            PlayerWindow.Hide();
-
-            if (_listWindow == null)
-            {                
-                _listWindow = _provider.GetRequiredService<ListManagerWindow>();
-
-                _listWindow.Closed += (s, e) =>
-                {
-                    _listWindow = null;
-                    ShowPlayer();
-                };
-            }
-
-            // Match the list manager window location to the player window's current position
-            try
-            {
-                _listWindow.WindowStartupLocation = System.Windows.WindowStartupLocation.Manual;
-                _listWindow.Left = PlayerWindow.Left;
-                _listWindow.Top = PlayerWindow.Top;
-            }
-            catch
-            {
-                // ignore any issue setting placement
-            }
-
-            _listWindow.Show();
-            _listWindow.Activate();
-        });
     }
 
-    public void ShowPlayer()
-    {
-        Application.Current.Dispatcher.Invoke(() =>
+    PlayerWindow GetPlayerWindow() => _provider.GetRequiredService<PlayerWindow>();
+
+    public Task<string?> PickPlaylistFileAsync()
+    {        
+        var op = Application.Current.Dispatcher.InvokeAsync(() =>
         {
-            if (_listWindow != null)
-            {
-                try { _listWindow.Close(); } catch { }
-                _listWindow = null;
-            }
-            
-            PlayerWindow.Show();
-            PlayerWindow.Activate();
+            var wnd = _provider.GetRequiredService<ListManagerWindow>();            
+            wnd.Owner = Application.Current?.MainWindow;
+            return wnd.ShowDialog() == true ? wnd.GetSelectedPlaylistPath() : null;
         });
+        return op.Task;
     }
 
     public string ShowInputDialog()
     {
         var inputDialog = _provider.GetRequiredService<InputDialog>();
-        inputDialog.Owner = Application.Current.MainWindow;
-
-        if (inputDialog.ShowDialog() == true)
-        {
-            string result = inputDialog.Response;
-            return String.IsNullOrWhiteSpace(result) ? string.Empty : result;
-        }
-
-        return string.Empty;
+        inputDialog.Owner = Application.Current?.MainWindow;
+        return inputDialog.ShowDialog() == true
+            ? (string.IsNullOrWhiteSpace(inputDialog.Response) ? string.Empty : inputDialog.Response)
+            : string.Empty;
     }
-      
+
     public void ShowAboutDialog()
     {
         var aboutDialog = _provider.GetRequiredService<AboutDialog>();
-        aboutDialog.Owner = Application.Current.MainWindow;
+        aboutDialog.Owner = Application.Current?.MainWindow;
         aboutDialog.ShowDialog();
     }
 }

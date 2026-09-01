@@ -14,7 +14,7 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
     readonly IPlaybackService _playbackService;
     readonly IFileOpenService _fileOpenService;
     readonly IClipBoardService _clipBoardService;
-    readonly IStorageService _storageService;    
+    readonly IStorageService _storageService;
     readonly IWindowDisplayService _windowDisplayService;
 
     public ObservableCollection<MediaItem> MediaItems => _playbackService.Items;
@@ -151,9 +151,9 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
 
     [RelayCommand]
     void CopyItem()
-    {        
-        if (SelectedItem is MediaItem item)            
-            _clipBoardService.Copy(item.FullPath);  
+    {
+        if (SelectedItem is MediaItem item)
+            _clipBoardService.Copy(item.FullPath);
     }
 
     [RelayCommand]
@@ -186,9 +186,6 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
     }
 
     [RelayCommand]
-    void OpenListManager() => _windowDisplayService.ShowListManager();
-
-    [RelayCommand]
     void ShowAbout()
     {
         _windowDisplayService.ShowAboutDialog();
@@ -197,23 +194,25 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
     [RelayCommand]
     async Task LoadList()
     {
-        string playlistFile = _fileOpenService.PickPlaylistFile();
-        if (string.IsNullOrEmpty(playlistFile)) return;       
-        
-            _playbackService.Items.Clear();     
-            _playbackService.Name = Path.GetFileNameWithoutExtension(playlistFile);
-            TitleBar = $"{_playbackService.Name} - WinMix Desktop";
-            var items = await _storageService.LoadPlaylistAsync(playlistFile);
-            foreach (var item in items)
-                _playbackService.AddItem(item);
+        string? playlistFile = await _windowDisplayService.PickPlaylistFileAsync();
+        if (string.IsNullOrEmpty(playlistFile)) return;
 
-            if (_playbackService.Items.Count > 0)
-                    {                
+        _playbackService.Items.Clear();
+        _playbackService.Name = Path.GetFileNameWithoutExtension(playlistFile);
+        TitleBar = $"{_playbackService.Name} - WinMix Desktop";
+        var items = await _storageService.LoadPlaylistAsync(playlistFile);
+        foreach (var item in items)
+            _playbackService.AddItem(item);
+
+        if (_playbackService.Items.Count > 0)
+        {
             _playbackService.CurrentIndex = 0;
             PlayItem(_playbackService.GetCurrentItem());
-        }            
-        else            
-                ResetPlayer();            
+        }
+        else
+        {
+            ResetPlayer();
+        }
     }
 
     [RelayCommand]
@@ -223,11 +222,11 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
 
         if (_playbackService.Name == string.Empty)
         {
-           string input = _windowDisplayService.ShowInputDialog();
-            if (string.IsNullOrEmpty(input)) return;            
-                
+            string input = _windowDisplayService.ShowInputDialog();
+            if (string.IsNullOrEmpty(input)) return;
+
             _playbackService.Name = input;
-                TitleBar = $"{_playbackService.Name} - WinMix Desktop";
+            TitleBar = $"{_playbackService.Name} - WinMix Desktop";
         }
         await _storageService.SavePlaylistAsync($"{_playbackService.Name}.wmx", _playbackService.Items);
     }
@@ -235,13 +234,13 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
     [RelayCommand]
     async Task CreateNewList()
     {
-        string input = _windowDisplayService.ShowInputDialog();        if (string.IsNullOrWhiteSpace(input)) return;                    
+        string input = _windowDisplayService.ShowInputDialog(); if (string.IsNullOrWhiteSpace(input)) return;
 
-            _playbackService.Name = input;
-            TitleBar = $"{_playbackService.Name} - List Manager";
-            ResetPlayer();       
+        _playbackService.Name = input;
+        TitleBar = $"{_playbackService.Name} - List Manager";
+        ResetPlayer();
     }
-    
+
     public void Dispose()
     {
         Dispose(true);
@@ -274,4 +273,4 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
         _disposed = true;
     }
 
-}    
+}

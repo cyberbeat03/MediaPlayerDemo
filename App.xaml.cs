@@ -33,6 +33,7 @@ public partial class App : Application
         await _host.StartAsync();
 
         var window = _host.Services.GetRequiredService<PlayerWindow>();
+        Application.Current.MainWindow = window;
         window.Show();
     }
 

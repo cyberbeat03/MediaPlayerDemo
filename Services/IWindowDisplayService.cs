@@ -1,8 +1,9 @@
 ﻿namespace WinMix.Services;
+using System.Threading.Tasks;
+
 public interface IWindowDisplayService
-{
-    void ShowListManager();
-    void ShowPlayer();
+{        
     void ShowAboutDialog();
-    string ShowInputDialog();    
+    string ShowInputDialog();
+    Task<string?> PickPlaylistFileAsync();
 }

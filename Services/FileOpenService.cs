@@ -27,25 +27,4 @@ public class FileOpenService : IFileOpenService
         return Enumerable.Empty<string>();
     }
 
-    public string PickPlaylistFile()
-    {
-        OpenFileDialog OFD = new()
-        {
-            Title = "Select a playlist file to load",
-            InitialDirectory = Path.Combine(_musicFolder, "Playlists"),
-            Multiselect = false,
-            RestoreDirectory = true,
-            CheckFileExists = true,
-            DefaultExt = ".wmx",
-            Filter = "Playlist Files (*.WMX)|*.wmx"
-        };
-
-        if (OFD.ShowDialog() == true)
-        {
-            return OFD.FileName ?? string.Empty;
-        }
-
-        return string.Empty;
-    }
-
 }
