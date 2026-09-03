@@ -15,9 +15,15 @@
                   SelectedItem="{Binding SelectedPlaylist}"
                   SelectionMode="Single"
                   MinHeight="200"
-                  Margin="0,0,0,8" />
+                  Margin="0,0,0,8">
+            <ListView.InputBindings>
+                <KeyBinding Key="Delete" Command="{Binding DeletePlaylistCommand}"/>
+            </ListView.InputBindings>
+        </ListView>
+
 
         <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Content="Delete..." Command="{Binding DeletePlaylistCommand}" Margin="4"/>
             <Button Content="OK" IsDefault="True" x:Name="OkButton" Click="OkButton_Click" Margin="4"/>
             <Button Content="Cancel" IsCancel="True" x:Name="CancelButton" Click="CancelButton_Click" Margin="4"/>
         </StackPanel>

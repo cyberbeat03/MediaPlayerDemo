@@ -1,6 +1,6 @@
 namespace WinMix.ViewModels;
 
-public class ListManagerViewModel : ObservableObject
+public partial class ListManagerViewModel : ObservableObject
 {
     public string PlaylistFolder { get; }
     public ObservableCollection<string> PlaylistFiles { get; } = new ObservableCollection<string>();
@@ -26,4 +26,22 @@ public class ListManagerViewModel : ObservableObject
         foreach (var file in files)
             PlaylistFiles.Add(file);
     }
+
+    [RelayCommand]
+    public void DeletePlaylist()
+    {
+        if (SelectedPlaylist == null) return;
+        
+            var filePath = Path.Combine(PlaylistFolder, $"{SelectedPlaylist}.wmx");
+            if (File.Exists(filePath))
+            {
+                if (ConfirmDelete() == MessageBoxResult.Yes)
+                {
+                    File.Delete(filePath);
+                    LoadPlaylists();
+                }                
+            }        
+    }
+
+MessageBoxResult     ConfirmDelete() => MessageBox.Show("Are you sure you want to permanently delete the selected playlist?", "Confirm Delete", MessageBoxButton.YesNo, MessageBoxImage.Question);    
 }
