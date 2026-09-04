@@ -21,7 +21,7 @@ public partial class ListManagerViewModel : ObservableObject
         if (!Directory.Exists(PlaylistFolder)) return;
 
         var files = Directory.EnumerateFiles(PlaylistFolder, "*.wmx")
-                             .Select(Path.GetFileNameWithoutExtension);
+                             .Select(Path.GetFileName);
 
         foreach (var file in files)
             PlaylistFiles.Add(file);
