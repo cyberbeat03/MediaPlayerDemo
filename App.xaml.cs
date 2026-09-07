@@ -19,6 +19,7 @@ public partial class App : Application
                 services.AddSingleton<IStorageService, StorageService>();
                 services.AddSingleton<IClipBoardService, ClipBoardService>();
                 services.AddSingleton<IWindowDisplayService, WindowDisplayService>();
+                services.AddSingleton<IMediaPlayerService, WpfMediaPlayerService>();
 
                 services.AddTransient<InputDialog>();
                 services.AddTransient<AboutDialog>();

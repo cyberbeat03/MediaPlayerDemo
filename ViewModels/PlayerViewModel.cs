@@ -1,15 +1,14 @@
-﻿namespace WinMix.ViewModels;
+namespace WinMix.ViewModels;
 
 public partial class PlayerViewModel : ObservableObject, IDisposable
 {
     [ObservableProperty] string _displayStatus = "No media loaded. Press the 'Add' button to get started.";
+    [ObservableProperty] bool _isPlaying = false;
     [ObservableProperty] TimeSpan _totalDuration = TimeSpan.Zero;
     [ObservableProperty] TimeSpan _elapsedTime = TimeSpan.Zero;
     [ObservableProperty] MediaItem? _selectedItem = null;
-    [ObservableProperty] System.Windows.Controls.MediaElement _mPlayer = new();
     [ObservableProperty] string _titleBar = "WinMix Desktop Music Player";
     bool _disposed;
-    DispatcherTimer _timer = new();
 
     readonly IPlaybackService _playbackService;
     readonly IFileOpenService _fileOpenService;
@@ -26,83 +25,94 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
         _clipBoardService = clipBoardService ?? throw new ArgumentNullException(nameof(clipBoardService));
         _storageService = storageService ?? throw new ArgumentNullException(nameof(storageService));
         _windowDisplayService = windowDisplayService ?? throw new ArgumentNullException(nameof(windowDisplayService));
-
-        _timer.Interval = TimeSpan.FromSeconds(1);
-        _timer.Tick += Timer_Tick;
-
-        MPlayer.LoadedBehavior = MediaState.Manual;
-        MPlayer.MediaOpened += OnMediaOpened;
-        MPlayer.MediaEnded += OnMediaEnded;
-        MPlayer.MediaFailed += OnMediaFailed;
+        
+        _playbackService.PositionChanged += PlaybackService_PositionChanged;
+        _playbackService.MediaOpened += PlaybackService_MediaOpened;
+        _playbackService.MediaEnded += PlaybackService_MediaEnded;
+        _playbackService.MediaFailed += PlaybackService_MediaFailed;
+        _playbackService.CurrentItemChanged += PlaybackService_CurrentItemChanged;
+        _playbackService.PlayingChanged += PlaybackService_PlayingChanged;
     }
 
-    void Timer_Tick(object? s, EventArgs e)
+    void PlaybackService_PositionChanged(object? s, TimeSpan position)
     {
-        if (MPlayer.NaturalDuration.HasTimeSpan)
-            ElapsedTime = MPlayer.Position;
+        ElapsedTime = position;
     }
 
-    void OnMediaOpened(object? sender, RoutedEventArgs e)
+    void PlaybackService_MediaOpened(object? s, TimeSpan duration)
     {
         DisplayStatus = $"Loaded: {_playbackService.GetCurrentItem()?.DisplayName}" ?? "Media could not be opened.";
-        TotalDuration = MPlayer.NaturalDuration.TimeSpan;
-        _timer.Start();
+        TotalDuration = duration;
     }
 
-    void OnMediaFailed(object? sender, ExceptionRoutedEventArgs e)
+    void PlaybackService_MediaFailed(object? s, Exception e)
     {
-        DisplayStatus = $"Media failed: {e.ErrorException?.Message}";
+        DisplayStatus = $"Media failed: {e.Message}";
     }
 
-    void OnMediaEnded(object? sender, RoutedEventArgs e)
+    void PlaybackService_MediaEnded(object? s, EventArgs e)
     {
         DisplayStatus = $"End of {_playbackService.GetCurrentItem()?.DisplayName}" ?? "Media has ended.";
-        _timer.Stop();
-        MPlayer.Stop();
         ElapsedTime = TimeSpan.Zero;
-        PlayNext();
+        _playbackService.PlayNext();
+    }
+
+    void PlaybackService_CurrentItemChanged(object? s, EventArgs e)
+    {
+        SelectedItem = _playbackService.GetCurrentItem();
+    }
+
+    void PlaybackService_PlayingChanged(object? s, bool playing)
+    {
+        IsPlaying = playing;
+        var current = _playbackService.GetCurrentItem();
+        if (current != null)        
+            DisplayStatus = playing ? $"Playing {current.DisplayName}" : $"{current.DisplayName} (not playing)";        
     }
 
     void ResetPlayer()
     {
         _playbackService.CurrentIndex = -1;
         _playbackService.Items.Clear();
-        _timer.Stop();
-        MPlayer.Stop();
-        MPlayer.Source = null;
+        _playbackService.Stop();
         ElapsedTime = TimeSpan.Zero;
         TotalDuration = TimeSpan.Zero;
-        MPlayer.SpeedRatio = 1.0;
+        _playbackService.SpeedRatio = 1.0;
         DisplayStatus = "No media currently loaded.";
     }
 
+    /*
     void PlayItem(MediaItem? currentItem)
     {
         if (currentItem is not null)
         {
-            MPlayer.Source = currentItem.UriPath;
-            MPlayer.Play();
+            var idx = _playbackService.Items.IndexOf(currentItem);
+            if (idx >= 0) _playbackService.CurrentIndex = idx;
+            _playbackService.Play();
         }
     }
+    */
 
     [RelayCommand]
-    void Play() => MPlayer.Play();
+    void Play() => _playbackService.Play();
 
     [RelayCommand]
-    void Pause() => MPlayer.Pause();
+    void Pause() => _playbackService.Pause();
 
     [RelayCommand]
-    void Stop() => MPlayer.Stop();
+    void Stop() => _playbackService.Stop();
 
     [RelayCommand]
-    void Rewind() => MPlayer.Position -= TimeSpan.FromSeconds(10);
+    void Rewind()=>    
+        _playbackService.Seek(_playbackService.Position - TimeSpan.FromSeconds(10));    
 
     [RelayCommand]
     void SpeedUp()
     {
         double fastest = 1.3;
 
-        if (MPlayer.SpeedRatio <= fastest) MPlayer.SpeedRatio += 0.1;
+        if (_playbackService.SpeedRatio <= fastest)
+            _playbackService.SpeedRatio += 0.1;
     }
 
     [RelayCommand]
@@ -110,28 +120,23 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
     {
         double slowest = 0.7;
 
-        if (MPlayer.SpeedRatio >= slowest) MPlayer.SpeedRatio -= 0.1;
+        if (_playbackService.SpeedRatio >= slowest)
+            _playbackService.SpeedRatio -= 0.1;
     }
 
     [RelayCommand]
-    void FastForward() => MPlayer.Position += TimeSpan.FromSeconds(10);
+    void FastForward() =>
+        _playbackService.Seek(_playbackService.Position + TimeSpan.FromSeconds(10));
 
     [RelayCommand]
-    void PlayNext()
-    {
-        var nextItem = _playbackService.GetNextItem();
-        PlayItem(nextItem);
-    }
+    void PlayNext() => _playbackService.PlayNext();
 
     [RelayCommand]
-    void PlayPrevious()
-    {
-        var previousItem = _playbackService.GetPreviousItem();
-        PlayItem(previousItem);
-    }
+    void PlayPrevious() => _playbackService.PlayPrevious();
 
     [RelayCommand]
     void MoveItemUp() => _playbackService.MoveUp(SelectedItem);
+    
     [RelayCommand]
     void MoveItemDown() => _playbackService.MoveDown(SelectedItem);
 
@@ -145,7 +150,7 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
             if (_playbackService.Items.Count == 0)
                 ResetPlayer();
             else
-                PlayItem(_playbackService.GetCurrentItem());
+                _playbackService.Play();
         }
     }
 
@@ -170,7 +175,7 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
         if (SelectedItem is MediaItem item)
         {
             _playbackService.CurrentIndex = _playbackService.Items.IndexOf(item);
-            PlayItem(item);
+            _playbackService.Play();
         }
     }
 
@@ -181,8 +186,8 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
         if (pickedFiles.Count() > 0)
             foreach (var file in pickedFiles)
                 _playbackService.AddItem(MediaItem.FromFile(file));
-        if (MPlayer.Source is null)
-            PlayItem(_playbackService.GetCurrentItem());
+        if (_playbackService.Items.Count > 0 && !_playbackService.IsPlaying)
+            _playbackService.Play();
     }
 
     [RelayCommand]
@@ -207,7 +212,7 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
         if (_playbackService.Items.Count > 0)
         {
             _playbackService.CurrentIndex = 0;
-            PlayItem(_playbackService.GetCurrentItem());
+            _playbackService.Play();
         }
         else
         {
@@ -254,18 +259,12 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
         {
             try
             {
-                _timer.Stop();
-                _timer.Tick -= Timer_Tick;
-            }
-            catch { }
-
-            try
-            {
-                MPlayer.MediaOpened -= OnMediaOpened;
-                MPlayer.MediaEnded -= OnMediaEnded;
-                MPlayer.MediaFailed -= OnMediaFailed;
-                MPlayer.Stop();
-                MPlayer.Source = null;
+                _playbackService.PositionChanged -= PlaybackService_PositionChanged;
+                _playbackService.MediaOpened -= PlaybackService_MediaOpened;
+                _playbackService.MediaEnded -= PlaybackService_MediaEnded;
+                _playbackService.MediaFailed -= PlaybackService_MediaFailed;
+                _playbackService.CurrentItemChanged -= PlaybackService_CurrentItemChanged;
+                _playbackService.PlayingChanged -= PlaybackService_PlayingChanged;
             }
             catch { }
         }
