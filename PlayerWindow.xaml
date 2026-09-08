@@ -19,11 +19,11 @@
     <Window.InputBindings>
         <KeyBinding Gesture="Ctrl+O" Command="{Binding OpenFilesCommand}"/>
         <KeyBinding Gesture="Alt    +F" Command="{Binding SpeedUpCommand}"/>
-        <KeyBinding Gesture="Alt    +D" Command="{Binding SlowDownCommand}"/>       
+        <KeyBinding Gesture="Alt    +D" Command="{Binding SlowDownCommand}"/>
         <KeyBinding Gesture="F4" Command="{Binding ShowAboutCommand}"/>
         <KeyBinding Gesture="Ctrl+Shift+O" Command="{Binding LoadListCommand}"/>
-                <KeyBinding Gesture="Ctrl+N" Command="{Binding CreateNewListCommand}"/>
-        <KeyBinding Gesture="Ctrl+S" Command="{Binding SaveListCommand}"/>        
+        <KeyBinding Gesture="Ctrl+N" Command="{Binding CreateNewListCommand}"/>
+        <KeyBinding Gesture="Ctrl+S" Command="{Binding SaveListCommand}"/>
     </Window.InputBindings>
 
     <Grid Margin="10">
@@ -40,7 +40,7 @@
         <Label Content="Play Queue" Grid.Row="0" Grid.Column="0" Grid.RowSpan="3" Margin="5"/>
         <ListView x:Name="ItemList" ItemsSource="{Binding MediaItems}" SelectedItem="{Binding SelectedItem}" ItemTemplate="{StaticResource SingleItemLayout}" KeyboardNavigation.DirectionalNavigation="Contained">
             <ListView.InputBindings>
-                <KeyBinding Gesture="Enter" Command="{Binding PlaySelectedCommand}"/>                
+                <KeyBinding Gesture="Enter" Command="{Binding PlaySelectedCommand}"/>
                 <KeyBinding Gesture="Delete" Command="{Binding RemoveItemCommand}"/>
                 <KeyBinding Gesture="Ctrl+U" Command="{Binding MoveItemUpCommand}"/>
                 <KeyBinding Gesture="Ctrl+D" Command="{Binding MoveItemDownCommand}"/>
@@ -49,12 +49,13 @@
 
             <ListView.ContextMenu>
                 <ContextMenu DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
-                    <MenuItem Header="Play Selected [Enter]" Command="{Binding PlaySelectedCommand}" />
-                    <MenuItem Header="Remove [Delete]" Command="{Binding RemoveItemCommand}" />                    
+                    <MenuItem Header="Play [Enter]" Command="{Binding PlaySelectedCommand}" />
+                    <MenuItem Header="Remove [Delete]" Command="{Binding RemoveItemCommand}" />
                     <MenuItem Header="Copy [Ctrl+C]" Command="{Binding CopyItemCommand}" />
-                    <MenuItem Header="Paste [Ctrl+V]" Command="{Binding PasteItemsCommand}" />                                        
+                    <MenuItem Header="Paste [Ctrl+V]" Command="{Binding PasteItemsCommand}" />
                     <MenuItem Header="Move Up [Ctrl+U]" Command="{Binding MoveItemUpCommand}" />
-                    <MenuItem Header="Move Down [Ctrl+D]" Command="{Binding MoveItemDownCommand}" />                    
+                    <MenuItem Header="Move Down [Ctrl+D]" Command="{Binding MoveItemDownCommand}" />
+                    <MenuItem Header="About... [F4]" Command="{Binding ShowAboutCommand}" />
                 </ContextMenu>
             </ListView.ContextMenu>
         </ListView>
@@ -68,7 +69,7 @@
             <TextBlock Text="{Binding TotalDuration, Converter={StaticResource TimeSpanToString}}" Focusable="True"/>
         </StackPanel>
 
-        <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="5" VerticalAlignment="Center">            
+        <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="5" VerticalAlignment="Center">
             <Button Content="_Add..." Command="{Binding OpenFilesCommand}" Margin="4" Padding="8,6" />
             <Button Content="Pre_vious" Command="{Binding PlayPreviousCommand}" Margin="4" Padding="8,6" FontSize="14" MinWidth="80" />
             <Button Content="_Play" Command="{Binding PlayCommand}" Margin="4" Padding="10,6" FontSize="14" FontWeight="Bold" />

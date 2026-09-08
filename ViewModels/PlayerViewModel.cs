@@ -79,19 +79,7 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
         TotalDuration = TimeSpan.Zero;
         _playbackService.SpeedRatio = 1.0;
         DisplayStatus = "No media currently loaded.";
-    }
-
-    /*
-    void PlayItem(MediaItem? currentItem)
-    {
-        if (currentItem is not null)
-        {
-            var idx = _playbackService.Items.IndexOf(currentItem);
-            if (idx >= 0) _playbackService.CurrentIndex = idx;
-            _playbackService.Play();
-        }
-    }
-    */
+    }    
 
     [RelayCommand]
     void Play() => _playbackService.Play();
