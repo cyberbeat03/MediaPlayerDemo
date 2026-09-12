@@ -1,7 +1,9 @@
+using System.Diagnostics;
+
 namespace WinMix.ViewModels;
 
 public partial class PlayerViewModel : ObservableObject, IDisposable
-{
+{    
     [ObservableProperty] string _displayStatus = "No media loaded. Press the 'Add' button to get started.";
     [ObservableProperty] bool _isPlaying = false;
     [ObservableProperty] TimeSpan _totalDuration = TimeSpan.Zero;
@@ -183,6 +185,22 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
     {
         _windowDisplayService.ShowAboutDialog();
     }
+
+    [RelayCommand]
+        void ShowHelp()
+    {
+        string helpUrl = "http://cyberbeat03.github.io/KeyboardShortcuts";
+
+        try
+        {
+            var psi = new ProcessStartInfo { FileName = helpUrl, UseShellExecute = true };
+            Process.Start(psi);
+        }
+        catch (Exception ex)
+        {         
+            DisplayStatus = $"Unable to open help: {ex.Message}";
+        }
+    }   
 
     [RelayCommand]
     async Task LoadList()
