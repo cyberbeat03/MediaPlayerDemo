@@ -24,7 +24,6 @@ public class PlaybackService : IPlaybackService, IDisposable
         _mediaPlayer.MediaOpened += (s, d) => MediaOpened?.Invoke(this, d);
         _mediaPlayer.MediaEnded += (s, e) => MediaEnded?.Invoke(this, EventArgs.Empty);
         _mediaPlayer.MediaFailed += (s, ex) => MediaFailed?.Invoke(this, ex);
-        _mediaPlayer.PlayingChanged += OnMediaPlayingChanged;
     }
 
     private bool IsIndexValid(int index) =>
@@ -38,7 +37,6 @@ public class PlaybackService : IPlaybackService, IDisposable
         if (IsIndexValid(CurrentIndex - 1))
         {
             CurrentIndex--;
-            CurrentItemChanged?.Invoke(this, EventArgs.Empty);
             return Items[CurrentIndex];
         }
 
@@ -50,7 +48,6 @@ public class PlaybackService : IPlaybackService, IDisposable
         if (IsIndexValid(CurrentIndex + 1))
         {
             CurrentIndex++;
-            CurrentItemChanged?.Invoke(this, EventArgs.Empty);
             return Items[CurrentIndex];
         }
 
@@ -59,7 +56,7 @@ public class PlaybackService : IPlaybackService, IDisposable
 
     public void MoveUp(MediaItem? mediaItem)
     {
-        if (mediaItem is null || !Items.Contains(mediaItem)) return;
+        if (mediaItem is null) return;
 
         int currentPosition = Items.IndexOf(mediaItem);
         if (currentPosition > 0)
@@ -68,7 +65,7 @@ public class PlaybackService : IPlaybackService, IDisposable
 
     public void MoveDown(MediaItem? mediaItem)
     {
-        if (mediaItem is null || !Items.Contains(mediaItem)) return;
+        if (mediaItem is null) return;
 
         int currentPosition = Items.IndexOf(mediaItem);
 
@@ -97,7 +94,6 @@ public class PlaybackService : IPlaybackService, IDisposable
         if (CurrentIndex <= -1 && Items.Count > 0)
         {
             CurrentIndex = 0;
-            CurrentItemChanged?.Invoke(this, EventArgs.Empty);
         }
     }
 
@@ -121,14 +117,12 @@ public class PlaybackService : IPlaybackService, IDisposable
         if (removedIndex < CurrentIndex)
         {
             CurrentIndex--;
-            CurrentItemChanged?.Invoke(this, EventArgs.Empty);
             return;
         }
 
         if (CurrentIndex >= Items.Count)
         {
             CurrentIndex = Items.Count - 1;
-            CurrentItemChanged?.Invoke(this, EventArgs.Empty);
         }
     }
 
@@ -143,7 +137,6 @@ public class PlaybackService : IPlaybackService, IDisposable
 
         if (current is null) return;
 
-        CurrentItemChanged?.Invoke(this, EventArgs.Empty);
         _mediaPlayer.Open(current.UriPath);
         _mediaPlayer.Play();
     }
@@ -167,13 +160,9 @@ public class PlaybackService : IPlaybackService, IDisposable
     }
 
     public event EventHandler<TimeSpan>? PositionChanged;
-    public event EventHandler<bool>? PlayingChanged;
     public event EventHandler<TimeSpan>? MediaOpened;
     public event EventHandler? MediaEnded;
     public event EventHandler<Exception>? MediaFailed;
-    public event EventHandler? CurrentItemChanged;
-
-    private void OnMediaPlayingChanged(object? s, bool playing) => PlayingChanged?.Invoke(this, playing);
 
     public void Dispose()
     {
@@ -181,7 +170,6 @@ public class PlaybackService : IPlaybackService, IDisposable
         try
         {
             _mediaPlayer.PositionChanged -= (s, pos) => PositionChanged?.Invoke(this, pos);
-            _mediaPlayer.PlayingChanged -= OnMediaPlayingChanged;
         }
         catch { }
 

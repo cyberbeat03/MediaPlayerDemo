@@ -32,8 +32,6 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
         _playbackService.MediaOpened += PlaybackService_MediaOpened;
         _playbackService.MediaEnded += PlaybackService_MediaEnded;
         _playbackService.MediaFailed += PlaybackService_MediaFailed;
-        _playbackService.CurrentItemChanged += PlaybackService_CurrentItemChanged;
-        _playbackService.PlayingChanged += PlaybackService_PlayingChanged;
     }
 
     void PlaybackService_PositionChanged(object? s, TimeSpan position)
@@ -57,19 +55,6 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
         DisplayStatus = $"End of {_playbackService.GetCurrentItem()?.DisplayName}" ?? "Media has ended.";
         ElapsedTime = TimeSpan.Zero;
         _playbackService.PlayNext();
-    }
-
-    void PlaybackService_CurrentItemChanged(object? s, EventArgs e)
-    {
-        SelectedItem = _playbackService.GetCurrentItem();
-    }
-
-    void PlaybackService_PlayingChanged(object? s, bool playing)
-    {
-        IsPlaying = playing;
-        var current = _playbackService.GetCurrentItem();
-        if (current != null)        
-            DisplayStatus = playing ? $"Playing {current.DisplayName}" : $"{current.DisplayName} (not playing)";        
     }
 
     void ResetPlayer()
@@ -165,7 +150,7 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
         if (SelectedItem is MediaItem item)
         {
             _playbackService.CurrentIndex = _playbackService.Items.IndexOf(item);
-            _playbackService.Play();
+            _playbackService.Play();            
         }
     }
 
@@ -269,8 +254,6 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
                 _playbackService.MediaOpened -= PlaybackService_MediaOpened;
                 _playbackService.MediaEnded -= PlaybackService_MediaEnded;
                 _playbackService.MediaFailed -= PlaybackService_MediaFailed;
-                _playbackService.CurrentItemChanged -= PlaybackService_CurrentItemChanged;
-                _playbackService.PlayingChanged -= PlaybackService_PlayingChanged;
             }
             catch { }
         }

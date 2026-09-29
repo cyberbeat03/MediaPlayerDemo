@@ -32,9 +32,7 @@ public interface IPlaybackService : IDisposable
     bool IsPlaying { get; }
 
     event EventHandler<TimeSpan>? PositionChanged;
-    event EventHandler<bool>? PlayingChanged;
     event EventHandler<TimeSpan>? MediaOpened;
     event EventHandler? MediaEnded;
     event EventHandler<Exception>? MediaFailed;
-    event EventHandler? CurrentItemChanged;
 }

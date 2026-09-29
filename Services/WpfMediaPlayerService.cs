@@ -41,7 +41,6 @@ public class WpfMediaPlayerService : IMediaPlayerService
         _mPlayer.Play();
         _timer.Start();
         IsPlaying = true;
-        PlayingChanged?.Invoke(this, IsPlaying);
     }
 
     public void Pause()
@@ -49,7 +48,6 @@ public class WpfMediaPlayerService : IMediaPlayerService
         _mPlayer.Pause();
         _timer.Stop();
         IsPlaying = false;
-        PlayingChanged?.Invoke(this, IsPlaying);
     }
 
     public void Stop()
@@ -57,14 +55,12 @@ public class WpfMediaPlayerService : IMediaPlayerService
         _mPlayer.Stop();
         _timer.Stop();
         IsPlaying = false;
-        PlayingChanged?.Invoke(this, IsPlaying);
         _mPlayer.Position = TimeSpan.Zero;
     }
 
     public void Seek(TimeSpan position) => _mPlayer.Position = position;
 
     public event EventHandler<TimeSpan>? PositionChanged;
-    public event EventHandler<bool>? PlayingChanged;
     public event EventHandler<TimeSpan>? MediaOpened;
     public event EventHandler? MediaEnded;
     public event EventHandler<Exception>? MediaFailed;
