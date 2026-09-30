@@ -14,10 +14,10 @@ public partial class App : Application
         _host = Host.CreateDefaultBuilder()
             .ConfigureServices((context, services) =>
             {
-                services.AddSingleton<IPlaybackService, PlaybackService>();
-                services.AddSingleton<IFileOpenService, FileOpenService>();
-                services.AddSingleton<IStorageService, StorageService>();
-                services.AddSingleton<IClipBoardService, ClipBoardService>();
+                services.AddTransient<IPlaybackService, PlaybackService>();
+                services.AddTransient<IFileOpenService, FileOpenService>();
+                services.AddTransient<IStorageService, StorageService>();
+                services.AddTransient<IClipBoardService, ClipBoardService>();
                 services.AddSingleton<IWindowDisplayService, WindowDisplayService>();
                 services.AddSingleton<IMediaPlayerService, WpfMediaPlayerService>();
 
@@ -25,7 +25,6 @@ public partial class App : Application
                 services.AddTransient<AboutDialog>();
                 services.AddTransient<ListManagerWindow>();
                 services.AddTransient<ListManagerViewModel>();
-
                 services.AddTransient<PlayerWindow>();
                 services.AddTransient<PlayerViewModel>();
             })

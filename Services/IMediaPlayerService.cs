@@ -1,5 +1,3 @@
-using System;
-
 namespace WinMix.Services;
 
 public interface IMediaPlayerService : IDisposable
@@ -12,6 +10,7 @@ public interface IMediaPlayerService : IDisposable
 
     TimeSpan Position { get; }
     TimeSpan Duration { get; }
+    Uri MediaSource { get; }
     double SpeedRatio { get; set; }
     bool IsPlaying { get; }
 

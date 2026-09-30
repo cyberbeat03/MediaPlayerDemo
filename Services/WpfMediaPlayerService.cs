@@ -9,16 +9,13 @@ public class WpfMediaPlayerService : IMediaPlayerService
     bool _isDisposed;
     public bool IsPlaying { get; private set; }
     public TimeSpan Position => _mPlayer.Position;
-    public TimeSpan Duration
-    {
-        get => _mPlayer.NaturalDuration.HasTimeSpan ? _mPlayer.NaturalDuration.TimeSpan : TimeSpan.Zero;
-        }        
-
+    public TimeSpan Duration => _mPlayer.NaturalDuration.HasTimeSpan ? _mPlayer.NaturalDuration.TimeSpan : TimeSpan.Zero;
+    public Uri MediaSource => _mPlayer.Source;
     public double SpeedRatio
     {
         get => _mPlayer.SpeedRatio;
         set => _mPlayer.SpeedRatio = value;
-    }
+    }   
 
     public WpfMediaPlayerService()
     {
@@ -31,7 +28,18 @@ public class WpfMediaPlayerService : IMediaPlayerService
     }
 
     void OnMediaOpened(object? s, EventArgs e) => MediaOpened?.Invoke(this, Duration);
-    void OnMediaEnded(object? s, EventArgs e) => MediaEnded?.Invoke(this, EventArgs.Empty);
+    void OnMediaEnded(object? s, EventArgs e)
+    {
+        // When media naturally ends, stop position reporting and update play state.
+        try
+        {
+            _timer.Stop();
+        }
+        catch { }
+        IsPlaying = false;
+        MediaEnded?.Invoke(this, EventArgs.Empty);
+    }
+
     void OnMediaFailed(object? s, ExceptionEventArgs e) => MediaFailed?.Invoke(this, e.ErrorException ?? new Exception("Media failed"));
 
     public void Open(Uri source) => _mPlayer.Open(source);
@@ -55,7 +63,7 @@ public class WpfMediaPlayerService : IMediaPlayerService
         _mPlayer.Stop();
         _timer.Stop();
         IsPlaying = false;
-        _mPlayer.Position = TimeSpan.Zero;
+        _mPlayer.Position = TimeSpan.Zero;        
     }
 
     public void Seek(TimeSpan position) => _mPlayer.Position = position;

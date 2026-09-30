@@ -42,7 +42,7 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
     void PlaybackService_MediaOpened(object? s, TimeSpan duration)
     {
         DisplayStatus = $"Loaded: {_playbackService.GetCurrentItem()?.DisplayName}" ?? "Media could not be opened.";
-        TotalDuration = duration;
+        TotalDuration = _playbackService.Duration;
     }
 
     void PlaybackService_MediaFailed(object? s, Exception e)
@@ -52,8 +52,10 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
 
     void PlaybackService_MediaEnded(object? s, EventArgs e)
     {
-        DisplayStatus = $"End of {_playbackService.GetCurrentItem()?.DisplayName}" ?? "Media has ended.";
-        ElapsedTime = TimeSpan.Zero;
+        DisplayStatus = $"End of {_playbackService.GetCurrentItem()?.DisplayName}" ?? "Media has ended.";        
+        _playbackService.Stop();
+        //_playbackService.Seek(TimeSpan.Zero);
+        ElapsedTime = _playbackService.Position;
         _playbackService.PlayNext();
     }
 
@@ -62,8 +64,7 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
         _playbackService.CurrentIndex = -1;
         _playbackService.Items.Clear();
         _playbackService.Stop();
-        ElapsedTime = TimeSpan.Zero;
-        TotalDuration = TimeSpan.Zero;
+        TotalDuration = _playbackService.Duration;
         _playbackService.SpeedRatio = 1.0;
         DisplayStatus = "No media currently loaded.";
     }    
@@ -75,7 +76,11 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
     void Pause() => _playbackService.Pause();
 
     [RelayCommand]
-    void Stop() => _playbackService.Stop();
+    void Stop()
+    {
+        _playbackService.Stop();
+        ElapsedTime = TimeSpan.Zero;
+    }
 
     [RelayCommand]
     void Rewind()=>    

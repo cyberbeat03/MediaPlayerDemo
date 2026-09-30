@@ -1,29 +1,14 @@
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Threading.Tasks;
-using System.Windows;
 
 namespace WinMix.Services;
 
 public class WindowDisplayService : IWindowDisplayService
 {
     readonly IServiceProvider _provider;
-    readonly IPlaybackService _playback;
-    readonly IFileOpenService _fileOpen;
-    readonly IStorageService _storage;
-    readonly IClipBoardService _clipboard;
 
-    public WindowDisplayService(IServiceProvider provider,
-        IPlaybackService playback,
-        IFileOpenService fileOpen,
-        IStorageService storage,
-        IClipBoardService clipboard)
+    public WindowDisplayService(IServiceProvider provider)        
     {
-        _provider = provider ?? throw new ArgumentNullException(nameof(provider));
-        _playback = playback ?? throw new ArgumentNullException(nameof(playback));
-        _fileOpen = fileOpen ?? throw new ArgumentNullException(nameof(fileOpen));
-        _storage = storage ?? throw new ArgumentNullException(nameof(storage));
-        _clipboard = clipboard ?? throw new ArgumentNullException(nameof(clipboard));
+        _provider = provider ?? throw new ArgumentNullException(nameof(provider));       
     }
 
     PlayerWindow GetPlayerWindow() => _provider.GetRequiredService<PlayerWindow>();
