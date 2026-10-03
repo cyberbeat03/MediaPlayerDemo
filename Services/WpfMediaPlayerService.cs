@@ -1,4 +1,5 @@
 using System.Windows.Media;
+using WinMix.Interfaces;
 
 namespace WinMix.Services;
 

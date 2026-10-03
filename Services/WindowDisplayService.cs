@@ -1,4 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
+using WinMix.Interfaces;
 
 namespace WinMix.Services;
 

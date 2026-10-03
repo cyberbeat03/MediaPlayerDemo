@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using WinMix.Interfaces;
 
 namespace WinMix.ViewModels;
 

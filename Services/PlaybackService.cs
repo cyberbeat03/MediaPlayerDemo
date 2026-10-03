@@ -1,3 +1,5 @@
+using WinMix.Interfaces;
+
 namespace WinMix.Services;
 
 public class PlaybackService : IPlaybackService, IDisposable

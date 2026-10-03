@@ -1,4 +1,4 @@
-namespace WinMix.Services;
+namespace WinMix.Interfaces;
 
 public interface IPlaybackService : IDisposable
 {

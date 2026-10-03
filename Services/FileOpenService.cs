@@ -1,4 +1,5 @@
 ﻿using Microsoft.Win32;
+using WinMix.Interfaces;
 
 namespace WinMix.Services;
 

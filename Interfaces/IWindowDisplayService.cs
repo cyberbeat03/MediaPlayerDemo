@@ -1,4 +1,4 @@
-﻿namespace WinMix.Services;
+﻿namespace WinMix.Interfaces;
 using System.Threading.Tasks;
 
 public interface IWindowDisplayService
