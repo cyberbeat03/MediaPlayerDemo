@@ -25,6 +25,7 @@ public interface IPlaybackService : IDisposable
     TimeSpan Position { get; }
     TimeSpan Duration { get; }
     double SpeedRatio { get; set; }
+    Uri Source { get; }
     bool IsPlaying { get; }
 
     event EventHandler<TimeSpan>? PositionChanged;

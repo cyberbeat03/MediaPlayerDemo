@@ -17,18 +17,8 @@ public class StorageService : IStorageService
         {
             await using FileStream fs = File.OpenRead(fullPath);
             var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-            var dto = await JsonSerializer.DeserializeAsync<PlaylistDTO>(fs, options);
-            if (dto?.Items == null) return Enumerable.Empty<MediaItem>();
-            
-            var result = dto.Items.Select(dto => new MediaItem
-            {
-                DisplayName = dto.DisplayName,
-                FullPath = dto.FullPath,
-                UriPath = new Uri(dto.FullPath, UriKind.Absolute),
-                LastAccessed = DateTime.FromFileTimeUtc(dto.LastAccessedFileTimeUtc)
-            }).ToList();
-
-            return result;
+            var playlist = await JsonSerializer.DeserializeAsync<Playlist>(fs, options);
+            return (playlist?.Items == null) ? Enumerable.Empty<MediaItem>() : playlist.Items;
         }
         catch (Exception)
         {
@@ -44,21 +34,16 @@ public class StorageService : IStorageService
         {
             if (!Directory.Exists(_playlistLocation)) Directory.CreateDirectory(_playlistLocation);
 
-            var dto = new PlaylistDTO
+            var playlist = new Playlist
             {
                 Version = 1,
                 Name = Path.GetFileNameWithoutExtension(wmxFileName),
-                Items = fileList.Select(fi => new MediaItemDto
-                {
-                    DisplayName = fi.DisplayName,
-                    FullPath = fi.FullPath,
-                    LastAccessedFileTimeUtc = fi.LastAccessed.ToFileTimeUtc()
-                }).ToList()
+                Items = fileList.ToList()
             };
 
             var options = new JsonSerializerOptions { WriteIndented = true };
             await using FileStream fs = File.Create(fullPath);
-            await JsonSerializer.SerializeAsync(fs, dto, options);
+            await JsonSerializer.SerializeAsync(fs, playlist, options);
         }
         catch (Exception e)
         {

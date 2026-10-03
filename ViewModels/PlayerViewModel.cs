@@ -4,8 +4,7 @@ namespace WinMix.ViewModels;
 
 public partial class PlayerViewModel : ObservableObject, IDisposable
 {    
-    [ObservableProperty] string _displayStatus = "No media loaded. Press the 'Add' button to get started.";
-    [ObservableProperty] bool _isPlaying = false;
+    [ObservableProperty] string _displayStatus = "No media loaded. Press the 'Add' button to get started.";    
     [ObservableProperty] TimeSpan _totalDuration = TimeSpan.Zero;
     [ObservableProperty] TimeSpan _elapsedTime = TimeSpan.Zero;
     [ObservableProperty] MediaItem? _selectedItem = null;
@@ -53,9 +52,8 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
     void PlaybackService_MediaEnded(object? s, EventArgs e)
     {
         DisplayStatus = $"End of {_playbackService.GetCurrentItem()?.DisplayName}" ?? "Media has ended.";        
-        _playbackService.Stop();
-        //_playbackService.Seek(TimeSpan.Zero);
-        ElapsedTime = _playbackService.Position;
+        _playbackService.Stop();        
+        ElapsedTime = TimeSpan.Zero;
         _playbackService.PlayNext();
     }
 
@@ -166,7 +164,7 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
         if (pickedFiles.Count() > 0)
             foreach (var file in pickedFiles)
                 _playbackService.AddItem(MediaItem.FromFile(file));
-        if (_playbackService.Items.Count > 0 && !_playbackService.IsPlaying)
+        if (_playbackService.Items.Count > 0 && _playbackService.Source == null)
             _playbackService.Play();
     }
 

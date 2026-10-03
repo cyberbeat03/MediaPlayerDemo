@@ -6,7 +6,7 @@ public class PlaybackService : IPlaybackService, IDisposable
     public TimeSpan Position => _mediaPlayer.Position;
     public TimeSpan Duration => _mediaPlayer.Duration;
     public bool IsPlaying => _mediaPlayer.IsPlaying;
-    public Uri MediaSource => _mediaPlayer.MediaSource;
+    public Uri Source => _mediaPlayer.MediaSource;
     public double SpeedRatio
     {
         get => _mediaPlayer.SpeedRatio;
@@ -138,7 +138,7 @@ public class PlaybackService : IPlaybackService, IDisposable
 
         if (current is null) return;
 
-        if (MediaSource != current.UriPath)
+        if (Source != current.UriPath)
         {
             _mediaPlayer.Open(current.UriPath);
             _mediaPlayer.Play();
