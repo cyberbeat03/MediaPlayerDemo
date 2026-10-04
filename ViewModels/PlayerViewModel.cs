@@ -63,9 +63,10 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
         _playbackService.CurrentIndex = -1;
         _playbackService.Items.Clear();
         _playbackService.Stop();
-        TotalDuration = _playbackService.Duration;
         _playbackService.SpeedRatio = 1.0;
         DisplayStatus = "No media currently loaded.";
+        ElapsedTime = TimeSpan.Zero;
+        TotalDuration = TimeSpan.Zero;
     }    
 
     [RelayCommand]
@@ -218,8 +219,12 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
     [RelayCommand]
     async Task SaveList()
     {
-        if (_playbackService.Items.Count == 0) return;
-
+        if (_playbackService.Items.Count == 0)
+        {
+            MessageBox.Show("There is nothing to save. Please add files to the playlist before saving.", "Save Playlist", MessageBoxButton.OK, MessageBoxImage.Information);
+            return;
+        }
+        
         if (_playbackService.Name == string.Empty)
         {
             string input = _windowDisplayService.ShowInputDialog();
@@ -234,7 +239,9 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
     [RelayCommand]
     async Task CreateNewList()
     {
-        string input = _windowDisplayService.ShowInputDialog(); if (string.IsNullOrWhiteSpace(input)) return;
+        string input = _windowDisplayService.ShowInputDialog();
+        
+        if (string.IsNullOrWhiteSpace(input)) return;
 
         _playbackService.Name = input;
         TitleBar = $"{_playbackService.Name} - List Manager";
