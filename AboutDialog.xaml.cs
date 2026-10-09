@@ -20,6 +20,11 @@ public partial class AboutDialog : Window
 
     private void Ok_Click(object sender, RoutedEventArgs e)
     {
-        this.Close();
+        DialogResult = true;
+    }
+
+    private void Cancel_Click(object sender, RoutedEventArgs e)
+    {
+        DialogResult = false;
     }
 }

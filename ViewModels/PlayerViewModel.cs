@@ -218,13 +218,7 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
 
     [RelayCommand]
     async Task SaveList()
-    {
-        if (_playbackService.Items.Count == 0)
-        {
-            MessageBox.Show("There is nothing to save. Please add files to the playlist before saving.", "Save Playlist", MessageBoxButton.OK, MessageBoxImage.Information);
-            return;
-        }
-        
+    {                
         if (_playbackService.Name == string.Empty)
         {
             string input = _windowDisplayService.ShowInputDialog();

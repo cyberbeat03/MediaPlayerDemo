@@ -13,7 +13,8 @@
             
             <TextBlock Text="Date:"/>
             <TextBox Text="{Binding BuildDate}" Focusable="True"/>
-            <Button Content="Close" IsDefault="True" HorizontalAlignment="Center" Click="Ok_Click"/>
+            <Button Content="OK" IsDefault="True" HorizontalAlignment="Center" Click="Ok_Click"/>
+            <Button Content="Cancel" IsCancel="True" HorizontalAlignment="Center" Click="Cancel_Click"/>
         </StackPanel>
     </Grid>
 </Window>

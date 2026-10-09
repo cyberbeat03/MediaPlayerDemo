@@ -1,5 +1,4 @@
 ﻿using System.Collections.Specialized;
-using WinMix.Interfaces;
 
 namespace WinMix.Services;
 
@@ -49,17 +48,22 @@ public class ClipBoardService : IClipBoardService
 
     public IEnumerable<string> Paste()
     {
-        try
+        if (!Clipboard.ContainsFileDropList())
         {
-            if (!Clipboard.ContainsFileDropList()) throw new InvalidOperationException("The clipboard does not contain any files.");
+            MessageBox.Show("There are no files on the clipboard.");
+            return [];
+        }                
 
+        try
+            {            
             StringCollection fileList = Clipboard.GetFileDropList();
-            return fileList.Cast<string>().ToList();
-        }
+                return fileList.Cast<string>().ToList();
+            }
         catch (Exception e)
         {
-            MessageBox.Show(e.Message);
-            return Enumerable.Empty<string>();
-        }
+            MessageBox.Show("Could not paste files from the clipboard.");
+            return [];
+        }        
     }
+
 }

@@ -25,6 +25,7 @@
         <KeyBinding Gesture="Ctrl+Shift+O" Command="{Binding LoadListCommand}"/>
         <KeyBinding Gesture="Ctrl+N" Command="{Binding CreateNewListCommand}"/>
         <KeyBinding Gesture="Ctrl+S" Command="{Binding SaveListCommand}"/>
+        <KeyBinding Gesture="Ctrl+V" Command="{Binding PasteItemsCommand}"/>
     </Window.InputBindings>
 
     <Grid Margin="10">
