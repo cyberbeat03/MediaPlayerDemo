@@ -4,12 +4,12 @@ namespace WinMix.Services;
 
 public class ClipBoardService : IClipBoardService
 {
-    public bool Copy(string mediaItem)
+    public bool Copy(string filePath)
     {
-        if (String.IsNullOrEmpty(mediaItem)) return false;
+        if (String.IsNullOrEmpty(filePath)) return false;
 
         StringCollection dropFiles = new();
-        dropFiles.Add(mediaItem);
+        dropFiles.Add(filePath);
 
         try
         {
@@ -48,21 +48,19 @@ public class ClipBoardService : IClipBoardService
 
     public IEnumerable<string> Paste()
     {
-        if (!Clipboard.ContainsFileDropList())
-        {
-            MessageBox.Show("There are no files on the clipboard.");
-            return [];
-        }                
+        
 
         try
-            {            
+            {
+            if (!Clipboard.ContainsFileDropList()) throw new InvalidOperationException("Clipboard does not contain any files.");
+
             StringCollection fileList = Clipboard.GetFileDropList();
                 return fileList.Cast<string>().ToList();
             }
         catch (Exception e)
         {
-            MessageBox.Show("Could not paste files from the clipboard.");
-            return [];
+            MessageBox.Show(e.Message);
+            return Enumerable.Empty<string>();
         }        
     }
 

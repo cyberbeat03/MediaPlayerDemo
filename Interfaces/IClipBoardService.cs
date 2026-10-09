@@ -2,7 +2,7 @@
 
 public interface IClipBoardService
 {
-    bool Copy(string mediaItem);
+    bool Copy(string filePath   );
     void CopyAll(IEnumerable<string> allFiles);
     IEnumerable<string> Paste();
 }
