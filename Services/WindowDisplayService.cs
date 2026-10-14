@@ -19,7 +19,12 @@ public class WindowDisplayService : IWindowDisplayService
         {
             var wnd = _provider.GetRequiredService<ListManagerWindow>();            
             wnd.Owner = Application.Current?.MainWindow;
-            return wnd.ShowDialog() == true ? wnd.GetSelectedPlaylistPath() : null;
+            if (wnd.ShowDialog() == true)
+            {
+                var vm = wnd.DataContext as WinMix.ViewModels.ListManagerViewModel;
+                return vm?.GetSelectedPlaylistPath();
+            }
+            return null;
         });
         return op.Task;
     }

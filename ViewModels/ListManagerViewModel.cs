@@ -1,17 +1,21 @@
+using System.IO;
+using System.Collections.ObjectModel;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+
 namespace WinMix.ViewModels;
 
 public partial class ListManagerViewModel : ObservableObject
 {
     public string PlaylistFolder { get; }
-    public ObservableCollection<string> PlaylistFiles { get; } = new ObservableCollection<string>();
-    public string? SelectedPlaylist { get; set; }
+    public ObservableCollection<string> PlaylistFiles { get; } = new();
 
-    public string ListTitle { get; set; }
+    [ObservableProperty]
+    string? _selectedPlaylist;
 
     public ListManagerViewModel()
     {
         PlaylistFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyMusic), "playlists");
-        ListTitle = "Playlists";
         LoadPlaylists();
     }
 
@@ -27,21 +31,41 @@ public partial class ListManagerViewModel : ObservableObject
             PlaylistFiles.Add(file);
     }
 
-    [RelayCommand]
+        [RelayCommand]
     public void DeletePlaylist()
     {
-        if (SelectedPlaylist == null) return;
-        
-            var filePath = Path.Combine(PlaylistFolder, $"{SelectedPlaylist}.wmx");
-            if (File.Exists(filePath))
+        if (string.IsNullOrWhiteSpace(SelectedPlaylist)) return;
+
+        var filePath = Path.Combine(PlaylistFolder, SelectedPlaylist);
+        if (File.Exists(filePath))
+        {
+            if (ConfirmDelete() == MessageBoxResult.Yes)
             {
-                if (ConfirmDelete() == MessageBoxResult.Yes)
-                {
-                    File.Delete(filePath);
-                    LoadPlaylists();
-                }                
-            }        
+                File.Delete(filePath);
+                LoadPlaylists();
+            }
+        }
     }
 
-MessageBoxResult     ConfirmDelete() => MessageBox.Show("Are you sure you want to permanently delete the selected playlist?", "Confirm Delete", MessageBoxButton.YesNo, MessageBoxImage.Question);    
+    public string? GetSelectedPlaylistPath()
+    {
+        if (string.IsNullOrWhiteSpace(SelectedPlaylist)) return null;
+        return Path.Combine(PlaylistFolder, SelectedPlaylist);
+    }
+
+    [RelayCommand]
+    public void Open()
+    {
+        RequestClose?.Invoke(this, true);
+    }
+
+    [RelayCommand]
+    public void Cancel()
+    {
+        RequestClose?.Invoke(this, false);
+    }
+
+    public event EventHandler<bool?>? RequestClose;
+
+    MessageBoxResult ConfirmDelete() => MessageBox.Show("Are you sure you want to permanently delete the selected playlist?", "Confirm Delete", MessageBoxButton.YesNo, MessageBoxImage.Question);
 }
